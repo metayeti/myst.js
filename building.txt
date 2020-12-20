@@ -1,0 +1,24 @@
+---- Building the library: -------
+
+1) Install node.js
+2) install uglifyjs:
+
+npm -g install uglify-js
+
+3) Run "build"
+
+---- To update docs: -------------
+
+1) Install jsdoc:
+
+npm -g install jsdoc
+
+2) Run "makedoc"
+
+---- To run linter: --------------
+
+1) Install jshint:
+
+npm -g install jshint
+
+2) Run "lint"

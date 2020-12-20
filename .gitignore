@@ -1,0 +1,6 @@
+/temp/
+*~
+*.swp
+*.swo
+*.vim
+.vscode

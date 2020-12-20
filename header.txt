@@ -1,0 +1,3 @@
+/* myst.js 0.9.0
+ * (c) 2020 Danijel Durakovic
+ * MIT License */
