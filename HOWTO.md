@@ -777,7 +777,7 @@ The Tween class allows tweening (inbetweening) values in a certain range with a 
 
 To construct a tween object:
 ```JavaScript
-new Tween(from, to, duration, onUpdate, onDone, easef, procf);
+new Tween(from, to, duration, onUpdate, onDone, easef, procf, resetf);
 ```
 
 - `from` and `to` define the range of the tween.
@@ -786,6 +786,7 @@ new Tween(from, to, duration, onUpdate, onDone, easef, procf);
 - `onDone` is a callback that gets called when the tween is done executing.
 - `easef` is the easing function. Use one of the functions from myst.ease (myst.ease.linear, myst.ease.quadIn, myst.ease.quadOut, myst.ease.quadInOut, myst.ease.backIn or myst.ease.backOut) or substitute your own. Defaults to myst.ease.linear.
 - `procf` is a value post-processing pure function that takes a single number parameter and outputs a single number parameter. Leave undefined for no post-processing. You can use `Math.floor`, `Math.ceil` for this parameter.
+- `resetf` is a reset function intended for manually restoring or finalizing several nested tweens in order to prevent having the animation stuck in mid-state whenever `tween.finish()` is called on a single level. This function will get called whenever the tween is interrupted through `tween.finish()`.
 
 All but first three parameters are optional (use `null` to skip the function parameters).
 
