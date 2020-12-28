@@ -12,7 +12,7 @@
 
 /**
  * @file myst.js
- * @version 0.9.0
+ * @version 0.9.1
  * @author Danijel Durakovic
  * @copyright 2020
  */
@@ -392,6 +392,8 @@ myst.Timer = function(interval) {
  *   (myst.ease.linear, myst.ease.quadIn, myst.ease.quadOut, myst.ease.quadInOut, myst.ease.backIn or
  *   myst.ease.backOut) or substitute your own.
  * @param {function} [procf] - Value post-process function.
+ * @param {function} [resetf] - This function is called whenever the Tween is interrupted through
+ *   tween.finish() and is intended for resetting an object's state when using multiple, nested tweens.
  *
  * @example
  * // Tween from 0 to 100 over 1.5 seconds with quadInOut easing
@@ -409,7 +411,7 @@ myst.Timer = function(interval) {
  *    console.log('Tween done!');
  * }, myst.ease.linear, Math.floor)).start();
  */
-myst.Tween = function(from, to, duration, onUpdate, onDone, easef, procf) {
+myst.Tween = function(from, to, duration, onUpdate, onDone, easef, procf, resetf) {
 	if (isNaN(duration) || isNaN(to) || isNaN(from) || duration <= 0) {
 		throw new Error('Erroneous parameters for Tween.');
 	}
@@ -423,6 +425,7 @@ myst.Tween = function(from, to, duration, onUpdate, onDone, easef, procf) {
 	var hasUpdate = onUpdate instanceof Function;
 	var hasDone = onDone instanceof Function;
 	var hasProc = procf instanceof Function;
+	var hasReset = resetf instanceof Function;
 
 	function doTween(elapsed) {
 		var progress = elapsed / duration;
@@ -486,6 +489,9 @@ myst.Tween = function(from, to, duration, onUpdate, onDone, easef, procf) {
 			twTimeout = null;
 			if (onUpdate instanceof Function) {
 				onUpdate(to);
+			}
+			if (hasReset) {
+				resetf();
 			}
 		}
 	};
