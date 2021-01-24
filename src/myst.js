@@ -420,7 +420,7 @@ myst.Tween = function(from, to, duration, onUpdate, onDone, easef, procf, resetf
 	}
 
 	var twTimeout = null;
-	var twFrametime = 5;
+	var twFrametime = 15;
 
 	var hasUpdate = onUpdate instanceof Function;
 	var hasDone = onDone instanceof Function;
