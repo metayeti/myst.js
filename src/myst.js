@@ -12,7 +12,7 @@
 
 /**
  * @file myst.js
- * @version 0.9.1
+ * @version 0.9.2
  * @author Danijel Durakovic
  * @copyright 2020
  */
@@ -420,7 +420,7 @@ myst.Tween = function(from, to, duration, onUpdate, onDone, easef, procf, resetf
 	}
 
 	var twTimeout = null;
-	var twFrametime = 5;
+	var twFrametime = 15;
 
 	var hasUpdate = onUpdate instanceof Function;
 	var hasDone = onDone instanceof Function;
@@ -1125,27 +1125,29 @@ myst.KeyInput = function() {
 	};
 
 	// keycodes
-	this.keyCancel = 3; this.keyHelp = 6; this.keyBackspace = 8; this.keyTab = 9; this.keyClear = 12;
-	this.keyEnter = 13; this.keyReturn = 14; this.keyShift = 16; this.keyControl = 17; this.keyAlt = 18;
-	this.keyPause = 19; this.keyCapsLock = 20; this.keyEscape = 27; this.keySpace = 32; this.keyPageUp = 33;
-	this.keyPageDown = 34; this.keyEnd = 35; this.keyHome = 36; this.keyLeft = 37; this.keyUp = 38;
-	this.keyRight = 39; this.keyDown = 40; this.keyPrintscreen = 44; this.keyInsert = 45; this.keyDelete = 46;
-	this.key0 = 48; this.key1 = 49; this.key2 = 50; this.key3 = 51; this.key4 = 52; this.key5 = 53; this.key6 = 54;
-	this.key7 = 55; this.key8 = 56; this.key9 = 57; this.keySemicolon = 59; this.keyEquals = 61; this.keyA = 65;
-	this.keyB = 66; this.keyC = 67; this.keyD = 68; this.keyE = 69; this.keyF = 70; this.keyG = 71; this.keyH = 72;
-	this.keyI = 73; this.keyJ = 74; this.keyK = 75; this.keyL = 76; this.keyM = 77; this.keyN = 78; this.keyO = 79;
-	this.keyP = 80; this.keyQ = 81; this.keyR = 82; this.keyS = 83; this.keyT = 84; this.keyU = 85; this.keyV = 86;
-	this.keyW = 87; this.keyX = 88; this.keyY = 89; this.keyZ = 90; this.keyContextMenu = 93; this.keyNumpad0 = 96;
-	this.keyNumpad1 = 97; this.keyNumpad2 = 98; this.keyNumpad3 = 99; this.keyNumpad4 = 100; this.keyNumpad5 = 101;
-	this.keyNumpad6 = 102; this.keyNumpad7 = 103; this.keyNumpad8 = 104; this.keyNumpad9 = 105; this.keyMultiply = 106;
-	this.keyAdd = 107; this.keySeparator = 108; this.keySubtract = 109; this.keyDecimal = 110; this.keyDivide = 111;
-	this.keyF1 = 112; this.keyF2 = 113; this.keyF3 = 114; this.keyF4 = 115; this.keyF5 = 116; this.keyF6 = 117;
-	this.keyF7 = 118; this.keyF8 = 119; this.keyF9 = 120; this.keyF10 = 121; this.keyF11 = 122; this.keyF12 = 123;
-	this.keyF13 = 124; this.keyF14 = 125; this.keyF15 = 126; this.keyF16 = 127; this.keyF17 = 128; this.keyF18 = 129;
-	this.keyF19 = 130; this.keyF20 = 131; this.keyF21 = 132; this.keyF22 = 133; this.keyF23 = 134; this.keyF24 = 135;
-	this.keyNumLock = 144; this.keyScrollLock = 145; this.keyComma = 188; this.keyPeriod = 190; this.keySlash = 191;
-	this.keyBackQuote = 192; this.keyOpenBracket = 219; this.keyBackSlash = 220; this.keyCloseBracket = 221;
-	this.keyQuote = 222; this.keyMeta = 224;
+	myst.compose(this, {
+		keyCancel: 3, keyHelp: 6, keyBackspace: 8, keyTab: 9, keyClear: 12,
+		keyEnter: 13, keyReturn: 14, keyShift: 16, keyControl: 17, keyAlt: 18,
+		keyPause: 19, keyCapsLock: 20, keyEscape: 27, keySpace: 32, keyPageUp: 33,
+		keyPageDown: 34, keyEnd: 35, keyHome: 36, keyLeft: 37, keyUp: 38,
+		keyRight: 39, keyDown: 40, keyPrintscreen: 44, keyInsert: 45, keyDelete: 46,
+		key0: 48, key1: 49, key2: 50, key3: 51, key4: 52, key5: 53, key6: 54,
+		key7: 55, key8: 56, key9: 57, keySemicolon: 59, keyEquals: 61, keyA: 65,
+		keyB: 66, keyC: 67, keyD: 68, keyE: 69, keyF: 70, keyG: 71, keyH: 72,
+		keyI: 73, keyJ: 74, keyK: 75, keyL: 76, keyM: 77, keyN: 78, keyO: 79,
+		keyP: 80, keyQ: 81, keyR: 82, keyS: 83, keyT: 84, keyU: 85, keyV: 86,
+		keyW: 87, keyX: 88, keyY: 89, keyZ: 90, keyContextMenu: 93, keyNumpad0: 96,
+		keyNumpad1: 97, keyNumpad2: 98, keyNumpad3: 99, keyNumpad4: 100, keyNumpad5: 101,
+		keyNumpad6: 102, keyNumpad7: 103, keyNumpad8: 104, keyNumpad9: 105, keyMultiply: 106,
+		keyAdd: 107, keySeparator: 108, keySubtract: 109, keyDecimal: 110, keyDivide: 111,
+		keyF1: 112, keyF2: 113, keyF3: 114, keyF4: 115, keyF5: 116, keyF6: 117,
+		keyF7: 118, keyF8: 119, keyF9: 120, keyF10: 121, keyF11: 122, keyF12: 123,
+		keyF13: 124, keyF14: 125, keyF15: 126, keyF16: 127, keyF17: 128, keyF18: 129,
+		keyF19: 130, keyF20: 131, keyF21: 132, keyF22: 133, keyF23: 134, keyF24: 135,
+		keyNumLock: 144, keyScrollLock: 145, keyComma: 188, keyPeriod: 190, keySlash: 191,
+		keyBackQuote: 192, keyOpenBracket: 219, keyBackSlash: 220, keyCloseBracket: 221,
+		keyQuote: 222, keyMeta: 224
+	});
 };
 
 ////////////////////////////////////////////////////////////////////////////////////
