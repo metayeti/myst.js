@@ -12,7 +12,7 @@
 
 /**
  * @file myst.js
- * @version 0.9.1
+ * @version 0.9.2
  * @author Danijel Durakovic
  * @copyright 2020
  */
