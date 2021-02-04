@@ -10,7 +10,7 @@ myState.createUI = function() {
 	// every created component from here on will default to this context
 	myst.ui.setGlobalContext(this);
 
-	// add a button component
+	// create a button component
 	this.myButton = new myst.ui.SimpleButton({	
 		//context: this, // commented on purpose, not needed after global context has been set
 		// define button geometry and texture
@@ -32,10 +32,11 @@ myState.createUI = function() {
 			console.log('click');
 		},
 		//test
-		/*
-		debug: true,
-		debugData: '$activeTile $type $x $y $enabled $alpha'
-		*/
+		
+		//debug: true,
+		//debugString: '$type $x $y',
+		//debugColor: 'blue'
+		
 	});
 
 	// center the component
@@ -47,6 +48,7 @@ myState.init = function() {
 };
 myState.draw = function() {
 	this.surface.clear();
+	// draw button
 	this.myButton.draw();
 };
 

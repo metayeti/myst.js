@@ -21,7 +21,7 @@ myst.ui = (function() { "use strict";
 
 	var input = null;
 	var globalContext = null;
-	
+
 	///////////////////////////////////////////////////////////////////////////////
 	//
 	//  Utility
@@ -46,14 +46,25 @@ myst.ui = (function() { "use strict";
 		});
 	}
 
-	var event_uiid = 0;
 	/**
-	 * Return the next unique incremental event id.
+	 * Returns the next incremental event id.
 	 *
 	 * @returns {number}
 	 */
-	function getEventUIID() {
-		return ++event_uiid;
+	var getNextEventId = (function() {
+		var uid = 0;
+		return function() {
+			return ++uid;
+		};
+	}());
+
+	/**
+	 * Passes given option, or returns the default.
+	 *
+	 * @returns {object}
+	 */
+	function fromOption(option, defaultOption) {
+		return (option != null) ? option : defaultOption;
 	}
 
 	///////////////////////////////////////////////////////////////////////////////
@@ -70,17 +81,20 @@ myst.ui = (function() { "use strict";
 		Base: function(options, self) {
 			self = self || this;
 
-			self._x = options.x || 0;
-			self._y = options.y || 0;
-			self._width = options.width || 0;
-			self._height = options.height || 0;
-			self._rotation = options.rotation || 0;
-			self._alpha = (options.alpha) ? options.alpha : 1;
-			self._enabled = (options.enabled) ? options.enabled : true;
+			self._x = fromOption(options.x, 0);
+			self._y = fromOption(options.y, 0);
+			self._width = fromOption(options.width, 0);
+			self._height = fromOption(options.height, 0);
+			self._alpha = fromOption(options.alpha, 1);
+			self._background = null;
+			self._enabled = fromOption(options.enabled, true);
+			self._context = fromOption(options.context, globalContext);
 
-			self._context = options.context || globalContext;
+			self._rootContext = self.context;
+			self._owner = null;
 
 			self._requestRepaint = true;
+			self._alwaysRepaint = false;
 
 			self._surface = new myst.Surface({
 				width: self._width,
@@ -88,10 +102,11 @@ myst.ui = (function() { "use strict";
 			});
 
 			self._texSurface = self._surface.canvas;
-
-			self._owner = null;
 			
-			self._events = {};
+			self._events = {
+				// "onRepaint" is triggered when the component needs to redraw
+				onRepaint: C_EMPTYF
+			};
 
 			self.paint = self._surface.render;
 
@@ -106,8 +121,15 @@ myst.ui = (function() { "use strict";
 			};
 
 			self.isEnabled = function() {
-				//TODO check chain of owners for disabled state?
-				return self._enabled;
+				// climb the chain of owners to determine enabled state
+				var component = self;
+				do {
+					if (!component._enabled) {
+						return false;
+					}
+					component = component._owner;
+				} while (component);
+				return true;
 			};
 
 			self.setX = function(x) {
@@ -226,9 +248,40 @@ myst.ui = (function() { "use strict";
 				return self.centerX().centerY();
 			};
 
+			/**
+			 * Set background to specified background color.
+			 *
+			 * @param {string} color - Component background color.
+			 */
+			self.setBackground = function(color) {
+				self._background = color;
+				self._surface.setFillClearMethod(color);
+				self._requestRepaint = true;
+				return self;
+			};
+
+			/**
+			 * Set background to transparent.
+			 */
+			self.removeBackground = function() {
+				self._background = null;
+				self._surface.setDefaultClearMethod();
+				self._requestRepaint = true;
+				return self;
+			};
+
+			/**
+			 * Retreive current component background color.
+			 */
+			self.getBackground = function() {
+				return self._background;
+			};
+
 			self.draw = function() {
-				if (self._requestRepaint && self._events.onRepaint) {
-					self._events.onRepaint.call(self);
+				if (self._alwaysRepaint || self._requestRepaint && self._events.onRepaint) {
+					console.log('repaint called');
+					self._surface.clear();
+					self._events.onRepaint();
 					self._requestRepaint = false;
 				}
 				var alpha = self.getAlpha();
@@ -244,11 +297,22 @@ myst.ui = (function() { "use strict";
 				}
 			};
 
-			// DEBUG FEATURES BEGIN
+			// initialize background
+			if (options.background) {
+				self.setBackground(options.background);
+			}
+		},
+
+		/**
+		 * Debuggable component.
+		 */
+		Debuggable: function(options, self) {
+			self = self || this;
+
 			if (options.debug) {
 				var debugDisplayText = '';
-				var debugWatch = (options.debugData)
-					? options.debugData.replace(/\$/g, '_').split(' ')
+				var debugWatch = (options.debugString)
+					? options.debugString.replace(/\$/g, '_').split(' ')
 					: ['_type'];
 				function updateDebugDisplayText() {
 					debugDisplayText = '';
@@ -257,7 +321,6 @@ myst.ui = (function() { "use strict";
 					}
 				}
 				var debugColor = options.debugColor || '#c2f';
-				updateDebugDisplayText();
 				setInterval(updateDebugDisplayText, 100);
 				var s_draw = self.draw;
 				self.draw = function() {
@@ -266,7 +329,6 @@ myst.ui = (function() { "use strict";
 					self._context.paint.rect(self._x, self._y, self._width, self._height, debugColor, 2);
 				}
 			}
-			// DEBUG FEATURES END
 		},
 
 		/**
@@ -317,7 +379,8 @@ myst.ui = (function() { "use strict";
 			self = self || this;
 
 			// unique event identifier
-			var _eventId = '_myst_ui_evntid_' + getEventUIID();
+			var _eventId = '_@' + getNextEventId();
+			console.log(_eventId);
 
 			// "press" gets triggered whenever a button is pressed down
 			self._events.onPress = C_EMPTYF;
@@ -383,6 +446,74 @@ myst.ui = (function() { "use strict";
 		 */
 		Container: function(options, self) {
 			self = self || this;
+
+			// list of components
+			self._componentList = [];
+			self._componentKeys = [];
+
+			/**
+			 * Adds components to the container.
+			 *
+			 * @param {object} components - Components to be added.
+			 */
+			self.add = function(components) {
+				myst.iter(components, function(componentKey, componentObject) {
+					if (self[componentKey]) { // disallow reserved or duplicate keys
+						console.error('Cannot add component "' + componentKey + '" due to a name clash.');
+						return;
+					}
+					self._componentList.push(self[componentKey] = componentObject);
+					self._componentKeys.push(componentKey);
+					// set component context to this container
+					componentObject._context = componentObject._owner = self;
+					// set root context to current root context
+					componentObject._rootContext = self._rootContext;
+					// invoke added event
+					if (componentObject._events.onAdded) {
+						componentObject._events.onAdded();
+					}
+				});
+			};
+
+			/**
+			 * Get all components.
+			 */
+			self.getComponents = function() {
+				return self._componentList;
+			};
+
+			/**
+			 * Remove all components.
+			 */
+			self.removeAll = function() {
+				self._componentList.forEach(function(componentObject) {
+					// unregister any events attached to components
+					if (componentObject.unregisterEvents) {
+						componentObject.unregisterEvents();
+					}
+					// recursively remove all contained containers
+					if (componentObject.removeAll) {
+						componentObject.removeAll();
+					}
+					// invoke removed event
+					if (componentObject._events.onRemoved) {
+						componentObject._events.onRemoved();
+					}
+				});
+				// clear component lists
+				self._componentList = [];
+				// clear component keys
+				self._componentKeys.forEach(function(componentKey) {
+					delete self[componentKey];
+				});
+				// clear component key list
+				self._componentKeys = [];
+			};
+
+			// add components from options
+			if (options.components) {
+				self.add(options.components);
+			}
 		}
 
 	};
@@ -404,6 +535,7 @@ myst.ui = (function() { "use strict";
 			myst.compose(
 				this,
 				new elementary_components.Base(options, self),
+				new elementary_components.Debuggable(options, self),
 				new elementary_components.Tweenable(options, self)
 			);
 
@@ -418,10 +550,25 @@ myst.ui = (function() { "use strict";
 
 			myst.compose(
 				this,
-				new public_controls.Control(options.self)
+				new public_components.Control(options, self),
+				new elementary_components.Container(options, self)
 			);
 
 			self._type = 'Frame';
+
+			/**
+			 * Draw the component and all children components.
+			 */
+			var s_draw = self.draw; // @super:draw
+			self.draw = function() { // @override
+				self._surface.clear();
+				var n_components = self._componentList.length;
+				for (var i = 0; i < n_components; i++) {
+					//self._componentList[i]._surface.clear();
+					self._componentList[i].draw();
+				}
+				s_draw();
+			};
 		},
 
 		Shape: function() {
@@ -448,13 +595,11 @@ myst.ui = (function() { "use strict";
 			self._events.onPress = function() { // @override
 				self._activeTile = options.tiles.pressed;
 				self._requestRepaint = true;
-				console.log('press');
 			};
 
 			self._events.onRelease = function() { // @override
 				self._activeTile = options.tiles.normal;
 				self._requestRepaint = true;
-				console.log('release');
 			};
 
 			self._events.onClick = function() { // @override
