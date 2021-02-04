@@ -24,16 +24,17 @@ myState.createUI = function() {
 		// button tile data
 		tiles: {
 			normal: [0, 0],
-			pressed: [0, 1]
+			pressed: [1, 0]
 		},
 		// events
 		onClick: function() {
-			alert('hello, world');
+			//alert('hello, world');
+			console.log('click');
 		},
 		//test
 		/*
 		debug: true,
-		debugData: '$type $x $y'
+		debugData: '$activeTile $type $x $y $enabled $alpha'
 		*/
 	});
 

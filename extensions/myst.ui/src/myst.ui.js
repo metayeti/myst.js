@@ -46,6 +46,16 @@ myst.ui = (function() { "use strict";
 		});
 	}
 
+	var event_uiid = 0;
+	/**
+	 * Return the next unique incremental event id.
+	 *
+	 * @returns {number}
+	 */
+	function getEventUIID() {
+		return ++event_uiid;
+	}
+
 	///////////////////////////////////////////////////////////////////////////////
 	//
 	//  Elementary components
@@ -96,6 +106,8 @@ myst.ui = (function() { "use strict";
 			};
 
 			self.isEnabled = function() {
+				//TODO check chain of owners for disabled state?
+				return self._enabled;
 			};
 
 			self.setX = function(x) {
@@ -109,11 +121,11 @@ myst.ui = (function() { "use strict";
 			};
 
 			self.getX = function() {
-				return x;
+				return self._x;
 			};
 
 			self.getY = function() {
-				return y;
+				return self._y;
 			};
 
 			self.moveTo = function(x, y) {
@@ -128,6 +140,33 @@ myst.ui = (function() { "use strict";
 				return self;
 			};
 
+			self.setWidth = function() {
+			};
+
+			self.setHeight = function() {
+			};
+
+			self.getWidth = function() {
+				return self._width;
+			};
+
+			self.getHeight = function() {
+				return self._height;
+			};
+
+			self.resize = function(width, height) {
+			};
+
+			self.growByWidth = function(width) {
+			};
+
+			self.growByHeight = function(height) {
+			};
+
+			self.growBy = function(amount) {
+				return self.growByWidth(amount).growByHeight(amount);
+			};
+
 			self.resetX = function() {
 				self._x = options.x || 0;
 				return self;
@@ -138,7 +177,18 @@ myst.ui = (function() { "use strict";
 				return self;
 			};
 
-			self.resize = function(width, height) {
+			self.resetPosition = function() {
+				return self.resetX().resetY();
+			};
+
+			self.resetWidth = function() {
+			};
+
+			self.resetHeight = function() {
+			};
+
+			self.resetSize = function() {
+				return self.resetWidth().resetHeight();
 			};
 
 			self.show = function() {
@@ -194,15 +244,29 @@ myst.ui = (function() { "use strict";
 				}
 			};
 
+			// DEBUG FEATURES BEGIN
 			if (options.debug) {
+				var debugDisplayText = '';
+				var debugWatch = (options.debugData)
+					? options.debugData.replace(/\$/g, '_').split(' ')
+					: ['_type'];
+				function updateDebugDisplayText() {
+					debugDisplayText = '';
+					for (var i = 0; i < debugWatch.length; i++) {
+						debugDisplayText += self[debugWatch[i]] + ' ';
+					}
+				}
+				var debugColor = options.debugColor || '#c2f';
+				updateDebugDisplayText();
+				setInterval(updateDebugDisplayText, 100);
 				var s_draw = self.draw;
 				self.draw = function() {
 					s_draw();
-					var dbgColor = '#c2f';
-					self._context.paint.text(self._type, self._x, self._y - 15, dbgColor, 'left', '11px sans-serif');
-					self._context.paint.rect(self._x, self._y, self._width, self._height, dbgColor, 2);
+					self._context.paint.text(debugDisplayText, self._x, self._y - 15, debugColor, 'left', '11px sans-serif');
+					self._context.paint.rect(self._x, self._y, self._width, self._height, debugColor, 2);
 				}
 			}
+			// DEBUG FEATURES END
 		},
 
 		/**
@@ -220,7 +284,7 @@ myst.ui = (function() { "use strict";
 			self._texGraphic = options.texture;
 
 			self._events.onRepaint = function() {
-				self.paint.graphics(self._texGraphic, self._x, self._y, self._width, self._height);
+				self.paint.graphics(self._texGraphic, 0, 0, self._width, self._height);
 			};
 		},
 
@@ -250,6 +314,74 @@ myst.ui = (function() { "use strict";
 		 * AbstractButton component.
 		 */
 		AbstractButton: function(options, self) {
+			self = self || this;
+
+			// unique event identifier
+			var _eventId = '_myst_ui_evntid_' + getEventUIID();
+
+			// "press" gets triggered whenever a button is pressed down
+			self._events.onPress = C_EMPTYF;
+			// "release" gets triggered whenever a button is released
+			self._events.onRelease = C_EMPTYF;
+			// "click" gets triggered whenever a button is clicked
+			self._events.onClick = C_EMPTYF;
+
+			function _mouseIn(coords) {
+				return myst.pointInRect(coords[0], coords[1], self._x, self._y, self._width, self._height);
+			}
+
+			self._holding = false;
+			self._pressed = false;
+
+			input.on('press', function(coords) {
+				if (!self.isEnabled()) {
+					return;
+				}
+				if (_mouseIn(coords)) {
+					self._holding = self._pressed = true;
+					self._events.onPress();
+				}
+			}, _eventId).bindTo(self._context);
+
+			input.on('move', function(coords) {
+				if (self._holding && self.isEnabled()) {
+					var prevPressed = self._pressed;
+					var nextPressed = _mouseIn(coords);
+					if (prevPressed !== nextPressed) {
+						if (self._pressed = nextPressed) {
+							self._events.onPress();
+						}
+						else if (!self._pressed) {
+							self._events.onRelease();
+						}
+					}
+				}
+			}, _eventId).bindTo(self._context);
+
+			input.on('release', function(coords) {
+				if (self._holding && self.isEnabled()) {
+					var prevPressed = self._pressed;
+					self._holding = self._pressed = false;
+					if (prevPressed) {
+						self._events.onRelease();
+						self._events.onClick();
+					}
+				}
+			}, _eventId).bindTo(self._context);
+
+			self.unregisterEvents = function() {
+				if (_eventId) {
+					input.off('press', _eventId);
+					input.off('move', _eventId);
+					input.off('release', _eventId);
+				}
+			};
+		},
+
+		/**
+		 * Container component.
+		 */
+		Container: function(options, self) {
 			self = self || this;
 		}
 
@@ -312,10 +444,39 @@ myst.ui = (function() { "use strict";
 			);
 
 			self._type = 'SimpleButton';
+
+			self._events.onPress = function() { // @override
+				self._activeTile = options.tiles.pressed;
+				self._requestRepaint = true;
+				console.log('press');
+			};
+
+			self._events.onRelease = function() { // @override
+				self._activeTile = options.tiles.normal;
+				self._requestRepaint = true;
+				console.log('release');
+			};
+
+			self._events.onClick = function() { // @override
+				if (options.onClick instanceof Function) {
+					options.onClick.call(self);
+				}
+			};
 		},
+
 		GraphicButton: function() {
 		},
+
 		ToggleButton: function() {
+		},
+
+		StateBox: function() {
+		},
+
+		CheckBox: function() {
+		},
+
+		OptionBox: function() {
 		}
 
 	};
