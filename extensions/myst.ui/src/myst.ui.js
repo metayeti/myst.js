@@ -148,13 +148,15 @@ myst.ui = (function() { "use strict";
 
 			self._texSurface = self._surface.canvas;
 			
-			self._events = {
-				// "onRepaint" is triggered when the component requests a repaint
-				onRepaint: C_EMPTYF,
-				// "onAdded" is triggered when the component is added to a container
-				onAdded: function() { invokeEvent(options.onAdded, self); },
-				// "onRemoved" is triggered when the component is removed from a container
-				onRemoved: function() { invokeEvent(options.onRemoved, self); },
+			self._events = {};
+
+			// "onRepaint" is triggered when the component requests a repaint
+			self._events.onRepaint = C_EMPTYF;
+			// "onAdded" is triggered when the component is added to a container
+			self._events.onAdded = function() { invokeEvent(options.onAdded, self); };
+			// "onRemoved" is triggered when the component is removed from a container
+			self._events.onRemoved = function() { invokeEvent(options.onRemoved, self); };
+/*
 				onEnabled: function() { invokeEvent(options.onEnabled, self); },
 				onDisabled: function() { invokeEvent(options.onDisabled, self); },
 				onMoved: function() { invokeEvent(options.onMoved, self); },
@@ -162,17 +164,18 @@ myst.ui = (function() { "use strict";
 				onAlphaSet: function() { invokeEvent(options.onAlphaSet, self); },
 				onAngleSet: function() { invokeEvent(options.onAngleSet, self); }
 			};
+			*/
 
 			self.paint = self._surface.render;
 
 			self.enable = function() {
 				self._enabled = true;
-				return this;
+				return self;
 			};
 
 			self.disable = function() {
 				self._enabled = false;
-				return this;
+				return self;
 			};
 
 			self.isEnabled = function() {
@@ -182,7 +185,7 @@ myst.ui = (function() { "use strict";
 					if (!component._enabled) {
 						return false;
 					}
-				} while (component = component._owner);
+				} while ((component = component._owner));
 				return true;
 			};
 
@@ -207,14 +210,14 @@ myst.ui = (function() { "use strict";
 			self.getRealX = function() {
 				var x = 0;
 				var component = self;
-				do { x += component._x; } while (component = component._owner);
+				do { x += component._x; } while ((component = component._owner));
 				return x;
 			};
 
 			self.getRealY = function() {
 				var y = 0;
 				var component = self;
-				do { y  += component._y; } while (component = component._owner);
+				do { y  += component._y; } while ((component = component._owner));
 				return y;
 			};
 
@@ -230,10 +233,16 @@ myst.ui = (function() { "use strict";
 				return self;
 			};
 
-			self.setWidth = function() {
+			self.setWidth = function(width) {
+				self._width = width;
+				self._surface.resize(self._width, self._height);
+				return self;
 			};
 
-			self.setHeight = function() {
+			self.setHeight = function(height) {
+				self._height = height;
+				self._surface.resize(self._width, self._height);
+				return self;
 			};
 
 			self.getWidth = function() {
@@ -245,16 +254,42 @@ myst.ui = (function() { "use strict";
 			};
 
 			self.resize = function(width, height) {
+				self._width = width;
+				self._height = height;
+				self._surface.resize(self._width, self._height);
+				return self;
 			};
 
 			self.growByWidth = function(width) {
+				self._x -= width;
+				self._width += width * 2;
+				self._requestRepaint = true;
+				self._surface.resize(self._width, self._height);
+				return self;
+			};
+
+			self.shrinkByWidth = function(width) {
+				self.growByWidth(-width);
 			};
 
 			self.growByHeight = function(height) {
+				self._y -= height;
+				self._height += height * 2;
+				self._requestRepaint = true;
+				self._surface.resize(self._width, self._height);
+				return self;
 			};
 
-			self.growBy = function(amount) {
-				return self.growByWidth(amount).growByHeight(amount);
+			self.shrinkByHeight = function(height) {
+				self.growByHeight(-height);
+			};
+
+			self.growBy = function(size) {
+				return self.growByWidth(size).growByHeight(size);
+			};
+
+			self.shrinkBy = function(size) {
+				return self.growBy(-size);
 			};
 
 			self.resetX = function() {
@@ -283,17 +318,17 @@ myst.ui = (function() { "use strict";
 
 			self.show = function() {
 				self._alpha = 1;
-				return this;
+				return self;
 			};
 
 			self.hide = function() {
 				self._alpha = 0;
-				return this;
+				return self;
 			};
 
 			self.setAlpha = function(alpha) {
 				self._alpha = alpha;
-				return this;
+				return self;
 			};
 
 			self.getAlpha = function() {
@@ -354,12 +389,6 @@ myst.ui = (function() { "use strict";
 			};
 
 			self.draw = function() {
-				if (self._alwaysRepaint || self._requestRepaint && self._events.onRepaint) {
-					console.log('repaint called');
-					self._surface.clear();
-					self._events.onRepaint();
-					self._requestRepaint = false;
-				}
 				var alpha = self.getAlpha();
 				if (alpha <= 0) {
 					return;
@@ -378,6 +407,12 @@ myst.ui = (function() { "use strict";
 				}
 				if (self._angle !== 0) {
 					self._context.paint.restore();
+				}
+				if (self._alwaysRepaint || self._requestRepaint) {
+					console.log('repaint called');
+					self._surface.clear();
+					self._events.onRepaint();
+					self._requestRepaint = false;
 				}
 			};
 
@@ -531,7 +566,7 @@ myst.ui = (function() { "use strict";
 				var list = [];
 				do {
 					list.push(component);
-				} while (component = component._owner);
+				} while ((component = component._owner));
 				for (var i = list.length - 1; i >= 0; i--) {
 					component = list[i];
 					if (component._angle !== 0) {
@@ -563,7 +598,7 @@ myst.ui = (function() { "use strict";
 					var prevPressed = self._pressed;
 					var nextPressed = _pointIn(coords);
 					if (prevPressed !== nextPressed) {
-						if (self._pressed = nextPressed) {
+						if ((self._pressed = nextPressed)) {
 							self._events.onPress();
 						}
 						else if (!self._pressed) {
@@ -723,25 +758,36 @@ myst.ui = (function() { "use strict";
 		},
 
 		Shape: function() {
+			self = self || this;
 		},
 
 		Image: function() {
+			self = self || this;
+
+			myst.compose(
+				self,
+				new public_components.Control(options, self),
+				new elementary_components.Graphics(options, self)
+			);
+
+			this._type = 'Image';
 		},
 
 		Label: function() {
+			self = self || this;
 		},
 
 		TileButton: function(options, self) {
 			self = self || this;
 
 			myst.compose(
-				this,
+				self,
 				new public_components.Control(options, self),
 				new elementary_components.Tile(options, self),
 				new elementary_components.AbstractButton(options, self)
 			);
 
-			self._type = 'SimpleButton';
+			self._type = 'TileButton';
 
 			self._events.onPress = function() { // @override
 				self._activeTile = options.tiles.pressed;
