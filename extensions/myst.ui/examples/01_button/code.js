@@ -28,8 +28,15 @@ myState.createUI = function() {
 		},
 		// events
 		onClick: function() {
-			//alert('hello, world');
-			console.log('click');
+			// make the button spin
+			this.disable(); // disable button during spin
+			this.tween({ angle: this.getAngle() + 720 }, { // animate "angle" property
+				duration: 1000,
+				ease: myst.ease.quadInOut,
+				onDone: function() {
+					this.enable(); // enable button again
+				}
+			});
 		},
 		//test
 		

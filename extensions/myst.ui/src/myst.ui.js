@@ -86,6 +86,7 @@ myst.ui = (function() { "use strict";
 			self._width = fromOption(options.width, 0);
 			self._height = fromOption(options.height, 0);
 			self._alpha = fromOption(options.alpha, 1);
+			self._angle = fromOption(options.angle, 0);
 			self._background = null;
 			self._enabled = fromOption(options.enabled, true);
 			self._context = fromOption(options.context, globalContext);
@@ -248,6 +249,14 @@ myst.ui = (function() { "use strict";
 				return self.centerX().centerY();
 			};
 
+			self.setAngle = function(angle) {
+				self._angle = angle;
+			};
+
+			self.getAngle = function() {
+				return self._angle;
+			};
+
 			/**
 			 * Set background to specified background color.
 			 *
@@ -284,6 +293,11 @@ myst.ui = (function() { "use strict";
 					self._events.onRepaint();
 					self._requestRepaint = false;
 				}
+				if (self._angle !== 0) {
+					var centerX = Math.floor(self._x + self._width / 2);
+					var centerY = Math.floor(self._y + self._height / 2);
+					self._context.paint.rotate(self._angle, [centerX, centerY]);
+				}
 				var alpha = self.getAlpha();
 				if (alpha <= 0) {
 					return;
@@ -294,6 +308,9 @@ myst.ui = (function() { "use strict";
 				self._context.paint.graphics(self._texSurface, self._x, self._y);
 				if (alpha < 1) {
 					self._context.paint.setAlpha();
+				}
+				if (self._angle !== 0) {
+					self._context.paint.restore();
 				}
 			};
 
@@ -335,6 +352,30 @@ myst.ui = (function() { "use strict";
 		 * Tweenable component.
 		 */
 		Tweenable: function(options, self) {
+
+			self.tween = function(properties, options) {
+				var duration = fromOption(options.duration, 240);
+				var easef = fromOption(options.ease, myst.ease.quadInOut);
+
+				myst.iter(properties, function(key, value) {
+					var memberfstr = key.charAt(0).toUpperCase() + key.slice(1);
+					var from = self['get' + memberfstr]();
+					var to = value;
+					var setf = self['set' + memberfstr];
+					console.log(memberfstr, from, to, setf);
+					(new myst.Tween(from, to, duration, setf, function() {
+						if (options.onDone instanceof Function) {
+							options.onDone.call(self);
+						}
+					}, easef)).start();
+				});
+			};
+
+			self.fadeOut = function(options) {
+			};
+
+			self.fadeIn = function(options) {
+			};
 		},
 
 		/**
@@ -564,7 +605,6 @@ myst.ui = (function() { "use strict";
 				self._surface.clear();
 				var n_components = self._componentList.length;
 				for (var i = 0; i < n_components; i++) {
-					//self._componentList[i]._surface.clear();
 					self._componentList[i].draw();
 				}
 				s_draw();
