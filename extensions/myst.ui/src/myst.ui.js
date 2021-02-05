@@ -105,8 +105,20 @@ myst.ui = (function() { "use strict";
 			self._texSurface = self._surface.canvas;
 			
 			self._events = {
-				// "onRepaint" is triggered when the component needs to redraw
-				onRepaint: C_EMPTYF
+				// "onRepaint" is triggered when the component requests a repaint
+				onRepaint: C_EMPTYF,
+				// "onAdded" is triggered whenever the component is added to a container
+				onAdded: function() {
+					if (options.onAdded instanceof Function) {
+						options.onAdded.call(self);
+					}
+				},
+				// "onRemoved" is triggered whenever the component is removed from a container
+				onRemoved: function() {
+					if (options.onRemoved instanceof Function) {
+						options.onRemoved.call(self);
+					}
+				}
 			};
 
 			self.paint = self._surface.render;
@@ -293,14 +305,14 @@ myst.ui = (function() { "use strict";
 					self._events.onRepaint();
 					self._requestRepaint = false;
 				}
+				var alpha = self.getAlpha();
+				if (alpha <= 0) {
+					return;
+				}
 				if (self._angle !== 0) {
 					var centerX = Math.floor(self._x + self._width / 2);
 					var centerY = Math.floor(self._y + self._height / 2);
 					self._context.paint.rotate(self._angle, [centerX, centerY]);
-				}
-				var alpha = self.getAlpha();
-				if (alpha <= 0) {
-					return;
 				}
 				if (alpha < 1) {
 					self._context.paint.setAlpha(alpha);
@@ -339,11 +351,19 @@ myst.ui = (function() { "use strict";
 				}
 				var debugColor = options.debugColor || '#c2f';
 				setInterval(updateDebugDisplayText, 100);
-				var s_draw = self.draw;
-				self.draw = function() {
+				var s_draw = self.draw; // @super:draw
+				self.draw = function() { // @override
 					s_draw();
+					if (self._angle !== 0) {
+						var centerX = Math.floor(self._x + self._width / 2);
+						var centerY = Math.floor(self._y + self._height / 2);
+						self._context.paint.rotate(self._angle, [centerX, centerY]);
+					}
 					self._context.paint.text(debugDisplayText, self._x, self._y - 15, debugColor, 'left', '11px sans-serif');
 					self._context.paint.rect(self._x, self._y, self._width, self._height, debugColor, 2);
+					if (self._angle !== 0) {
+						self._context.paint.restore();
+					}
 				}
 			}
 		},
@@ -445,7 +465,7 @@ myst.ui = (function() { "use strict";
 					self._holding = self._pressed = true;
 					self._events.onPress();
 				}
-			}, _eventId).bindTo(self._context);
+			}, _eventId).bindTo(self._rootContext);
 
 			input.on('move', function(coords) {
 				if (self._holding && self.isEnabled()) {
@@ -460,7 +480,7 @@ myst.ui = (function() { "use strict";
 						}
 					}
 				}
-			}, _eventId).bindTo(self._context);
+			}, _eventId).bindTo(self._rootContext);
 
 			input.on('release', function(coords) {
 				if (self._holding && self.isEnabled()) {
@@ -471,7 +491,7 @@ myst.ui = (function() { "use strict";
 						self._events.onClick();
 					}
 				}
-			}, _eventId).bindTo(self._context);
+			}, _eventId).bindTo(self._rootContext);
 
 			self.unregisterEvents = function() {
 				if (_eventId) {
