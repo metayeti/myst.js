@@ -67,6 +67,18 @@ myst.ui = (function() { "use strict";
 		return (option != null) ? option : defaultOption;
 	}
 
+	/**
+	 * Invoke a user event.
+	 *
+	 * @param {function} callback - User function to call.
+	 * @param {object} self - Reference to component invoking the event.
+	 */
+	function invokeEvent(callback, self) {
+		if (callback instanceof Function) {
+			callback.call(self);
+		}
+	}
+
 	///////////////////////////////////////////////////////////////////////////////
 	//
 	//  Elementary components
@@ -107,18 +119,16 @@ myst.ui = (function() { "use strict";
 			self._events = {
 				// "onRepaint" is triggered when the component requests a repaint
 				onRepaint: C_EMPTYF,
-				// "onAdded" is triggered whenever the component is added to a container
-				onAdded: function() {
-					if (options.onAdded instanceof Function) {
-						options.onAdded.call(self);
-					}
-				},
-				// "onRemoved" is triggered whenever the component is removed from a container
-				onRemoved: function() {
-					if (options.onRemoved instanceof Function) {
-						options.onRemoved.call(self);
-					}
-				}
+				// "onAdded" is triggered when the component is added to a container
+				onAdded: function() { invokeEvent(options.onAdded, self); },
+				// "onRemoved" is triggered when the component is removed from a container
+				onRemoved: function() { invokeEvent(options.onRemoved, self); },
+				onEnabled: function() { invokeEvent(options.onEnabled, self); },
+				onDisabled: function() { invokeEvent(options.onDisabled, self); },
+				onMoved: function() { invokeEvent(options.onMoved, self); },
+				onResized: function() { invokeEvent(options.onResized, self); },
+				onAlphaSet: function() { invokeEvent(options.onAlphaSet, self); },
+				onAngleSet: function() { invokeEvent(options.onAngleSet, self); }
 			};
 
 			self.paint = self._surface.render;
@@ -140,8 +150,7 @@ myst.ui = (function() { "use strict";
 					if (!component._enabled) {
 						return false;
 					}
-					component = component._owner;
-				} while (component);
+				} while (component = component._owner);
 				return true;
 			};
 
@@ -373,9 +382,23 @@ myst.ui = (function() { "use strict";
 		 */
 		Tweenable: function(options, self) {
 
+			var _activeTweens = [];
+
+			function finalizeAllTweens() {
+				_activeTweens.forEach(function(tween) {
+					if (tween.isActive()) {
+						tween.finish();
+					}
+				});
+			}
+
 			self.tween = function(properties, options) {
+				options = options || {};
 				var duration = fromOption(options.duration, 240);
 				var easef = fromOption(options.ease, myst.ease.quadInOut);
+
+				finalizeAllTweens();
+				_activeTweens = [];
 
 				myst.iter(properties, function(key, value) {
 					var memberfstr = key.charAt(0).toUpperCase() + key.slice(1);
@@ -383,18 +406,21 @@ myst.ui = (function() { "use strict";
 					var to = value;
 					var setf = self['set' + memberfstr];
 					console.log(memberfstr, from, to, setf);
-					(new myst.Tween(from, to, duration, setf, function() {
-						if (options.onDone instanceof Function) {
-							options.onDone.call(self);
-						}
-					}, easef)).start();
+					var tween = new myst.Tween(from, to, duration, setf, function() {
+						invokeEvent(options.onDone, self);
+					}, easef);
+					_activeTweens.push(tween);
+					tween.start();
 				});
+				return self;
 			};
 
 			self.fadeOut = function(options) {
+				self.tween({ alpha: 0 }, options);
 			};
 
 			self.fadeIn = function(options) {
+				self.tween({ alpha: 1 }, options);
 			};
 		},
 
@@ -640,7 +666,7 @@ myst.ui = (function() { "use strict";
 		Label: function() {
 		},
 
-		SimpleButton: function(options, self) {
+		TileButton: function(options, self) {
 			self = self || this;
 
 			myst.compose(
@@ -655,17 +681,17 @@ myst.ui = (function() { "use strict";
 			self._events.onPress = function() { // @override
 				self._activeTile = options.tiles.pressed;
 				self._requestRepaint = true;
+				invokeEvent(options.onPress, self);
 			};
 
 			self._events.onRelease = function() { // @override
 				self._activeTile = options.tiles.normal;
 				self._requestRepaint = true;
+				invokeEvent(options.onRelease, self);
 			};
 
 			self._events.onClick = function() { // @override
-				if (options.onClick instanceof Function) {
-					options.onClick.call(self);
-				}
+				invokeEvent(options.onClick, self);
 			};
 		},
 

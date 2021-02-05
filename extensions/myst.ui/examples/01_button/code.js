@@ -11,7 +11,7 @@ myState.createUI = function() {
 	myst.ui.setGlobalContext(this);
 
 	// create a button component
-	this.myButton = new myst.ui.SimpleButton({	
+	this.myButton = new myst.ui.TileButton({
 		//context: this, // commented on purpose, not needed after global context has been set
 		// define button geometry and texture
 		//x: 0, // commented on purpose, not needed as we're calling myButton.center to position the button
