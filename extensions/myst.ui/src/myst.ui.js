@@ -29,6 +29,38 @@ myst.ui = (function() { "use strict";
 	///////////////////////////////////////////////////////////////////////////////
 
 	/**
+	 * Rotate point P around point R by angle.
+	 *
+	 * @param {array} P - Point P.
+	 * @param {array} R - Point R.
+	 * @param {number} angle - Angle to rotate by.
+	 *
+	 * @returns {array}
+	 */
+	function rotatePointAroundPoint(P, R, angle) {
+		P[0] -= R[0];
+		P[1] -= R[1];
+		var B = [
+			Math.floor(P[0] * Math.cos(angle) - P[1] * Math.sin(angle)),
+			Math.floor(P[1] * Math.cos(angle) + P[0] * Math.sin(angle))
+		];
+		B[0] += R[0];
+		B[1] += R[1];
+		return B;
+	}
+
+	/**
+	 * Converts degrees to radians.
+	 *
+	 * @param {number} degrees
+	 *
+	 * @returns {number}
+	 */
+	function toRadians(degrees) {
+		return degrees * Math.PI / 180;
+	}
+
+	/**
 	 * Applies an action to an arbitrary group of components.
 	 *
 	 * @param {object} group - Group of components.
@@ -170,6 +202,20 @@ myst.ui = (function() { "use strict";
 
 			self.getY = function() {
 				return self._y;
+			};
+
+			self.getRealX = function() {
+				var x = 0;
+				var component = self;
+				do { x += component._x; } while (component = component._owner);
+				return x;
+			};
+
+			self.getRealY = function() {
+				var y = 0;
+				var component = self;
+				do { y  += component._y; } while (component = component._owner);
+				return y;
 			};
 
 			self.moveTo = function(x, y) {
@@ -347,17 +393,16 @@ myst.ui = (function() { "use strict";
 		Debuggable: function(options, self) {
 			self = self || this;
 
-			if (options.debug) {
-				var debugDisplayText = '';
-				var debugWatch = (options.debugString)
-					? options.debugString.replace(/\$/g, '_').split(' ')
-					: ['_type'];
-				function updateDebugDisplayText() {
-					debugDisplayText = '';
-					for (var i = 0; i < debugWatch.length; i++) {
-						debugDisplayText += self[debugWatch[i]] + ' ';
-					}
+			var debugDisplayText = '';
+			function updateDebugDisplayText() {
+				debugDisplayText = '';
+				for (var i = 0; i < debugWatch.length; i++) {
+					debugDisplayText += self[debugWatch[i]] + ' ';
 				}
+			}
+
+			if (options.debug) {
+				var debugWatch = (options.debugString) ? options.debugString.replace(/\$/g, '_').split(' ') : ['_type'];
 				var debugColor = options.debugColor || '#c2f';
 				setInterval(updateDebugDisplayText, 100);
 				var s_draw = self.draw; // @super:draw
@@ -373,7 +418,7 @@ myst.ui = (function() { "use strict";
 					if (self._angle !== 0) {
 						self._context.paint.restore();
 					}
-				}
+				};
 			}
 		},
 
@@ -476,8 +521,28 @@ myst.ui = (function() { "use strict";
 			// "click" gets triggered whenever a button is clicked
 			self._events.onClick = C_EMPTYF;
 
-			function _mouseIn(coords) {
-				return myst.pointInRect(coords[0], coords[1], self._x, self._y, self._width, self._height);
+			function _pointInAABB(coords) {
+				//return myst.pointInRect(coords[0], coords[1], self._x, self._y, self._width, self._height);
+				return myst.pointInRect(coords[0], coords[1], self.getRealX(), self.getRealY(), self._width, self._height);
+			}
+
+			function _pointIn(coords) {
+				var component = self;
+				var list = [];
+				do {
+					list.push(component);
+				} while (component = component._owner);
+				for (var i = list.length - 1; i >= 0; i--) {
+					component = list[i];
+					if (component._angle !== 0) {
+						var centerPoint = [
+							Math.floor(component.getRealX() + component._width / 2),
+							Math.floor(component.getRealY() + component._height / 2)
+						];
+						coords = rotatePointAroundPoint(coords, centerPoint, toRadians(-component._angle));
+					}
+				}
+				return _pointInAABB(coords);
 			}
 
 			self._holding = false;
@@ -487,7 +552,7 @@ myst.ui = (function() { "use strict";
 				if (!self.isEnabled()) {
 					return;
 				}
-				if (_mouseIn(coords)) {
+				if (_pointIn(coords)) {
 					self._holding = self._pressed = true;
 					self._events.onPress();
 				}
@@ -496,7 +561,7 @@ myst.ui = (function() { "use strict";
 			input.on('move', function(coords) {
 				if (self._holding && self.isEnabled()) {
 					var prevPressed = self._pressed;
-					var nextPressed = _mouseIn(coords);
+					var nextPressed = _pointIn(coords);
 					if (prevPressed !== nextPressed) {
 						if (self._pressed = nextPressed) {
 							self._events.onPress();
