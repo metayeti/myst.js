@@ -1,6 +1,4 @@
-![myst.js](/logo.png?raw=true)
-
-myst.ui.js is a user interface extension script for myst.js.
+**myst.ui.js** is a user interface addon for myst.js. It supports constructs for composing basic interfaces and can be extended if needed.
 
 Version 0.1.0
 

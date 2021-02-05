@@ -120,7 +120,26 @@ myst.ui = (function() { "use strict";
 	var elementary_components = {
 
 		/**
-		 * Base component.
+		 * Base elementary component.
+		 *
+		 * @class elementary_components.Base
+		 * @classdesc Base component implements functions common to all components.
+		 *
+		 * @param {object} options - Constructor options.
+		 * @param {object} [options.context] - State context. Global context by default.
+		 * @param {number} [options.x=0] - Component x position.
+		 * @param {number} [options.y=0] - Component y position.
+		 * @param {number} [options.width=0] - Component width.
+		 * @param {number} [options.height=0] - Component height.
+		 * @param {number} [options.alpha=1] - Component alpha level.
+		 * @param {number} [options.angle=0] - Component rotation angle.
+		 * @param {bool} [options.enabled=true] - Component enabled status.
+		 * @param {string} [options.background] - Component background color. Default to null
+		 *   for transparent background.
+		 * @param {function} [options.onAdded] - Added event is triggered when the component is
+		 *   added to a container.
+		 * @param {function} [options.onRemoved] - Removed event is triggered when the component is
+		 *   removed from a container.
 		 */
 		Base: function(options, self) {
 			self = self || this;
@@ -168,16 +187,25 @@ myst.ui = (function() { "use strict";
 
 			self.paint = self._surface.render;
 
+			/**
+			 * Enables the component.
+			 */
 			self.enable = function() {
 				self._enabled = true;
 				return self;
 			};
 
+			/**
+			 * Disables the component.
+			 */
 			self.disable = function() {
 				self._enabled = false;
 				return self;
 			};
 
+			/**
+			 * Returns the component enabled state.
+			 */
 			self.isEnabled = function() {
 				// climb the chain of owners to determine enabled state
 				var component = self;
@@ -189,24 +217,45 @@ myst.ui = (function() { "use strict";
 				return true;
 			};
 
+			/**
+			 * Sets the component x position.
+			 */
 			self.setX = function(x) {
 				self._x = x;
 				return self;
 			};
 
+			/**
+			 * Sets the component y position.
+			 */
 			self.setY = function(y) {
 				self._y = y;
 				return self;
 			};
 
+			/**
+			 * Returns the component x position.
+			 *
+			 * @returns {number}
+			 */
 			self.getX = function() {
 				return self._x;
 			};
 
+			/**
+			 * Returns the component y position.
+			 *
+			 * @returns {number}
+			 */
 			self.getY = function() {
 				return self._y;
 			};
 
+			/**
+			 * Returns the component global x position.
+			 *
+			 * @returns {number}
+			 */
 			self.getRealX = function() {
 				var x = 0;
 				var component = self;
@@ -214,6 +263,11 @@ myst.ui = (function() { "use strict";
 				return x;
 			};
 
+			/**
+			 * Returns the component global y position.
+			 *
+			 * @returns {number}
+			 */
 			self.getRealY = function() {
 				var y = 0;
 				var component = self;
@@ -221,45 +275,89 @@ myst.ui = (function() { "use strict";
 				return y;
 			};
 
+			/**
+			 * Moves the component to given position.
+			 *
+			 * @param {number} x - x position.
+			 * @param {number} y - y position.
+			 */
 			self.moveTo = function(x, y) {
 				self._x = x;
 				self._y = y;
 				return self;
 			};
 
+			/**
+			 * Moves the component by desired distance.
+			 *
+			 * @param {number} x - x distance.
+			 * @param {number} y - y distance.
+			 */
 			self.moveBy = function(dx, dy) {
 				self._x += dx;
 				self._y += dy;
 				return self;
 			};
 
+			/**
+			 * Sets the component width.
+			 *
+			 * @param {number} width
+			 */
 			self.setWidth = function(width) {
 				self._width = width;
 				self._surface.resize(self._width, self._height);
 				return self;
 			};
 
+			/**
+			 * Sets the component height.
+			 *
+			 * @param {number} height
+			 */
 			self.setHeight = function(height) {
 				self._height = height;
 				self._surface.resize(self._width, self._height);
 				return self;
 			};
 
+			/**
+			 * Returns the component width.
+			 *
+			 * @returns {number}
+			 */
 			self.getWidth = function() {
 				return self._width;
 			};
 
+			/**
+			 * Returns the component height.
+			 *
+			 * @returns {number}
+			 */
 			self.getHeight = function() {
 				return self._height;
 			};
 
+			/**
+			 * Resize the component.
+			 *
+			 * @param {number} width
+			 * @param {number} height
+			 */
 			self.resize = function(width, height) {
+				// TODO constraints
 				self._width = width;
 				self._height = height;
 				self._surface.resize(self._width, self._height);
 				return self;
 			};
 
+			/**
+			 * Grow the component width in both directions by given amount.
+			 *
+			 * @param {number} width
+			 */
 			self.growByWidth = function(width) {
 				self._x -= width;
 				self._width += width * 2;
@@ -268,10 +366,20 @@ myst.ui = (function() { "use strict";
 				return self;
 			};
 
+			/**
+			 * Shrink the component width in both directions by given amount.
+			 *
+			 * @param {number} width
+			 */
 			self.shrinkByWidth = function(width) {
 				self.growByWidth(-width);
 			};
 
+			/**
+			 * Grow the component height in both directions by given amount.
+			 *
+			 * @param {number} height
+			 */
 			self.growByHeight = function(height) {
 				self._y -= height;
 				self._height += height * 2;
@@ -280,87 +388,153 @@ myst.ui = (function() { "use strict";
 				return self;
 			};
 
+			/**
+			 * Shrink the component height in both directions by given amount.
+			 *
+			 * @param {number} height
+			 */
 			self.shrinkByHeight = function(height) {
 				self.growByHeight(-height);
 			};
 
+			/**
+			 * Grow the component in all directions by given amount.
+			 */
 			self.growBy = function(size) {
 				return self.growByWidth(size).growByHeight(size);
 			};
 
+			/**
+			 * Shrink the component in all directions by given amount.
+			 */
 			self.shrinkBy = function(size) {
 				return self.growBy(-size);
 			};
 
+			/**
+			 * Reset component x position to one provided at construction.
+			 */
 			self.resetX = function() {
-				self._x = options.x || 0;
+				self.setX(fromOption(options.x, 0));
 				return self;
 			};
 
+			/**
+			 * Reset component y position to one provided at construction.
+			 */
 			self.resetY = function() {
-				self._y = options.y || 0;
+				self.setY(fromOption(options.y, 0));
 				return self;
 			};
 
+			/**
+			 * Reset component position to one provided at construction.
+			 */
 			self.resetPosition = function() {
 				return self.resetX().resetY();
 			};
 
+			/**
+			 * Reset component width to one provided at construction.
+			 */
 			self.resetWidth = function() {
+				self.setWidth(fromOption(options.width, 0));
 			};
 
+			/**
+			 * Reset component height to one provided at construction.
+			 */
 			self.resetHeight = function() {
+				self.setHeight(fromOption(options.height, 0));
 			};
 
+			/**
+			 * Reset component size to one provided at construction.
+			 */
 			self.resetSize = function() {
 				return self.resetWidth().resetHeight();
 			};
 
+			/**
+			 * Shows the component.
+			 */
 			self.show = function() {
 				self._alpha = 1;
 				return self;
 			};
 
+			/**
+			 * Hides the component.
+			 */
 			self.hide = function() {
 				self._alpha = 0;
 				return self;
 			};
 
+			/**
+			 * Sets component alpha level.
+			 *
+			 * @param {number} alpha - Alpha level (0 to 1).
+			 */
 			self.setAlpha = function(alpha) {
 				self._alpha = alpha;
 				return self;
 			};
 
+			/**
+			 * Returns component alpha level.
+			 *
+			 * @returns {number}
+			 */
 			self.getAlpha = function() {
 				return self._alpha;
 			};
 
+			/**
+			 * Centers component x position relative to owner.
+			 */
 			self.centerX = function() {
 				var ownerWidth = (self._owner) ? self.owner._width : self._context.surface.width;
 				self.setX(Math.floor((ownerWidth - self._width) / 2));
 				return self;
 			};
 
+			/**
+			 * Centers component y position relative to owner.
+			 */
 			self.centerY = function() {
 				var ownerHeight = (self._owner) ? self.owner._height : self._context.surface.height;
 				self.setY(Math.floor((ownerHeight - self._height) / 2));
 				return self;
 			};
 
+			/**
+			 * Centers component relative to owner.
+			 */
 			self.center = function() {
 				return self.centerX().centerY();
 			};
 
+			/**
+			 * Sets component rotation angle.
+			 *
+			 * @param {number} angle - Rotation angle in degrees.
+			 */
 			self.setAngle = function(angle) {
 				self._angle = angle;
 			};
 
+			/**
+			 * Returns component rotation angle.
+			 *
+			 * @returns {number}
+			 */
 			self.getAngle = function() {
 				return self._angle;
 			};
 
 			/**
-			 * Set background to specified background color.
+			 * Set component background to specified background color.
 			 *
 			 * @param {string} color - Component background color.
 			 */
@@ -372,7 +546,7 @@ myst.ui = (function() { "use strict";
 			};
 
 			/**
-			 * Set background to transparent.
+			 * Set component background to transparent.
 			 */
 			self.removeBackground = function() {
 				self._background = null;
@@ -382,12 +556,15 @@ myst.ui = (function() { "use strict";
 			};
 
 			/**
-			 * Retreive current component background color.
+			 * Returns component background color. Returns null when background is transparent.
 			 */
 			self.getBackground = function() {
 				return self._background;
 			};
 
+			/**
+			 * Draw the component.
+			 */
 			self.draw = function() {
 				var alpha = self.getAlpha();
 				if (alpha <= 0) {
@@ -423,7 +600,19 @@ myst.ui = (function() { "use strict";
 		},
 
 		/**
-		 * Debuggable component.
+		 * Debuggable elementary component.
+		 *
+		 * @class elementary_components.Debuggable
+		 * @classdesc Adds debug features to component.
+		 *
+		 * @param {object} options - Constructor options.
+		 * @param {bool} [options.debug=false] - When set to true, debugging features will be enabled.
+		 * @param {string} [options.debugColor=#c2f] - Color of debug display.
+		 * TODO @param {string} [options.debugString=$type] - String of variables to watch and display. Private
+		 *   variables are prefixed with $, public variables with %.
+		 * TODO @param {number} [options.debugOutputAnchor=1] - Debug label anchor. 1-4 for each corner of the container.
+		 * TODO @param {array} [options.debugOutputOffset=[0,-15]] - Debug label position.
+		 * TODO @param {number} [options.debugBorderWidth=2] - Debug border thickness.
 		 */
 		Debuggable: function(options, self) {
 			self = self || this;
@@ -458,7 +647,10 @@ myst.ui = (function() { "use strict";
 		},
 
 		/**
-		 * Tweenable component.
+		 * Tweenable elementary component.
+		 *
+		 * @class elementary_components.Tweenable
+		 * @classdesc Gives component superpowers.
 		 */
 		Tweenable: function(options, self) {
 
@@ -472,6 +664,15 @@ myst.ui = (function() { "use strict";
 				});
 			}
 
+			/**
+			 * Performs a tween.
+			 *
+			 * @param {object} properties - Collection of properties and corresponding values to tween.
+			 * @param {object} [options] - Tween options.
+			 * @param {number} [options.duration=240] - Tween duration in milliseconds.
+			 * @param {function} [options.ease=myst.ease.quadInOut] - Easing function.
+			 * TODO @param {number} [options.delay=0] - Tween delay in milliseconds.
+			 */
 			self.tween = function(properties, options) {
 				options = options || {};
 				var duration = fromOption(options.duration, 240);
@@ -495,17 +696,39 @@ myst.ui = (function() { "use strict";
 				return self;
 			};
 
+			/**
+			 * Fade out a component.
+			 *
+			 * @param {object} [options] - Tween options.
+			 * @param {number} [options.duration=240] - Tween duration in milliseconds.
+			 * @param {function} [options.ease=myst.ease.quadInOut] - Easing function.
+			 * TODO @param {number} [options.delay=0] - Tween delay in milliseconds.
+			 */
 			self.fadeOut = function(options) {
 				self.tween({ alpha: 0 }, options);
 			};
 
+			/**
+			 * Fade in a component.
+			 *
+			 * @param {object} [options] - Tween options.
+			 * @param {number} [options.duration=240] - Tween duration in milliseconds.
+			 * @param {function} [options.ease=myst.ease.quadInOut] - Easing function.
+			 * TODO @param {number} [options.delay=0] - Tween delay in milliseconds.
+			 */
 			self.fadeIn = function(options) {
 				self.tween({ alpha: 1 }, options);
 			};
 		},
 
 		/**
-		 * Graphics component.
+		 * Graphics elementary component.
+		 *
+		 * @class elementary_components.Graphics
+		 * @classdesc Displays graphics.
+		 *
+		 * @param {object} options - Constructor options.
+		 * @param {object} options.texture - Component graphics.
 		 */
 		Graphics: function(options, self) {
 			self = self || this;
@@ -518,7 +741,14 @@ myst.ui = (function() { "use strict";
 		},
 
 		/**
-		 * Tile component.
+		 * Tile elementary component.
+		 *
+		 * @class elementary_components.Tile
+		 * @classdesc Displays a tile from a tileset.
+		 *
+		 * @param {object} options - Constructor options.
+		 * @param {object} options.texture - Component graphics.
+		 * @param {array} [options.tile=[0,0]] - Current tile.
 		 */
 		Tile: function(options, self) {
 			self = self || this;
@@ -527,7 +757,7 @@ myst.ui = (function() { "use strict";
 			self._tileWidth = options.tileWidth || self._width;
 			self._tileHeight = options.tileHeight || self._height;
 			
-			self._activeTile = [0, 0];
+			self._activeTile = fromOption(options.tile, [0, 0]);
 
 			self._events.onRepaint = function() {
 				self.paint.stretchTile(
@@ -540,7 +770,12 @@ myst.ui = (function() { "use strict";
 		},
 
 		/**
-		 * AbstractButton component.
+		 * AbstractButton elementary component.
+		 *
+		 * @class elementary_components.AbstractButton
+		 * @classdesc Defines a button abstraction with corresponding events.
+		 *
+		 * @param {object} options - Constructor options.
 		 */
 		AbstractButton: function(options, self) {
 			self = self || this;
@@ -629,7 +864,13 @@ myst.ui = (function() { "use strict";
 		},
 
 		/**
-		 * Container component.
+		 * Container elementary component.
+		 *
+		 * @class elementary_components.Container
+		 * @classdesc Defines a container abstraction.
+		 *
+		 * @param {object} options - Constructor options.
+		 * @param {object} [options.components] - Components to add to container.
 		 */
 		Container: function(options, self) {
 			self = self || this;
@@ -660,17 +901,29 @@ myst.ui = (function() { "use strict";
 						componentObject._events.onAdded();
 					}
 				});
+				return self;
 			};
 
 			/**
-			 * Get all components.
+			 * Get the list of components.
+			 *
+			 * @returns {array}
 			 */
 			self.getComponents = function() {
 				return self._componentList;
 			};
 
 			/**
-			 * Remove all components.
+			 * Get the list of component keys.
+			 *
+			 * @returns {array}
+			 */
+			self.getComponentKeys = function() {
+				return self._componentKeys;
+			};
+
+			/**
+			 * Remove all components from the container.
 			 */
 			self.removeAll = function() {
 				self._componentList.forEach(function(componentObject) {
@@ -695,6 +948,7 @@ myst.ui = (function() { "use strict";
 				});
 				// clear component key list
 				self._componentKeys = [];
+				return self;
 			};
 
 			// add components from options
