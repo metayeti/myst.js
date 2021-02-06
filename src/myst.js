@@ -254,6 +254,8 @@ myst.movePoint = function(ax, ay, bx, by, d) {
  * @param {number} bx - Point B x coordinate.
  * @param {number} by - Point B y coordinate.
  * @param {number} angle - Angle in degrees.
+ *
+ * @returns {array} Coordinates to point A after rotation.
  */
 myst.rotatePoint = function(ax, ay, bx, by, angle) {
 	angle *= Math.PI / 180;
