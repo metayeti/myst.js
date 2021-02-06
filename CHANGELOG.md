@@ -1,4 +1,9 @@
-## 0.9.2 (January 25, 2020)
+## 0.9.3 (February 6, 2021)
+- `BUGFIX` Fix `myst.iter` to allow iterating over members named `hasOwnProperty`.
+- `FEATURE` Added `myst.rotatePoint` function.
+- `FEATURE` Added `myst.applyToGroup` function.
+
+## 0.9.2 (January 25, 2021)
 - Increased frametime for Tween for smoother animations on slower browsers or machines.
 - `BUGFIX` Remove obsolete build flag.
 

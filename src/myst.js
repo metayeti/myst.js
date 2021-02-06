@@ -12,7 +12,7 @@
 
 /**
  * @file myst.js
- * @version 0.9.2
+ * @version 0.9.3
  * @author Danijel Durakovic
  * @copyright 2020
  */
@@ -247,6 +247,25 @@ myst.movePoint = function(ax, ay, bx, by, d) {
 };
 
 /**
+ * Rotate point A around point B by angle.
+ *
+ * @param {number} ax - Point A x coordinate.
+ * @param {number} ay - Point A y coordinate.
+ * @param {number} bx - Point B x coordinate.
+ * @param {number} by - Point B y coordinate.
+ * @param {number} angle - Angle in degrees.
+ */
+myst.rotatePoint = function(ax, ay, bx, by, angle) {
+	angle *= Math.PI / 180;
+	ax -= bx;
+	ay -= by;
+	return [
+		Math.floor(ax * Math.cos(angle) - ay * Math.sin(angle)) + bx,
+		Math.floor(ay * Math.cos(angle) + ax * Math.sin(angle)) + by
+	];
+};
+
+/**
  * Iterates over non-function members of an object.
  *
  * @param {object} collection
@@ -255,7 +274,7 @@ myst.movePoint = function(ax, ay, bx, by, d) {
 myst.iter = function(object, callback) {
 	for (var key in object) {
 		var item = object[key];
-		if (object.hasOwnProperty(key) && !(item instanceof Function)) {
+		if (Object.prototype.hasOwnProperty.call(object, key) && !(item instanceof Function)) {
 			callback(key, item);
 		}
 	}
@@ -265,6 +284,24 @@ myst.iter = function(object, callback) {
  * @param {string} key - Item's key.
  * @param {object} item - The item itself.
  */
+
+/**
+ * Applies a function to an arbitrary group of objects.
+ *
+ * @param {object} group - Collection of objects.
+ * @param {string} fname - Function to call on objects.
+ * @param {array} [fargs] - List of arguments to apply to the function.
+ */
+myst.applyToGroup = function(group, fname, fargs) {
+	if (fargs !== undefined) {
+		fargs = (fargs instanceof Array) ? fargs : [fargs];
+	}
+	myst.iter(group, function(key, object) {
+		if (object[fname] instanceof Function) {
+			object[fname].apply(object, fargs);
+		}
+	});
+};
 
 /**
  * Retreives the extension of a filename. Outputs lowercase.

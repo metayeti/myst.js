@@ -37,6 +37,7 @@ myst.ui = (function() { "use strict";
 	 *
 	 * @returns {array}
 	 */
+	/*
 	function rotatePointAroundPoint(P, R, angle) {
 		P[0] -= R[0];
 		P[1] -= R[1];
@@ -48,6 +49,7 @@ myst.ui = (function() { "use strict";
 		B[1] += R[1];
 		return B;
 	}
+	*/
 
 	/**
 	 * Converts degrees to radians.
@@ -56,9 +58,11 @@ myst.ui = (function() { "use strict";
 	 *
 	 * @returns {number}
 	 */
+	/*
 	function toRadians(degrees) {
 		return degrees * Math.PI / 180;
 	}
+	*/
 
 	/**
 	 * Applies an action to an arbitrary group of components.
@@ -67,6 +71,7 @@ myst.ui = (function() { "use strict";
 	 * @param {string} fname - Function name.
 	 * @param {string} [fargs] - Function arguments.
 	 */
+	/*
 	function applyToGroup(group, fname, fargs) {
 		if (fargs != null) {
 			fargs = (fargs instanceof Array) ? fargs : [fargs];
@@ -77,6 +82,7 @@ myst.ui = (function() { "use strict";
 			}
 		});
 	}
+	*/
 
 	/**
 	 * Returns the next incremental event id.
@@ -811,7 +817,8 @@ myst.ui = (function() { "use strict";
 							Math.floor(component.getRealX() + component._width / 2),
 							Math.floor(component.getRealY() + component._height / 2)
 						];
-						coords = rotatePointAroundPoint(coords, centerPoint, toRadians(-component._angle));
+						//coords = rotatePointAroundPoint(coords, centerPoint, toRadians(-component._angle));
+						coords = myst.rotatePoint(coords[0], coords[1], centerPoint[0], centerPoint[1], -component._angle);
 					}
 				}
 				return _pointInAABB(coords);
@@ -1076,12 +1083,21 @@ myst.ui = (function() { "use strict";
 					// line shape
 					//
 					case SHAPE_TYPE.line:
+						if (n_points < 2) {
+							return;
+						}
+						self.paint.line(
+							points[0][0], points[0][1],
+							points[1][0], points[1][1],
+							self._shapeColor,
+							self._shapeBorder
+						);
 						break;
 					//
 					// triangle shape
 					//
 					case SHAPE_TYPE.triangle:
-						if (n_points !== 3) {
+						if (n_points < 3) {
 							return;
 						}
 						if (self._shapeFill) {
@@ -1095,7 +1111,7 @@ myst.ui = (function() { "use strict";
 									points[indexCurrent][0], points[indexCurrent][1],
 									points[indexNext][0], points[indexNext][1],
 									self._shapeColor,
-									self.shapeBorder
+									self._shapeBorder
 								);
 							}
 						}
@@ -1104,6 +1120,25 @@ myst.ui = (function() { "use strict";
 					// polygon shape
 					//
 					case SHAPE_TYPE.polygon:
+						if (n_points < 3) {
+							return;
+						}
+						if (self._shapeFill) {
+							self.paint.polygon(points, self._shapeColor);
+						}
+						else {
+							for (var i = 0; i < n_points; i++) {
+								var indexCurrent = i;
+								var indexNext = (i < n_points - 1) ? i + 1 : 0;
+								self.paint.line(
+									points[indexCurrent][0], points[indexCurrent][1],
+									points[indexNext][0], points[indexNext][1],
+									self._shapeColor,
+									self._shapeBorder
+								);
+							}
+
+						}
 						break;
 					//
 					// arc shape
