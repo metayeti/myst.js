@@ -608,9 +608,10 @@ myst.ui = (function() { "use strict";
 		 * @param {object} options - Constructor options.
 		 * @param {bool} [options.debug=false] - When set to true, debugging features will be enabled.
 		 * @param {string} [options.debugColor=#c2f] - Color of debug display.
-		 * TODO @param {string} [options.debugString=$type] - String of variables to watch and display. Private
-		 *   variables are prefixed with $, public variables with %.
-		 * TODO @param {number} [options.debugOutputAnchor=1] - Debug label anchor. 1-4 for each corner of the container.
+		 * TODO @param {string} [options.debugString=$type] - String of variables to watch and display.
+		 *   Private variables are prefixed with $, public variables with %.
+		 * TODO @param {number} [options.debugOutputAnchor=1] - Debug label anchor. 1-4 for each corner
+		 *   of the container.
 		 * TODO @param {array} [options.debugOutputOffset=[0,-15]] - Debug label position.
 		 * TODO @param {number} [options.debugBorderWidth=2] - Debug border thickness.
 		 */
@@ -672,6 +673,7 @@ myst.ui = (function() { "use strict";
 			 * @param {number} [options.duration=240] - Tween duration in milliseconds.
 			 * @param {function} [options.ease=myst.ease.quadInOut] - Easing function.
 			 * TODO @param {number} [options.delay=0] - Tween delay in milliseconds.
+			 * TODO @param {function} [options.onDone] - Is called when tween is done animating.
 			 */
 			self.tween = function(properties, options) {
 				options = options || {};
@@ -974,7 +976,7 @@ myst.ui = (function() { "use strict";
 			self = self || this;
 
 			myst.compose(
-				this,
+				self,
 				new elementary_components.Base(options, self),
 				new elementary_components.Debuggable(options, self),
 				new elementary_components.Tweenable(options, self)
@@ -990,7 +992,7 @@ myst.ui = (function() { "use strict";
 			self = self || this;
 
 			myst.compose(
-				this,
+				self,
 				new public_components.Control(options, self),
 				new elementary_components.Container(options, self)
 			);
@@ -1011,8 +1013,126 @@ myst.ui = (function() { "use strict";
 			};
 		},
 
-		Shape: function() {
+		Shape: function(options, self) {
 			self = self || this;
+
+			myst.compose(
+				self,
+				new public_components.Control(options, self)
+			);
+
+			self._type = 'Shape';
+
+			var SHAPE_TYPE = {
+				rectangle: 0,
+				line: 1,
+				triangle: 2,
+				polygon: 3,
+				arc: 4,
+				circle: 5
+			};
+
+			self._shapeColor = fromOption(options.shapeColor, '#fff');
+			self._shapeFill = fromOption(options.shapeFill, false);
+			self._shapeBorder = fromOption(options.shapeBorder, 1);
+			self._shapePoints = fromOption(options.shapePoints, [[0, 0], [1, 1]]);
+			self._shapeType = 0;
+
+			self._events.onRepaint = function() { // @override
+				var points = self._shapePoints;
+				var n_points = points.length;
+				var scale_x = self.getWidth();
+				var scale_y = self.getHeight();
+				// normalize points
+				for (var p = 0; p < n_points; p++) {
+					points[p][0] *= scale_x;
+					points[p][1] *= scale_y;
+				}
+				switch (self._shapeType) {
+					//
+					// rectangle shape
+					//
+					case SHAPE_TYPE.rectangle:
+						if (n_points < 2) {
+							return;
+						}
+						if (self._shapeFill) {
+							self.paint.rectFill(
+								points[0][0], points[0][1],
+								points[1][0] - points[0][0], points[1][1] - points[0][1],
+								self._shapeColor
+							);
+						}
+						else {
+							self.paint.rect(
+								points[0][0], points[0][1],
+								points[1][0] - points[0][0], points[1][1] - points[0][1],
+								self._shapeColor,
+								self._shapeBorder
+							);
+						}
+						break;
+					//
+					// line shape
+					//
+					case SHAPE_TYPE.line:
+						break;
+					//
+					// triangle shape
+					//
+					case SHAPE_TYPE.triangle:
+						if (n_points !== 3) {
+							return;
+						}
+						if (self._shapeFill) {
+							self.paint.polygon(points, self._shapeColor);
+						}
+						else {
+							for (var i = 0; i < 3; i++) {
+								var indexCurrent = i;
+								var indexNext = (i < 2) ? i + 1 : 0;
+								self.paint.line(
+									points[indexCurrent][0], points[indexCurrent][1],
+									points[indexNext][0], points[indexNext][1],
+									self._shapeColor,
+									self.shapeBorder
+								);
+							}
+						}
+						break;
+					//
+					// polygon shape
+					//
+					case SHAPE_TYPE.polygon:
+						break;
+					//
+					// arc shape
+					//
+					case SHAPE_TYPE.arc:
+						break;
+					//
+					// circle shape
+					//
+					case SHAPE_TYPE.circle:
+						break;
+					//
+					// rounded rectangle shape
+					//
+				}
+			};
+
+			/**
+			 * Sets shape type.
+			 */
+			self.setShapeType = function(shapeType) {
+				if (!shapeType) {
+					shapeType = 'rectangle';
+				}
+				self._shapeType = SHAPE_TYPE[shapeType];
+			};
+
+			// set shape type on init
+			self.setShapeType(fromOption(options.shapeType));
 		},
 
 		Image: function() {
@@ -1024,11 +1144,17 @@ myst.ui = (function() { "use strict";
 				new elementary_components.Graphics(options, self)
 			);
 
-			this._type = 'Image';
+			self._type = 'Image';
+		},
+
+		TileImage: function() {
 		},
 
 		Label: function() {
 			self = self || this;
+		},
+
+		BitmapLabel: function() {
 		},
 
 		TileButton: function(options, self) {
