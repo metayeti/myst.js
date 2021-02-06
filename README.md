@@ -6,7 +6,7 @@ Version 0.9.3
 
 ## Features
 
-- Single file (minified: 15.1KB) with zero external dependencies
+- Single file (minified: 15.3KB) with zero external dependencies
 - Supports all modern browsers (IE11/Edge/Firefox/Opera/Chrome/Safari)
 - Easy to use API - most features are simple, reusable classes
 - State based
