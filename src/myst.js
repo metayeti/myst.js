@@ -12,9 +12,9 @@
 
 /**
  * @file myst.js
- * @version 0.9.3
+ * @version 0.9.4
  * @author Danijel Durakovic
- * @copyright 2020
+ * @copyright 2021
  */
 
 "use strict";
@@ -133,13 +133,27 @@ myst.shuffle = function(list) {
  *
  * @param {array} list
  *
- * @returns {number}
+ * @returns {object}
  */
 myst.choose = function(list) {
 	if (list instanceof Array) {
 		return list[Math.floor(Math.random() * list.length)];
 	}
 };
+
+/**
+ * Picks an element from a list at random, and removes it from the list.
+ *
+ * @param {array} list
+ *
+ * @returns {object}
+ */
+myst.pick = function(list) {
+	if (list instanceof Array && list.length > 0) {
+		return list.splice(Math.floor(Math.random() * list.length), 1)[0];
+	}
+};
+
 
 /**
  * Checks whether a point resides within a given rectangle.
@@ -169,7 +183,7 @@ myst.pointInRect = function(x, y, rx, ry, rw, rh) {
  * @returns {bool}
  */
 myst.pointInCircle = function(x, y, cx, cy, radius) {
-	return Math.pow(x - cx, 2) + Math.pow(y - cy, 2) < Math.pow(radius, 2);
+	return (x - cx) * (x - cx) + (y - cy) * (y - cy) < radius * radius;
 };
 
 /**
@@ -196,9 +210,16 @@ myst.linesIntersect = function(ax, ay, bx, by, cx, cy, dx, dy) {
 
 /**
  * Returns the distance from point A to point B.
+ *
+ * @param {number} x - Point A x coordinate.
+ * @param {number} y - Point A y coordinate.
+ * @param {number} x - Point B x coordinate.
+ * @param {number} y - Point B y coordinate.
+ * 
+ * @returns {number}
  */
 myst.pointToPointDistance = function(ax, ay, bx, by) {
-	return Math.sqrt(Math.pow(ax - bx, 2) + Math.pow(ay - by, 2));
+	return Math.sqrt((ax - bx) * (ax - bx) + (ay - by) * (ay - by));
 };
 
 /**
@@ -211,19 +232,19 @@ myst.pointToPointDistance = function(ax, ay, bx, by) {
  * @param {number} bx - Point B x coordinate.
  * @param {number} by - Point B y coordinate.
  *
- * @returns {bool}
+ * @returns {number}
  */
 myst.pointToLineDistance = function(x, y, ax, ay, bx, by) {
 	var dx = bx - ax;
 	var dy = by - ay;
-	var l = Math.pow(dx, 2) + Math.pow(dy, 2);
+	var l = dx * dx + dy * dy;
 	if (l == 0) {
 		return 0;
 	}
 	var t = Math.min(1, Math.max(0, (dx * (x - ax) + dy * (y - ay)) / l));
 	var cx = ax + t * dx;
 	var cy = ay + t * dy;
-	return Math.sqrt(Math.pow(x - cx, 2) + Math.pow(y - cy, 2));
+	return Math.sqrt((x - cx) * (x - cx) + (y - cy) * (y - cy));
 };
 
 /**
@@ -666,12 +687,14 @@ myst.AssetLoader = function() {
 
 	/**
 	 * Loads assets from an asset list. Iterates over categories in the list and then calls
-	 * the appropriate load handler on every item in the category.
+	 * the appropriate load handler on every item in the category. Returns loaded assets.
 	 *
 	 * @param {object} options
 	 * @param {object} options.assets - A categorized list of assets.
 	 * @param {function} [options.done] - Triggers when all assets are done loading.
 	 * @param {progressCallback} [options.progress] - Triggers when a single asset is loaded.
+	 *
+	 * @returns {object}
 	 *
 	 * @example
 	 * var assetList = {
@@ -1321,13 +1344,37 @@ myst.Render = function(ctx) {
 	 * @param {number} h - Rectangle height.
 	 * @param {string} [color="#fff"] - Rectangle line color.
 	 * @param {number} [width=1] - Rectangle line width.
+	 * @param {number|array} [radius=0] - Rectangle border radius. Can be a number or
+	 *   an array of 4 values for radius of each corner (top-left first, clockwise).
 	 */
-	this.rect = function(x, y, w, h, color, width) {
+	this.rect = function(x, y, w, h, color, width, radius) {
 		color = (color === undefined) ? '#fff' : color;
 		width = (width === undefined) ? 1 : width;
 		ctx.strokeStyle = color;
 		ctx.lineWidth = width;
-		ctx.strokeRect(x, y, w, h);
+		if (radius === undefined || radius === 0) {
+			ctx.strokeRect(x, y, w, h);
+		}
+		else {
+			if (radius instanceof Array) {
+				radius = [radius[0] || 0, radius[1] || 0, radius[2] || 0, radius[3] || 0];
+			}
+			else {
+				radius = [radius, radius, radius, radius];
+			}
+			ctx.beginPath();
+			ctx.moveTo(x + radius[0], y);
+			ctx.lineTo(x + w - radius[1], y);
+			ctx.quadraticCurveTo(x + w, y, x + w, y + radius[1]);
+			ctx.lineTo(x + w, y + h - radius[3]);
+			ctx.quadraticCurveTo(x + w, y + h, x + w - radius[3], y + h);
+			ctx.lineTo(x + radius[2], y + h);
+			ctx.quadraticCurveTo(x, y + h, x, y + h - radius[2]);
+			ctx.lineTo(x, y + radius[0]);
+			ctx.quadraticCurveTo(x, y, x + radius[0], y);
+			ctx.closePath();
+			ctx.stroke();
+		}
 	};
 
 	/**
@@ -1338,11 +1385,35 @@ myst.Render = function(ctx) {
 	 * @param {number} w - Rectangle width.
 	 * @param {number} h - Rectangle height.
 	 * @param {string} [color="#fff"] - Rectangle fill color.
+	 * @param {number|array} [radius=0] - Rectangle border radius. Can be a number or
+	 *   an array of 4 values for radius of each corner (top-left first, clockwise).
 	 */
-	this.rectFill = function(x, y, w, h, color) {
+	this.rectFill = function(x, y, w, h, color, radius) {
 		color = (color === undefined) ? '#fff' : color;
 		ctx.fillStyle = color;
-		ctx.fillRect(x, y, w, h);
+		if (radius === undefined || radius === 0) {
+			ctx.fillRect(x, y, w, h);
+		}
+		else {
+			if (radius instanceof Array) {
+				radius = [radius[0] || 0, radius[1] || 0, radius[2] || 0, radius[3] || 0];
+			}
+			else {
+				radius = [radius, radius, radius, radius];
+			}
+			ctx.beginPath();
+			ctx.moveTo(x + radius[0], y);
+			ctx.lineTo(x + w - radius[1], y);
+			ctx.quadraticCurveTo(x + w, y, x + w, y + radius[1]);
+			ctx.lineTo(x + w, y + h - radius[3]);
+			ctx.quadraticCurveTo(x + w, y + h, x + w - radius[3], y + h);
+			ctx.lineTo(x + radius[2], y + h);
+			ctx.quadraticCurveTo(x, y + h, x, y + h - radius[2]);
+			ctx.lineTo(x, y + radius[0]);
+			ctx.quadraticCurveTo(x, y, x + radius[0], y);
+			ctx.closePath();
+			ctx.fill();
+		}
 	};
 
 	/**
@@ -1351,18 +1422,45 @@ myst.Render = function(ctx) {
 	 * @param {number} x - Arc x coordinate.
 	 * @param {number} y - Arc y coordinate.
 	 * @param {number} rad - Arc radius.
-	 * @param {number} start - Arc start angle.
-	 * @param {number} end - Arc end angle.
+	 * @param {number} start - Arc start angle in degrees.
+	 * @param {number} end - Arc end angle in degrees.
 	 * @param {string} [color="#fff"] - Arc color.
 	 * @param {number} [width=1] - Arc line width.
 	 */
 	this.arc = function(x, y, rad, start, end, color, width) {
 		color = (color === undefined) ? '#fff' : color;
 		width = (width === undefined) ? 1 : width;
+		start *= Math.PI / 180;
+		end *= Math.PI / 180;
 		ctx.strokeStyle = color;
 		ctx.lineWidth = width;
+		ctx.beginPath();
 		ctx.arc(x, y, rad, start, end);
 		ctx.stroke();
+	};
+
+
+	/**
+	 * Renders a filled arc.
+	 *
+	 * @param {number} x - Arc x coordinate.
+	 * @param {number} y - Arc y coordinate.
+	 * @param {number} rad - Arc radius.
+	 * @param {number} start - Arc start angle in degrees.
+	 * @param {number} end - Arc end angle in degrees.
+	 * @param {string} [color="#fff"] - Arc fill color.
+	 */
+	this.arcFill = function(x, y, rad, start, end, color) {
+		color = (color === undefined) ? '#fff' : color;
+		start *= Math.PI / 180;
+		end *= Math.PI / 180;
+		//ctx.strokeStyle = color;
+		ctx.fillStyle = color;
+		//ctx.lineWidth = width;
+		ctx.beginPath();
+		ctx.arc(x, y, rad, start, end);
+		ctx.closePath();
+		ctx.fill();
 	};
 
 	/**
@@ -1379,6 +1477,7 @@ myst.Render = function(ctx) {
 		width = (width === undefined) ? 1 : width;
 		ctx.strokeStyle = color;
 		ctx.lineWidth = width;
+		ctx.beginPath();
 		ctx.arc(x, y, rad, 0, Math.PI * 2);
 		ctx.stroke();
 	};
@@ -1396,8 +1495,8 @@ myst.Render = function(ctx) {
 		ctx.fillStyle = color;
 		ctx.beginPath();
 		ctx.arc(x, y, rad, 0, Math.PI * 2);
-		ctx.fill();
 		ctx.closePath();
+		ctx.fill();
 	};
 
 	/**
@@ -1407,7 +1506,30 @@ myst.Render = function(ctx) {
 	 *   containing the coordinates.
 	 * @param {string} color - Polygon color.
 	 */
-	this.polygon = function(points, color) {
+	this.polygon = function(points, color, width) {
+		color = (color === undefined) ? '#fff' : color;
+		width = (width === undefined) ? 1 : width;
+		ctx.strokeStyle = color;
+		ctx.lineWidth = width;
+		var n_points = points.length;
+		ctx.beginPath();
+		for (var i = 0; i < n_points; i++) {
+			var p1 = points[i];
+			var p2 = (i < n_points - 1) ? points[i + 1] : points[0];
+			ctx.moveTo(p1[0], p1[1]);
+			ctx.lineTo(p2[0], p2[1]);
+		}
+		ctx.stroke();
+	};
+
+	/**
+	 * Renders a filled polygon.
+	 *
+	 * @param {array} points - A list of polygon points. Each point is an array of length two,
+	 *   containing the coordinates.
+	 * @param {string} color - Polygon color.
+	 */
+	this.polygonFill = function(points, color) {
 		color = (color === undefined) ? '#fff' : color;
 		ctx.fillStyle = color;
 		ctx.beginPath();

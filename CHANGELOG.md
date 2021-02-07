@@ -1,3 +1,13 @@
+## 0.9.4 (February 7, 2021)
+- `BUGFIX` Fixed `Render.circle` and `Render.arc` so they don't continue drawing from old paths.
+- `API CHANGE` Renamed `Render.polygon` to `Render.polygonFill`.
+- `FEATURE` Added `Render.polygon` which renders polygon outlines only.
+- `API CHANGE` Changed `Render.arc` to accept degrees instead of radians.
+- `FEATURE` Added `Render.arcFill`.
+- `FEATURE` Added `myst.pick` which works the same as `myst.choose` except it also removes the selected item from the array.
+- `FEATURE` Added `radius` parameter to `Render.rect` and `Render.rectFill` that can be used to render rectangles with rounded borders.
+- `BUGFIX` Optimized `Math.pow` calls to multiplication calls.
+
 ## 0.9.3 (February 6, 2021)
 - `BUGFIX` Fix `myst.iter` to allow iterating over members named `hasOwnProperty`.
 - `FEATURE` Added `myst.rotatePoint` function.
