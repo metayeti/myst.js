@@ -133,13 +133,27 @@ myst.shuffle = function(list) {
  *
  * @param {array} list
  *
- * @returns {number}
+ * @returns {object}
  */
 myst.choose = function(list) {
 	if (list instanceof Array) {
 		return list[Math.floor(Math.random() * list.length)];
 	}
 };
+
+/**
+ * Picks an element from a list at random, and removes it from the list.
+ *
+ * @param {array} list
+ *
+ * @returns {object}
+ */
+myst.pick = function(list) {
+	if (list instanceof Array && list.length > 0) {
+		return list.splice(Math.floor(Math.random() * list.length), 1)[0];
+	}
+};
+
 
 /**
  * Checks whether a point resides within a given rectangle.
@@ -666,12 +680,14 @@ myst.AssetLoader = function() {
 
 	/**
 	 * Loads assets from an asset list. Iterates over categories in the list and then calls
-	 * the appropriate load handler on every item in the category.
+	 * the appropriate load handler on every item in the category. Returns loaded assets.
 	 *
 	 * @param {object} options
 	 * @param {object} options.assets - A categorized list of assets.
 	 * @param {function} [options.done] - Triggers when all assets are done loading.
 	 * @param {progressCallback} [options.progress] - Triggers when a single asset is loaded.
+	 *
+	 * @returns {object}
 	 *
 	 * @example
 	 * var assetList = {
@@ -1321,13 +1337,37 @@ myst.Render = function(ctx) {
 	 * @param {number} h - Rectangle height.
 	 * @param {string} [color="#fff"] - Rectangle line color.
 	 * @param {number} [width=1] - Rectangle line width.
+	 * @param {number|array} [radius=0] - Rectangle border radius. Can be a number or
+	 *   an array of 4 values for radius of each corner (top-left first, clockwise).
 	 */
-	this.rect = function(x, y, w, h, color, width) {
+	this.rect = function(x, y, w, h, color, width, radius) {
 		color = (color === undefined) ? '#fff' : color;
 		width = (width === undefined) ? 1 : width;
 		ctx.strokeStyle = color;
 		ctx.lineWidth = width;
-		ctx.strokeRect(x, y, w, h);
+		if (radius === undefined || radius === 0) {
+			ctx.strokeRect(x, y, w, h);
+		}
+		else {
+			if (radius instanceof Array) {
+				radius = [radius[0] || 0, radius[1] || 0, radius[2] || 0, radius[3] || 0];
+			}
+			else {
+				radius = [radius, radius, radius, radius];
+			}
+			ctx.beginPath();
+			ctx.moveTo(x + radius[0], y);
+			ctx.lineTo(x + w - radius[1], y);
+			ctx.quadraticCurveTo(x + w, y, x + w, y + radius[1]);
+			ctx.lineTo(x + w, y + h - radius[3]);
+			ctx.quadraticCurveTo(x + w, y + h, x + w - radius[3], y + h);
+			ctx.lineTo(x + radius[2], y + h);
+			ctx.quadraticCurveTo(x, y + h, x, y + h - radius[2]);
+			ctx.lineTo(x, y + radius[0]);
+			ctx.quadraticCurveTo(x, y, x + radius[0], y);
+			ctx.closePath();
+			ctx.stroke();
+		}
 	};
 
 	/**
@@ -1338,11 +1378,35 @@ myst.Render = function(ctx) {
 	 * @param {number} w - Rectangle width.
 	 * @param {number} h - Rectangle height.
 	 * @param {string} [color="#fff"] - Rectangle fill color.
+	 * @param {number|array} [radius=0] - Rectangle border radius. Can be a number or
+	 *   an array of 4 values for radius of each corner (top-left first, clockwise).
 	 */
-	this.rectFill = function(x, y, w, h, color) {
+	this.rectFill = function(x, y, w, h, color, radius) {
 		color = (color === undefined) ? '#fff' : color;
 		ctx.fillStyle = color;
-		ctx.fillRect(x, y, w, h);
+		if (radius === undefined || radius === 0) {
+			ctx.fillRect(x, y, w, h);
+		}
+		else {
+			if (radius instanceof Array) {
+				radius = [radius[0] || 0, radius[1] || 0, radius[2] || 0, radius[3] || 0];
+			}
+			else {
+				radius = [radius, radius, radius, radius];
+			}
+			ctx.beginPath();
+			ctx.moveTo(x + radius[0], y);
+			ctx.lineTo(x + w - radius[1], y);
+			ctx.quadraticCurveTo(x + w, y, x + w, y + radius[1]);
+			ctx.lineTo(x + w, y + h - radius[3]);
+			ctx.quadraticCurveTo(x + w, y + h, x + w - radius[3], y + h);
+			ctx.lineTo(x + radius[2], y + h);
+			ctx.quadraticCurveTo(x, y + h, x, y + h - radius[2]);
+			ctx.lineTo(x, y + radius[0]);
+			ctx.quadraticCurveTo(x, y, x + radius[0], y);
+			ctx.closePath();
+			ctx.fill();
+		}
 	};
 
 	/**
@@ -1388,8 +1452,8 @@ myst.Render = function(ctx) {
 		//ctx.lineWidth = width;
 		ctx.beginPath();
 		ctx.arc(x, y, rad, start, end);
-		ctx.fill();
 		ctx.closePath();
+		ctx.fill();
 	};
 
 	/**
@@ -1424,10 +1488,9 @@ myst.Render = function(ctx) {
 		ctx.fillStyle = color;
 		ctx.beginPath();
 		ctx.arc(x, y, rad, 0, Math.PI * 2);
-		ctx.fill();
 		ctx.closePath();
+		ctx.fill();
 	};
-
 
 	/**
 	 * Renders a polygon.
@@ -1469,8 +1532,8 @@ myst.Render = function(ctx) {
 			var p = points[i];
 			ctx.lineTo(p[0], p[1]);
 		}
-		ctx.fill();
 		ctx.closePath();
+		ctx.fill();
 	};
 
 	/**

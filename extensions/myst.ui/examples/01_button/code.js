@@ -19,7 +19,7 @@ myState.createUI = function() {
 		width: 200,
 		height: 100,
 		texture: myAssets.graphics.button,
-		//tileWidth: 200, // commented on purpose, not needed unless a stretchable button is desired
+		//tileWidth: 200, // commented on purpose, not needed unless we want to stretch the button on construction
 		//tileHeight: 100,
 		// button tile data
 		tiles: {
@@ -37,13 +37,7 @@ myState.createUI = function() {
 					this.enable(); // enable button again
 				}
 			});
-		},
-		//test
-		
-		//debug: true,
-		//debugString: '$type $x $y',
-		//debugColor: 'blue'
-		
+		}		
 	});
 
 	// center the component

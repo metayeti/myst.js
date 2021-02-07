@@ -548,6 +548,7 @@ myst.ui = (function() { "use strict";
 			 */
 			self.setAngle = function(angle) {
 				self._angle = angle;
+				return self;
 			};
 
 			/**
@@ -655,6 +656,7 @@ myst.ui = (function() { "use strict";
 			if (options.debug) {
 				var debugWatch = (options.debugString) ? options.debugString.replace(/\$/g, '_').split(' ') : ['_type'];
 				var debugColor = options.debugColor || '#c2f';
+				setTimeout(updateDebugDisplayText, 5);
 				setInterval(updateDebugDisplayText, 100);
 				var s_draw = self.draw; // @super:draw
 				self.draw = function() { // @override
@@ -1027,19 +1029,16 @@ myst.ui = (function() { "use strict";
 			self._type = 'Frame';
 
 			/**
-			 * Draw the component and all children components.
+			 * Render the component and all children components.
 			 */
-			var s_draw = self.draw; // @super:draw
-			//self.draw = function() { // @override
 			self._events.onRepaint = function() {
-				//self._surface.clear();
 				var n_components = self._componentList.length;
 				for (var i = 0; i < n_components; i++) {
 					self._componentList[i].draw();
 				}
-				//s_draw();
 			};
 
+			// set frame to autorepaint
 			self._alwaysRepaint = true;
 		},
 

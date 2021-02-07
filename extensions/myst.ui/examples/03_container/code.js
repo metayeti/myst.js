@@ -75,6 +75,29 @@ myState.createUI = function() {
 
 myState.init = function() {
 	myState.createUI();
+	(function() {
+		// activate easter-egg after 3 presses on canvas
+		var duration = 20000;
+		var pressedTimes = 0;
+		function doEasterEgg() {
+			var myFrame = myState.myFrame;
+			myFrame.myFrame3.myFrame5.myControl.setAngle(0).tween({ angle: -720 }, { duration: duration });
+			myFrame.myFrame3.myFrame5.setAngle(0).tween({ angle: -720 }, { duration: duration });
+			myFrame.myFrame3.myFrame4.setAngle(0).tween({ angle: 720 }, { duration: duration });
+			myFrame.myFrame3.setAngle(0).tween({ angle: 720 * 2 }, { duration: duration });
+			myFrame.myFrame2.setAngle(0).tween({ angle: 720 }, { duration: duration });
+			myFrame.setAngle(0).tween({ angle: -720 }, { duration: duration, onDone: function() { pressedTimes = 0; }});
+		}
+		inputHandler.on('press', function() {
+			if (pressedTimes === 3) {
+				return;
+			}
+			pressedTimes++;
+			if (pressedTimes === 3) {
+				doEasterEgg();
+			}
+		});
+	}());
 };
 myState.draw = function() {
 	this.surface.clear();

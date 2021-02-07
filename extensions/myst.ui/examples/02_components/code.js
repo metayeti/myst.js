@@ -42,8 +42,10 @@ myState.init = function() {
 myState.draw = function() {
 	this.surface.clear();
 	// draw button
-	///this.myButton.draw();
-	this.myShape.draw();
+	//this.myShape.draw();
+
+	this.paint.rect(150, 150, 100, 100, 'turquoise', 1);
+	//this.paint.roundRectangle(150, 150, 100, 100, 'red', 1, 30);
 };
 
 var myGame = new myst.Game({
