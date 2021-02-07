@@ -12,7 +12,7 @@
 
 /**
  * @file myst.js
- * @version 0.9.3
+ * @version 0.9.4
  * @author Danijel Durakovic
  * @copyright 2020
  */
@@ -1351,18 +1351,45 @@ myst.Render = function(ctx) {
 	 * @param {number} x - Arc x coordinate.
 	 * @param {number} y - Arc y coordinate.
 	 * @param {number} rad - Arc radius.
-	 * @param {number} start - Arc start angle.
-	 * @param {number} end - Arc end angle.
+	 * @param {number} start - Arc start angle in degrees.
+	 * @param {number} end - Arc end angle in degrees.
 	 * @param {string} [color="#fff"] - Arc color.
 	 * @param {number} [width=1] - Arc line width.
 	 */
 	this.arc = function(x, y, rad, start, end, color, width) {
 		color = (color === undefined) ? '#fff' : color;
 		width = (width === undefined) ? 1 : width;
+		start *= Math.PI / 180;
+		end *= Math.PI / 180;
 		ctx.strokeStyle = color;
 		ctx.lineWidth = width;
+		ctx.beginPath();
 		ctx.arc(x, y, rad, start, end);
 		ctx.stroke();
+	};
+
+
+	/**
+	 * Renders a filled arc.
+	 *
+	 * @param {number} x - Arc x coordinate.
+	 * @param {number} y - Arc y coordinate.
+	 * @param {number} rad - Arc radius.
+	 * @param {number} start - Arc start angle in degrees.
+	 * @param {number} end - Arc end angle in degrees.
+	 * @param {string} [color="#fff"] - Arc fill color.
+	 */
+	this.arcFill = function(x, y, rad, start, end, color) {
+		color = (color === undefined) ? '#fff' : color;
+		start *= Math.PI / 180;
+		end *= Math.PI / 180;
+		//ctx.strokeStyle = color;
+		ctx.fillStyle = color;
+		//ctx.lineWidth = width;
+		ctx.beginPath();
+		ctx.arc(x, y, rad, start, end);
+		ctx.fill();
+		ctx.closePath();
 	};
 
 	/**
@@ -1379,6 +1406,7 @@ myst.Render = function(ctx) {
 		width = (width === undefined) ? 1 : width;
 		ctx.strokeStyle = color;
 		ctx.lineWidth = width;
+		ctx.beginPath();
 		ctx.arc(x, y, rad, 0, Math.PI * 2);
 		ctx.stroke();
 	};
@@ -1400,6 +1428,7 @@ myst.Render = function(ctx) {
 		ctx.closePath();
 	};
 
+
 	/**
 	 * Renders a polygon.
 	 *
@@ -1407,7 +1436,30 @@ myst.Render = function(ctx) {
 	 *   containing the coordinates.
 	 * @param {string} color - Polygon color.
 	 */
-	this.polygon = function(points, color) {
+	this.polygon = function(points, color, width) {
+		color = (color === undefined) ? '#fff' : color;
+		width = (width === undefined) ? 1 : width;
+		ctx.strokeStyle = color;
+		ctx.lineWidth = width;
+		var n_points = points.length;
+		ctx.beginPath();
+		for (var i = 0; i < n_points; i++) {
+			var p1 = points[i];
+			var p2 = (i < n_points - 1) ? points[i + 1] : points[0];
+			ctx.moveTo(p1[0], p1[1]);
+			ctx.lineTo(p2[0], p2[1]);
+		}
+		ctx.stroke();
+	};
+
+	/**
+	 * Renders a filled polygon.
+	 *
+	 * @param {array} points - A list of polygon points. Each point is an array of length two,
+	 *   containing the coordinates.
+	 * @param {string} color - Polygon color.
+	 */
+	this.polygonFill = function(points, color) {
 		color = (color === undefined) ? '#fff' : color;
 		ctx.fillStyle = color;
 		ctx.beginPath();
@@ -1417,8 +1469,8 @@ myst.Render = function(ctx) {
 			var p = points[i];
 			ctx.lineTo(p[0], p[1]);
 		}
-		ctx.closePath();
 		ctx.fill();
+		ctx.closePath();
 	};
 
 	/**

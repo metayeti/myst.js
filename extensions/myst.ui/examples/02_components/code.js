@@ -12,17 +12,25 @@ myState.createUI = function() {
 
 	// create a shape
 	this.myShape = new myst.ui.Shape({
-		x: 50,
-		y: 50,
+		x: 95,
+		y: 95,
 		width: 50,
 		height: 50,
+		//background: 'pink',
+		shape: {
+			color: '#c2f',
+			fill: true,
+			border: 1,
+			type: 'triangle',
+			//geometry: [[0, 0], [0, 1], [1, 1]]
+		},
 		shapeColor: '#c2f',
 		shapeFill: false,
 		shapeBorder: 1,
 		//shapeType: 'rectangle',
-		//shapePoints: [[0.5, 0.5], [0.9, 0.9]],
+		//shapePoints: [[0, 0], [1, 1]],
 		shapeType: 'triangle',
-		shapePoints: [[0.2, 0.2], [0.2, 0.8], [0.8, 0.8]],
+		shapePoints: [[1, 0], [0, 1], [1, 1]],
 		//background: '#cc9'
 	});
 

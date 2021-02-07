@@ -181,11 +181,15 @@ myst.ui = (function() { "use strict";
 			self._events.onAdded = function() { invokeEvent(options.onAdded, self); };
 			// "onRemoved" is triggered when the component is removed from a container
 			self._events.onRemoved = function() { invokeEvent(options.onRemoved, self); };
+			// "onResized" is triggered when the component changes size
+			self._events.onResized = function() {
+				self._requestRepaint = true;
+				invokeEvent(options.onResized, self);
+			};
 /*
 				onEnabled: function() { invokeEvent(options.onEnabled, self); },
 				onDisabled: function() { invokeEvent(options.onDisabled, self); },
 				onMoved: function() { invokeEvent(options.onMoved, self); },
-				onResized: function() { invokeEvent(options.onResized, self); },
 				onAlphaSet: function() { invokeEvent(options.onAlphaSet, self); },
 				onAngleSet: function() { invokeEvent(options.onAngleSet, self); }
 			};
@@ -313,6 +317,8 @@ myst.ui = (function() { "use strict";
 			self.setWidth = function(width) {
 				self._width = width;
 				self._surface.resize(self._width, self._height);
+				self._requestRepaint = true;
+				self._events.onResized();
 				return self;
 			};
 
@@ -324,6 +330,8 @@ myst.ui = (function() { "use strict";
 			self.setHeight = function(height) {
 				self._height = height;
 				self._surface.resize(self._width, self._height);
+				self._requestRepaint = true;
+				self._events.onResized();
 				return self;
 			};
 
@@ -356,6 +364,8 @@ myst.ui = (function() { "use strict";
 				self._width = width;
 				self._height = height;
 				self._surface.resize(self._width, self._height);
+				self._requestRepaint = true;
+				self._events.onResized();
 				return self;
 			};
 
@@ -367,8 +377,9 @@ myst.ui = (function() { "use strict";
 			self.growByWidth = function(width) {
 				self._x -= width;
 				self._width += width * 2;
-				self._requestRepaint = true;
 				self._surface.resize(self._width, self._height);
+				self._requestRepaint = true;
+				self._events.onResized();
 				return self;
 			};
 
@@ -389,8 +400,9 @@ myst.ui = (function() { "use strict";
 			self.growByHeight = function(height) {
 				self._y -= height;
 				self._height += height * 2;
-				self._requestRepaint = true;
 				self._surface.resize(self._width, self._height);
+				self._requestRepaint = true;
+				self._events.onResized();
 				return self;
 			};
 
@@ -407,6 +419,12 @@ myst.ui = (function() { "use strict";
 			 * Grow the component in all directions by given amount.
 			 */
 			self.growBy = function(size) {
+				self._x -= size;
+				self._width += size * 2;
+				self._y -= size;
+				self._height += size * 2;
+				self._surface.resize(self._width, self._height);
+				self._requestRepaint = true;
 				return self.growByWidth(size).growByHeight(size);
 			};
 
@@ -445,6 +463,7 @@ myst.ui = (function() { "use strict";
 			 */
 			self.resetWidth = function() {
 				self.setWidth(fromOption(options.width, 0));
+				return self;
 			};
 
 			/**
@@ -452,6 +471,7 @@ myst.ui = (function() { "use strict";
 			 */
 			self.resetHeight = function() {
 				self.setHeight(fromOption(options.height, 0));
+				return self;
 			};
 
 			/**
@@ -572,6 +592,12 @@ myst.ui = (function() { "use strict";
 			 * Draw the component.
 			 */
 			self.draw = function() {
+				if (self._alwaysRepaint || self._requestRepaint) {
+					//console.log('repaint called');
+					self._surface.clear();
+					self._events.onRepaint();
+					self._requestRepaint = false;
+				}
 				var alpha = self.getAlpha();
 				if (alpha <= 0) {
 					return;
@@ -590,12 +616,6 @@ myst.ui = (function() { "use strict";
 				}
 				if (self._angle !== 0) {
 					self._context.paint.restore();
-				}
-				if (self._alwaysRepaint || self._requestRepaint) {
-					console.log('repaint called');
-					self._surface.clear();
-					self._events.onRepaint();
-					self._requestRepaint = false;
 				}
 			};
 
@@ -1010,14 +1030,17 @@ myst.ui = (function() { "use strict";
 			 * Draw the component and all children components.
 			 */
 			var s_draw = self.draw; // @super:draw
-			self.draw = function() { // @override
-				self._surface.clear();
+			//self.draw = function() { // @override
+			self._events.onRepaint = function() {
+				//self._surface.clear();
 				var n_components = self._componentList.length;
 				for (var i = 0; i < n_components; i++) {
 					self._componentList[i].draw();
 				}
-				s_draw();
+				//s_draw();
 			};
+
+			self._alwaysRepaint = true;
 		},
 
 		Shape: function(options, self) {
@@ -1035,45 +1058,119 @@ myst.ui = (function() { "use strict";
 				line: 1,
 				triangle: 2,
 				polygon: 3,
-				arc: 4,
-				circle: 5
+				circle: 4,
+				arc: 5,
+				roundrectangle: 6
 			};
 
-			self._shapeColor = fromOption(options.shapeColor, '#fff');
-			self._shapeFill = fromOption(options.shapeFill, false);
-			self._shapeBorder = fromOption(options.shapeBorder, 1);
-			self._shapePoints = fromOption(options.shapePoints, [[0, 0], [1, 1]]);
-			self._shapeType = 0;
+			self._recalculateGeometry = false;
 
-			self._events.onRepaint = function() { // @override
-				var points = self._shapePoints;
-				var n_points = points.length;
+			self._shapeColor = '#fff';
+			self._shapeFill = false;
+			self._shapeBorder = 1;
+			self._shapeUnitGeometry = null;
+			self._shapeRealGeometry = [];
+			self._shapeType = SHAPE_TYPE.rectangle;
+
+			function getDefaultGeometry(shapeType) {
+				switch (shapeType) {
+					case SHAPE_TYPE.rectangle: return [[0, 0], [1, 1]];
+					case SHAPE_TYPE.line: return [[0, 0], [1, 0]];
+					case SHAPE_TYPE.triangle: return [[0.5, 0], [0, 1], [1, 1]];
+					case SHAPE_TYPE.circle: return [[0.5, 0.5], 0.5];
+					case SHAPE_TYPE.arc: return [[0.5, 0.5], 0.5, 0, 120];
+				}
+			}
+
+			function updateRealGeometry() {
+				self._shapeRealGeometry = [];
+				var n_params = self._shapeUnitGeometry.length;
 				var scale_x = self.getWidth();
 				var scale_y = self.getHeight();
-				// normalize points
-				for (var p = 0; p < n_points; p++) {
-					points[p][0] *= scale_x;
-					points[p][1] *= scale_y;
+				var scale_min = Math.min(scale_x, scale_y);
+				for (var p = 0; p < n_params; p++) {
+					if (self._shapeUnitGeometry[p] instanceof Array) {
+						var px = self._shapeUnitGeometry[p][0] * scale_x;
+						var py = self._shapeUnitGeometry[p][1] * scale_y;
+						// shrink shape by border
+						if (!self._shapeFill || self._shapeFill && self._shapeType === SHAPE_TYPE.line) {
+							px = myst.clamp(px, self._shapeBorder, scale_x - self._shapeBorder);
+							py = myst.clamp(py, self._shapeBorder, scale_y - self._shapeBorder);
+						}
+						self._shapeRealGeometry.push([px, py]);
+					}
+					else {
+						if (p > 1) {
+							self._shapeRealGeometry.push(self._shapeUnitGeometry[p]);
+							continue;
+						}
+						var ps = self._shapeUnitGeometry[p] * scale_min;
+						//if (!self.shapeFill && !(self._shapeType === SHAPE_TYPE.circle || self._shapeType === SHAPE_TYPE.arc)) {
+						if (!self.shapeFill && (self._shapeType === SHAPE_TYPE.circle || self._shapeType === SHAPE_TYPE.arc)) {
+							// shrink radius by border
+							ps = myst.clamp(ps * 2, self._shapeBorder, scale_min - self._shapeBorder) / 2;
+						}
+						console.log(ps);
+						//if (!self._shapeFill) {
+							//ps = myst.clamp(px, self._shapeBorder, scale_min - self._shapeBorder);
+						//}
+						self._shapeRealGeometry.push(ps);
+					}
 				}
+			}
+
+			self.setShape = function(shape) {
+				shape = shape || {};
+				self._shapeColor = fromOption(shape.color, self._shapeColor);
+				self._shapeFill = fromOption(shape.fill, self._shapeFill);
+				self._shapeBorder = fromOption(shape.border, self._shapeBorder);
+				var prevType = self._shapeType;
+				self._shapeType = fromOption(SHAPE_TYPE[shape.type], self._shapeType);
+				if (self._shapeType !== prevType) {
+					self._shapeUnitGeometry = fromOption(shape.geometry, getDefaultGeometry(self._shapeType));
+				}
+				else {
+					self._shapeUnitGeometry = fromOption(shape.geometry, self._shapeUnitGeometry || getDefaultGeometry(self._shapeType));
+				}
+				self._requestRepaint = true;
+				self._recalculateGeometry = true;
+				return self;
+			};
+
+			var s_events_onResized = self._events.onResized; // @super:_events:onResized
+			self._events.onResized = function() { // @override
+				self._recalculateGeometry = true;
+				s_events_onResized();
+			};
+
+			self._events.onRepaint = function() { // @override
+				if (self._recalculateGeometry) {
+					updateRealGeometry();
+					self._recalculateGeometry = false;
+				}
+
+				var geometry = self._shapeRealGeometry;
+				var n_params = geometry.length;
+				console.log(geometry);
 				switch (self._shapeType) {
 					//
 					// rectangle shape
 					//
 					case SHAPE_TYPE.rectangle:
-						if (n_points < 2) {
+						if (n_params < 2) {
 							return;
 						}
 						if (self._shapeFill) {
 							self.paint.rectFill(
-								points[0][0], points[0][1],
-								points[1][0] - points[0][0], points[1][1] - points[0][1],
+								geometry[0][0], geometry[0][1],
+								geometry[1][0] - geometry[0][0], geometry[1][1] - geometry[0][1],
 								self._shapeColor
 							);
 						}
 						else {
 							self.paint.rect(
-								points[0][0], points[0][1],
-								points[1][0] - points[0][0], points[1][1] - points[0][1],
+								geometry[0][0], geometry[0][1],
+								geometry[1][0] - geometry[0][0], geometry[1][1] - geometry[0][1],
 								self._shapeColor,
 								self._shapeBorder
 							);
@@ -1083,72 +1180,55 @@ myst.ui = (function() { "use strict";
 					// line shape
 					//
 					case SHAPE_TYPE.line:
-						if (n_points < 2) {
+						if (n_params < 2) {
 							return;
 						}
 						self.paint.line(
-							points[0][0], points[0][1],
-							points[1][0], points[1][1],
+							geometry[0][0], geometry[0][1],
+							geometry[1][0], geometry[1][1],
 							self._shapeColor,
 							self._shapeBorder
 						);
 						break;
 					//
-					// triangle shape
+					// triangle and polygon shapes
 					//
 					case SHAPE_TYPE.triangle:
-						if (n_points < 3) {
+					case SHAPE_TYPE.polygon:
+						if (n_params < 3) {
 							return;
 						}
 						if (self._shapeFill) {
-							self.paint.polygon(points, self._shapeColor);
+							self.paint.polygonFill(geometry, self._shapeColor);
 						}
 						else {
-							for (var i = 0; i < 3; i++) {
-								var indexCurrent = i;
-								var indexNext = (i < 2) ? i + 1 : 0;
-								self.paint.line(
-									points[indexCurrent][0], points[indexCurrent][1],
-									points[indexNext][0], points[indexNext][1],
-									self._shapeColor,
-									self._shapeBorder
-								);
-							}
+							self.paint.polygon(geometry, self._shapeColor, self._shapeBorder);
 						}
 						break;
 					//
-					// polygon shape
+					// circle shape
 					//
-					case SHAPE_TYPE.polygon:
-						if (n_points < 3) {
+					case SHAPE_TYPE.circle:
+						if (n_params < 2) {
 							return;
 						}
 						if (self._shapeFill) {
-							self.paint.polygon(points, self._shapeColor);
+							self.paint.circleFill(geometry[0][0], geometry[0][1], geometry[1], self._shapeColor);
 						}
 						else {
-							for (var i = 0; i < n_points; i++) {
-								var indexCurrent = i;
-								var indexNext = (i < n_points - 1) ? i + 1 : 0;
-								self.paint.line(
-									points[indexCurrent][0], points[indexCurrent][1],
-									points[indexNext][0], points[indexNext][1],
-									self._shapeColor,
-									self._shapeBorder
-								);
-							}
-
+							self.paint.circle(geometry[0][0], geometry[0][1], geometry[1], self._shapeColor, self._shapeBorder);
 						}
 						break;
 					//
 					// arc shape
 					//
 					case SHAPE_TYPE.arc:
-						break;
-					//
-					// circle shape
-					//
-					case SHAPE_TYPE.circle:
+						if (self._shapeFill) {
+							self.paint.arcFill(geometry[0][0], geometry[0][1], geometry[1], geometry[2], geometry[3], self._shapeColor);
+						}
+						else {
+							self.paint.arc(geometry[0][0], geometry[0][1], geometry[1], geometry[2], geometry[3], self._shapeColor, self._shapeBorder);
+						}
 						break;
 					//
 					// rounded rectangle shape
@@ -1159,6 +1239,7 @@ myst.ui = (function() { "use strict";
 			/**
 			 * Sets shape type.
 			 */
+			/*
 			self.setShapeType = function(shapeType) {
 				if (!shapeType) {
 					shapeType = 'rectangle';
@@ -1168,6 +1249,10 @@ myst.ui = (function() { "use strict";
 
 			// set shape type on init
 			self.setShapeType(fromOption(options.shapeType));
+			*/
+
+			// set shape on init
+			self.setShape(options.shape);
 		},
 
 		Image: function() {

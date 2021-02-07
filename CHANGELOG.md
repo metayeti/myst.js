@@ -1,3 +1,10 @@
+## 0.9.4 (?)
+- `BUGFIX` Fixes `render.circle` and `render.arc` so they don't continue drawing from old path.
+- `REFACTOR` Changed `render.polygon` to `render.polygonFill`.
+- `FEATURE` Added `render.polygon` which renders polygon outlines.
+- Changed `render.arc` to accept degrees instead of radians.
+- `FEATURE` Added `render.arcFill`.
+
 ## 0.9.3 (February 6, 2021)
 - `BUGFIX` Fix `myst.iter` to allow iterating over members named `hasOwnProperty`.
 - `FEATURE` Added `myst.rotatePoint` function.
