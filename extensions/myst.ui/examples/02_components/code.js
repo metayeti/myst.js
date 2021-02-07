@@ -16,14 +16,23 @@ myState.createUI = function() {
 		y: 95,
 		width: 50,
 		height: 50,
-		//background: 'pink',
+		//background: 'lightgrey',
+		/*
+		shape: {
+			type: 'rectangle',
+			fill: true,
+			border: 1,
+			geometry: [[0.5, 0.5], [1, 1]]
+		}
+		*/
 		shape: {
 			color: '#c2f',
 			fill: true,
 			border: 1,
 			type: 'triangle',
-			//geometry: [[0, 0], [0, 1], [1, 1]]
+			//geometry: [[0.5, 0.5], [1, 1]]
 		},
+		/*
 		shapeColor: '#c2f',
 		shapeFill: false,
 		shapeBorder: 1,
@@ -32,6 +41,7 @@ myState.createUI = function() {
 		shapeType: 'triangle',
 		shapePoints: [[1, 0], [0, 1], [1, 1]],
 		//background: '#cc9'
+		//*/
 	});
 
 };
@@ -42,10 +52,12 @@ myState.init = function() {
 myState.draw = function() {
 	this.surface.clear();
 	// draw button
-	//this.myShape.draw();
+	this.myShape.draw();
 
-	this.paint.rect(150, 150, 100, 100, 'turquoise', 1);
+	//this.paint.rotate(45, [260, 180]);
+	//this.paint.rectFill(150, 150, 100, 100, 'tomato', 150);
 	//this.paint.roundRectangle(150, 150, 100, 100, 'red', 1, 30);
+	//this.paint.restore();
 };
 
 var myGame = new myst.Game({

@@ -14,7 +14,7 @@
  * @file myst.js
  * @version 0.9.4
  * @author Danijel Durakovic
- * @copyright 2020
+ * @copyright 2021
  */
 
 "use strict";
@@ -183,7 +183,7 @@ myst.pointInRect = function(x, y, rx, ry, rw, rh) {
  * @returns {bool}
  */
 myst.pointInCircle = function(x, y, cx, cy, radius) {
-	return Math.pow(x - cx, 2) + Math.pow(y - cy, 2) < Math.pow(radius, 2);
+	return (x - cx) * (x - cx) + (y - cy) * (y - cy) < radius * radius;
 };
 
 /**
@@ -210,9 +210,16 @@ myst.linesIntersect = function(ax, ay, bx, by, cx, cy, dx, dy) {
 
 /**
  * Returns the distance from point A to point B.
+ *
+ * @param {number} x - Point A x coordinate.
+ * @param {number} y - Point A y coordinate.
+ * @param {number} x - Point B x coordinate.
+ * @param {number} y - Point B y coordinate.
+ * 
+ * @returns {number}
  */
 myst.pointToPointDistance = function(ax, ay, bx, by) {
-	return Math.sqrt(Math.pow(ax - bx, 2) + Math.pow(ay - by, 2));
+	return Math.sqrt((ax - bx) * (ax - bx) + (ay - by) * (ay - by));
 };
 
 /**
@@ -225,19 +232,19 @@ myst.pointToPointDistance = function(ax, ay, bx, by) {
  * @param {number} bx - Point B x coordinate.
  * @param {number} by - Point B y coordinate.
  *
- * @returns {bool}
+ * @returns {number}
  */
 myst.pointToLineDistance = function(x, y, ax, ay, bx, by) {
 	var dx = bx - ax;
 	var dy = by - ay;
-	var l = Math.pow(dx, 2) + Math.pow(dy, 2);
+	var l = dx * dx + dy * dy;
 	if (l == 0) {
 		return 0;
 	}
 	var t = Math.min(1, Math.max(0, (dx * (x - ax) + dy * (y - ay)) / l));
 	var cx = ax + t * dx;
 	var cy = ay + t * dy;
-	return Math.sqrt(Math.pow(x - cx, 2) + Math.pow(y - cy, 2));
+	return Math.sqrt((x - cx) * (x - cx) + (y - cy) * (y - cy));
 };
 
 /**

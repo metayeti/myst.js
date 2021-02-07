@@ -822,7 +822,6 @@ myst.ui = (function() { "use strict";
 			self._events.onClick = C_EMPTYF;
 
 			function _pointInAABB(coords) {
-				//return myst.pointInRect(coords[0], coords[1], self._x, self._y, self._width, self._height);
 				return myst.pointInRect(coords[0], coords[1], self.getRealX(), self.getRealY(), self._width, self._height);
 			}
 
@@ -839,7 +838,6 @@ myst.ui = (function() { "use strict";
 							Math.floor(component.getRealX() + component._width / 2),
 							Math.floor(component.getRealY() + component._height / 2)
 						];
-						//coords = rotatePointAroundPoint(coords, centerPoint, toRadians(-component._angle));
 						coords = myst.rotatePoint(coords[0], coords[1], centerPoint[0], centerPoint[1], -component._angle);
 					}
 				}
@@ -1058,8 +1056,7 @@ myst.ui = (function() { "use strict";
 				triangle: 2,
 				polygon: 3,
 				circle: 4,
-				arc: 5,
-				roundrectangle: 6
+				arc: 5
 			};
 
 			self._recalculateGeometry = false;
@@ -1088,9 +1085,10 @@ myst.ui = (function() { "use strict";
 				var scale_y = self.getHeight();
 				var scale_min = Math.min(scale_x, scale_y);
 				for (var p = 0; p < n_params; p++) {
-					if (self._shapeUnitGeometry[p] instanceof Array) {
-						var px = self._shapeUnitGeometry[p][0] * scale_x;
-						var py = self._shapeUnitGeometry[p][1] * scale_y;
+					var geometry = self._shapeUnitGeometry[p];
+					if (geometry instanceof Array && geometry.length === 2) {
+						var px = geometry[0] * scale_x;
+						var py = geometry[1] * scale_y;
 						// shrink shape by border
 						if (!self._shapeFill || self._shapeFill && self._shapeType === SHAPE_TYPE.line) {
 							px = myst.clamp(px, self._shapeBorder, scale_x - self._shapeBorder);
@@ -1100,19 +1098,15 @@ myst.ui = (function() { "use strict";
 					}
 					else {
 						if (p > 1) {
-							self._shapeRealGeometry.push(self._shapeUnitGeometry[p]);
+							self._shapeRealGeometry.push(geometry);
 							continue;
 						}
-						var ps = self._shapeUnitGeometry[p] * scale_min;
-						//if (!self.shapeFill && !(self._shapeType === SHAPE_TYPE.circle || self._shapeType === SHAPE_TYPE.arc)) {
+						var ps = geometry * scale_min;
 						if (!self.shapeFill && (self._shapeType === SHAPE_TYPE.circle || self._shapeType === SHAPE_TYPE.arc)) {
 							// shrink radius by border
 							ps = myst.clamp(ps * 2, self._shapeBorder, scale_min - self._shapeBorder) / 2;
 						}
 						console.log(ps);
-						//if (!self._shapeFill) {
-							//ps = myst.clamp(px, self._shapeBorder, scale_min - self._shapeBorder);
-						//}
 						self._shapeRealGeometry.push(ps);
 					}
 				}
@@ -1150,7 +1144,7 @@ myst.ui = (function() { "use strict";
 
 				var geometry = self._shapeRealGeometry;
 				var n_params = geometry.length;
-				console.log(geometry);
+
 				switch (self._shapeType) {
 					//
 					// rectangle shape
@@ -1163,7 +1157,8 @@ myst.ui = (function() { "use strict";
 							self.paint.rectFill(
 								geometry[0][0], geometry[0][1],
 								geometry[1][0] - geometry[0][0], geometry[1][1] - geometry[0][1],
-								self._shapeColor
+								self._shapeColor,
+								geometry[2]
 							);
 						}
 						else {
@@ -1171,7 +1166,8 @@ myst.ui = (function() { "use strict";
 								geometry[0][0], geometry[0][1],
 								geometry[1][0] - geometry[0][0], geometry[1][1] - geometry[0][1],
 								self._shapeColor,
-								self._shapeBorder
+								self._shapeBorder,
+								geometry[2]
 							);
 						}
 						break;
@@ -1190,7 +1186,7 @@ myst.ui = (function() { "use strict";
 						);
 						break;
 					//
-					// triangle and polygon shapes
+					// triangle/polygon shape
 					//
 					case SHAPE_TYPE.triangle:
 					case SHAPE_TYPE.polygon:
@@ -1229,26 +1225,8 @@ myst.ui = (function() { "use strict";
 							self.paint.arc(geometry[0][0], geometry[0][1], geometry[1], geometry[2], geometry[3], self._shapeColor, self._shapeBorder);
 						}
 						break;
-					//
-					// rounded rectangle shape
-					//
 				}
 			};
-
-			/**
-			 * Sets shape type.
-			 */
-			/*
-			self.setShapeType = function(shapeType) {
-				if (!shapeType) {
-					shapeType = 'rectangle';
-				}
-				self._shapeType = SHAPE_TYPE[shapeType];
-			};
-
-			// set shape type on init
-			self.setShapeType(fromOption(options.shapeType));
-			*/
 
 			// set shape on init
 			self.setShape(options.shape);
