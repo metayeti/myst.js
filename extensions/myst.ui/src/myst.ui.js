@@ -659,7 +659,7 @@ myst.ui = (function() { "use strict";
 			};
 
 			/**
-			 * Sets component alpha level.
+			 * Sets the component alpha level.
 			 *
 			 * @function setAlpha
 			 * @memberof atomic_components.Base
@@ -670,12 +670,12 @@ myst.ui = (function() { "use strict";
 			 * @returns {object} Self.
 			 */
 			self.setAlpha = function(alpha) {
-				self._alpha = alpha;
+				self._alpha = myst.clamp(alpha, 0, 1);
 				return self;
 			};
 
 			/**
-			 * Returns component alpha level.
+			 * Returns the component alpha level.
 			 *
 			 * @function getAlpha
 			 * @memberof atomic_components.Base
@@ -685,6 +685,19 @@ myst.ui = (function() { "use strict";
 			 */
 			self.getAlpha = function() {
 				return self._alpha;
+			};
+
+			/**
+			 * Returns the component visible state.
+			 */
+			self.isVisible = function() {
+				var component = self;
+				do {
+					if (component._alpha <= 0) {
+						return false;
+					}
+				} while ((component = component._owner));
+				return true;
 			};
 
 			/**
@@ -983,6 +996,19 @@ myst.ui = (function() { "use strict";
 			self.fadeIn = function(options) {
 				self.tween({ alpha: 1 }, options);
 			};
+
+			/**
+			 * Fade a component to specific alpha value.
+			 *
+			 * @param {number} alpha - Alpha value.
+			 * @param {object} [options] - Tween options.
+			 * @param {number} [options.duration=240] - Tween duration in milliseconds.
+			 * @param {function} [options.ease=myst.ease.quadInOut] - Easing function.
+			 * TODO @param {number} [options.delay=0] - Tween delay in milliseconds.
+			 */
+			self.fadeTo = function(alpha, options) {
+				self.tween({ alpha: alpha }, options);
+			};
 		},
 
 		/**
@@ -1082,7 +1108,7 @@ myst.ui = (function() { "use strict";
 			self._pressed = false;
 
 			input.on('press', function(coords) {
-				if (!self.isEnabled()) {
+				if (!self.isEnabled() || !self.isVisible()) {
 					return;
 				}
 				if (_pointIn(coords)) {
@@ -1092,7 +1118,7 @@ myst.ui = (function() { "use strict";
 			}, _eventId).bindTo(self._rootContext);
 
 			input.on('move', function(coords) {
-				if (self._holding && self.isEnabled()) {
+				if (self._holding && self.isEnabled() && self.isVisible()) {
 					var prevPressed = self._pressed;
 					var nextPressed = _pointIn(coords);
 					if (prevPressed !== nextPressed) {
@@ -1107,7 +1133,7 @@ myst.ui = (function() { "use strict";
 			}, _eventId).bindTo(self._rootContext);
 
 			input.on('release', function(coords) {
-				if (self._holding && self.isEnabled()) {
+				if (self._holding && self.isEnabled() && self.isVisible()) {
 					var prevPressed = self._pressed;
 					self._holding = self._pressed = false;
 					if (prevPressed) {
@@ -1124,6 +1150,9 @@ myst.ui = (function() { "use strict";
 					input.off('release', _eventId);
 				}
 			};
+
+			//TODO reset state on enable or disable?
+			//TODO implement clickmasks?
 		},
 
 		/**
