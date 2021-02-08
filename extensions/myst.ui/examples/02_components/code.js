@@ -10,38 +10,56 @@ myState.createUI = function() {
 	// every created component from here on will default to this context
 	myst.ui.setGlobalContext(this);
 
+	// create some labels
+	this.label1 = new myst.ui.Label({
+		x: 10,
+		y: 10,
+		text: 26,
+		autoResize: true
+	});
+
 	// create a shape
 	this.myShape = new myst.ui.Shape({
 		x: 95,
 		y: 95,
 		width: 50,
 		height: 50,
-		//background: 'lightgrey',
-		/*
-		shape: {
-			type: 'rectangle',
-			fill: true,
-			border: 1,
-			geometry: [[0.5, 0.5], [1, 1]]
-		}
-		*/
-		shape: {
+		
+		// set the shape type and appearance with the "shape" entry. we may change shape at runtime
+		// by calling setShape({...}) with one or more of the same parameters as listed below
+		shape: {			
+			// shape color. default is #fff
 			color: '#c2f',
+			// whether or not to fill the shape. when false, only the border is displayed. default is true
 			fill: true,
+			// border thickness. default is 1
 			border: 1,
-			type: 'triangle',
-			//geometry: [[0.5, 0.5], [1, 1]]
+			// type of shape. can be any of the following: rectangle, line, triangle, polygon, circle, arc
+			type: 'rectangle',
+			// shape geometry. this is an array of tuples of coordinates in the unit coordinate system (0 to 1)
+			// different shapes may require different number of coordinates. polygon may have any number of coordinates.
+			geometry: [[0, 0], [1, 1]],
+			// shape radius. only applicable to circle, arc, and rectangle. rectangle may have multiple radii in the form
+			// of an array (one radius for each corner, top-left first, clockwise). these values may be 0 to 1
+			radius: 0,
+			// additional shape parameters in the form of a list of values. only applicable to shapes that require these
+			// (such as arc)
+			//parameters: []
+			// real units flag. set to true if you want to use pixel instead of unit coordinates. default is false
+			realUnits: false
 		},
+		
+		// the following are examples of various shapes we can achieve with the Shape component.
+		
 		/*
-		shapeColor: '#c2f',
-		shapeFill: false,
-		shapeBorder: 1,
-		//shapeType: 'rectangle',
-		//shapePoints: [[0, 0], [1, 1]],
-		shapeType: 'triangle',
-		shapePoints: [[1, 0], [0, 1], [1, 1]],
-		//background: '#cc9'
-		//*/
+		shape: {
+			color: 'coral',
+			fill: false,
+			type: 'triangle',
+			geometry: [[0, 0], [1, 0], [1, 1]]
+		}
+		*/		
+		
 	});
 
 };

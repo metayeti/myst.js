@@ -10,13 +10,16 @@ myState.createUI = function() {
 	// every created component from here on will default to this context
 	myst.ui.setGlobalContext(this);
 
-	// create some frames
+	// create some Frames
+	// a Frame is a container component that can hold other multiple components, including other Frames
 	// we use "debug" and "debugColor" options to help us visualize container geometry
 	this.myFrame = new myst.ui.Frame({
 		width: 265,
 		height: 250,
 		background: '#eee',
 		debug: true,
+		// use the "components" entry to add controls on construction
+		// we may also add controls later by calling myFrame.add({...});
 		components: {
 			myFrame2: new myst.ui.Frame({
 				x: 22,
