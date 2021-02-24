@@ -878,6 +878,7 @@ myst.ui = (function() { "use strict";
 		 *
 		 * @class Debuggable
 		 * @classdesc Adds debug features to component.
+		 * @memberof atomic_components
 		 *
 		 * @param {object} options - Constructor options.
 		 * @param {bool} [options.debug=false] - When set to true, debugging features will be enabled.
@@ -927,6 +928,7 @@ myst.ui = (function() { "use strict";
 		 *
 		 * @class Tweenable
 		 * @classdesc Gives component superpowers.
+		 * @memberof atomic_components.
 		 */
 		Tweenable: function(options, self) {
 
@@ -1263,7 +1265,14 @@ myst.ui = (function() { "use strict";
 	var public_components = {
 
 		/**
-		 * Base component.
+		 * Control component. Extends {@link atomic_components.Base|Base},
+		 *   {@link atomic_components.Debuggable|Debuggable}, {@link atomic_components.Tweenable|Tweenable}.
+		 *
+		 * @class Control
+		 * @classdesc A basic standalone control component.
+		 * @memberof public_components
+		 *
+		 * @param {object} options - Constructor options.
 		 */
 		Control: function(options, self) {
 			self = self || this;
@@ -1309,10 +1318,11 @@ myst.ui = (function() { "use strict";
 		},
 
 		/**
-		 * Shape component.
+		 * Shape control. Extends {@link public_components.Control|Control}.
 		 *
 		 * @class Shape
-		 * @classdesc A component that may display one of several shapes.
+		 * @classdesc A control that may display one of several shapes.
+		 * @memberof public_components
 		 *
 		 * @param {object} options - Constructor options.
 		 * @param {object} options.shape - Shape options.

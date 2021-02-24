@@ -29,8 +29,8 @@ myState.init = function() {
 // draw the screen
 myState.draw = function() {
 	this.surface.clear();
-	this.paint.text('Type something!', 10, 12, '#00f', 'left', '15px Arial');
-	this.paint.rectFill(10, 40, 380, 1, '#00f');
+	this.paint.text('Type something!', 10, 14, '#555', 'left', 'bold 14px sans-serif');
+	this.paint.rectFill(10, 40, 380, 1, '#555');
 	var displayText = this.strBuff;
 	if (this.showCaret)
 		displayText += '_';

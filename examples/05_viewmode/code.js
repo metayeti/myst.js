@@ -85,10 +85,22 @@ var myGame = new myst.Game({
 myGame.setViewMode('center');
 
 // toggle between view modes
+var selectViewElement = document.querySelector('#selectview');
+var viewExplanationElement = document.querySelector('#viewmode-explanation');
+
+function updateSelectExplanation(optionElement) {
+	var info = optionElement.getAttribute('data-info');
+	viewExplanationElement.innerText = info;
+}
+
 selectview.addEventListener('change', function() {
-	var mode = selectview.options[selectview.selectedIndex].text;
+	var optionElement = selectViewElement.options[selectview.selectedIndex];
+	var mode = optionElement.text;
 	myGame.setViewMode(mode);
+	updateSelectExplanation(optionElement);
 });
+
+updateSelectExplanation(selectview.options[0]);
 
 // run game on window load
 window.addEventListener('load', myGame.run);

@@ -11,7 +11,7 @@ myState.createUI = function() {
 	myst.ui.setGlobalContext(this);
 
 	// create some Frames
-	// a Frame is a container component that can hold other multiple components, including other Frames
+	// a Frame is a container component that can hold multiple components, including other Frames
 	// we use "debug" and "debugColor" options to help us visualize container geometry
 	this.myFrame = new myst.ui.Frame({
 		width: 265,

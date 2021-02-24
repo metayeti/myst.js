@@ -2,21 +2,32 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Myst.js Example 05 - View Mode</title>
+	<title>myst.js Example 05</title>
 	<link rel="stylesheet" href="style.css">
 </head>
 <body>
-	<div id="header">
-		<h2>Set View Mode:</h2>
-		<select id="selectview">
-			<option selected>Center</option>
-			<option>Scale-Fit</option>
-			<option>Scale-Stretch</option>
-			<option>Expand</option>
-		</select>
-	</div>
 	<div id="myst-container">
+		<div class="info">myst.js example | <span class="hl">05_viewmode</span></div>
 		<canvas id="myst-example" width="400" height="300"></canvas>
+		<div class="description">This example demonstrates the view mode feature. Select an option below to see the effects.</div>
+		<a href="../04_input/index.html" class="nav-btn back">
+			<span class="icon"></span>
+			<span class="label">Previous</span>
+		</a>
+		<a href="../06_text/index.html" class="nav-btn next">
+			<span class="icon"></span>
+			<span class="label">Next</span>
+		</a>
+		<div class="viewmode-selection">
+			<h2>Set View Mode</h2>
+			<select id="selectview">
+				<option selected data-info="This mode centers canvas inside a container.">center</option>
+				<option data-info="This mode scales canvas to container size, preserving aspect ratio.">scale-fit</option>
+				<option data-info="This mode scales canvas to container size fully.">scale-stretch</option>
+				<option data-info="This mode resizes canvas to the size of container. Modifies canvas dimensions.">expand</option>
+			</select>
+			<div class="explanation" id="viewmode-explanation"></div>
+		</div>
 	</div>
 	<script src="../../src/myst.js"></script>
 	<script src="code.js"></script>
