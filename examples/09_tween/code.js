@@ -38,16 +38,16 @@ function TweenableBox(state, options) {
 	}
 
 	function nextTween() {
+		enabled = false;
 		animationStage += 1;
 		if (animationStage > 4) {
 			animationStage = 1;
 		}
-		enabled = false;
 		switch (animationStage) {
 			case 1:
 				infoText = 'ease.linear';
-				//            from  to     duration    set_f   done_f      ease_f          proc_f
-				//              |   |         |          |       |           |               |
+				//            from   to    duration    set_f   done_f      ease_f          proc_f
+				//              |    |        |          |       |           |               |
 				(new myst.Tween(0, 190, tweenDuration, setY, tweenDone, myst.ease.linear, tweenProc)).start();
 				break;
 			case 2:
@@ -86,10 +86,6 @@ myState.init = function() {
 	this.box = new TweenableBox(this, { // we pass the state for context
 		graphics: myAssets.graphics.box
 	});
-	// get the sprite from our loaded assets
-	//this.sprite = myAssets.graphics.sprite;
-	// alternatively, we can fetch through the asset loader
-	//this.sprite = myLoader.get('graphics.sprite');
 };
 
 myState.draw = function() {

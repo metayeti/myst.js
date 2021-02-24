@@ -75,7 +75,7 @@ window.addEventListener('load', function() {
 	// load assets
 	myAssets = myLoader.load({
 		assets: myAssets,
-		done: myGame.run // run game when all is loaded
+		done: myGame.run // run game when all assets are loaded
 	});
 });
 

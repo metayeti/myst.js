@@ -165,7 +165,7 @@ body {
 	width: 500px;
 	left: 0;
 	right: 0;
-	top: 450px;
+	top: 420px;
 	margin: 0 auto;
 }
 .viewmode-selection h2 {
@@ -192,7 +192,7 @@ body {
 .viewmode-selection .explanation {
 	position: absolute;
 	width: 400px;
-	height: 100px;
+	height: 55px;
 	top: 110px;
 	line-height: 20px;
 	left: 0;
