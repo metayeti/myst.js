@@ -94,10 +94,10 @@ myState.createUI = function() {
 		height: 50,
 		shape: {
 			type: 'circle',
-			color: 'green',
+			color: 'seagreen',
 			//geometry: [[0.5, 0.5]], // [0.5, 0.5] is the default geometry for circle and arc (center point)
 			fill: false,
-			border: 5
+			border: 12
 		}
 	});
 	
@@ -112,6 +112,19 @@ myState.createUI = function() {
 			fill: false,
 			parameters: [90, 360], // start and end angles in degrees
 			border: 10
+		}
+	});
+	
+	this.shape7 = new myst.ui.Shape({
+		x: 100,
+		y: 150,
+		width: 50,
+		height: 50,
+		shape: {
+			type: 'pie',
+			color: 'dodgerblue',
+			parameters: [-90, 180],
+			fill: false
 		}
 	});
 
@@ -130,6 +143,7 @@ myState.draw = function() {
 	this.shape4.draw();
 	this.shape5.draw();
 	this.shape6.draw();
+	this.shape7.draw();
 
 	//this.paint.rotate(45, [260, 180]);
 	//this.paint.rectFill(150, 150, 100, 100, 'tomato', 150);

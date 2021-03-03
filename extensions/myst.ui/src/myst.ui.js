@@ -1457,14 +1457,21 @@ var public_components = {
 		 */
 		function getDefaultShapeGeometry() {
 			switch (self._shapeType) {
-				case SHAPE_TYPE.rectangle: return [[0, 0], [1, 1]];
-				case SHAPE_TYPE.line: return [[0, 0], [1, 0]];
-				case SHAPE_TYPE.triangle: return [[0, 1], [0.5, 0], [1, 1]];
-				case SHAPE_TYPE.polygon: return [[0, 1], [0.5, 0], [1, 1]];
-				case SHAPE_TYPE.circle: return [[0.5, 0.5]];
-				case SHAPE_TYPE.arc: return [[0.5, 0.5]];
+				case SHAPE_TYPE.rectangle:
+					return [[0, 0], [1, 1]];
+				case SHAPE_TYPE.line:
+					return [[0, 0], [1, 0]];
+				case SHAPE_TYPE.triangle:
+					return [[0, 1], [0.5, 0], [1, 1]];
+				case SHAPE_TYPE.polygon:
+					return [[0, 1], [0.5, 0], [1, 1]];
+				case SHAPE_TYPE.circle:
+				case SHAPE_TYPE.arc:
+				case SHAPE_TYPE.pie:
+					return [[0.5, 0.5]];
+				default:
+					return [];
 			}
-			return [];
 		}
 
 		/**
@@ -1476,6 +1483,7 @@ var public_components = {
 			switch (self._shapeType) {
 				case SHAPE_TYPE.circle:
 				case SHAPE_TYPE.arc:
+				case SHAPE_TYPE.pie:
 					return 0.5;
 				default:
 					return 0;
@@ -1489,9 +1497,12 @@ var public_components = {
 		 */
 		function getDefaultShapeParameters() {
 			switch (self._shapeType) {
-				case SHAPE_TYPE.arc: return [-90, 0];
+				case SHAPE_TYPE.arc:
+				case SHAPE_TYPE.pie:
+					return [-90, 0];
+				default:
+					return [];
 			}
-			return [];
 		}
 
 		/**
@@ -1764,7 +1775,9 @@ var public_components = {
 				}
 				else {
 					var ps = radius * scale_min;
-					if (shapeType === SHAPE_TYPE.circle || shapeType === SHAPE_TYPE.arc) {
+					if (!shapeFill && (shapeType === SHAPE_TYPE.circle ||
+							shapeType === SHAPE_TYPE.arc ||
+							shapeType == SHAPE_TYPE.pie)) {
 						ps = myst.clamp(ps * 2, shapeBorder, scale_min - shapeBorder) / 2;
 					}
 					return ps;
@@ -1845,6 +1858,18 @@ var public_components = {
 					}
 					else {
 						self.paint.arc(geometry[0][0], geometry[0][1], shapeRadius, shapeParameters[0], shapeParameters[1], shapeColor, shapeBorder);
+					}
+					break;
+				case SHAPE_TYPE.pie:
+					if (n_points < 1) {
+						return;
+					}
+					console.log(shapeParameters);
+					if (self._shapeFill) {
+						self.paint.sectorFill(geometry[0][0], geometry[0][1], shapeRadius, shapeParameters[0], shapeParameters[1], shapeColor);
+					}
+					else {
+						self.paint.sector(geometry[0][0], geometry[0][1], shapeRadius, shapeParameters[0], shapeParameters[1], shapeColor, shapeBorder);
 					}
 					break;
 			}
