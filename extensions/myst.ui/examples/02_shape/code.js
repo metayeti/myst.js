@@ -20,7 +20,7 @@ myState.createUI = function() {
 
 	// create some shapes
 	this.shape1 = new myst.ui.Shape({
-		x: 20,
+		x: 30,
 		y: 60,
 		width: 50,
 		height: 50,
@@ -28,15 +28,15 @@ myState.createUI = function() {
 		// set the shape type and appearance with the "shape" entry. we may change shape at runtime
 		// by calling setShape({...}) with one or more of the same parameters as listed below
 		shape: {			
-			// shape color. default is #fff
+			// shape color. default is #000
 			color: '#c2f',
 			// whether or not to fill the shape. when false, only the border is displayed. default is true
-			fill: true,
+			fill: false,
 			// border thickness. default is 1
 			border: 1,
 			// type of shape. can be any of the following: rectangle, line, triangle, polygon, circle, arc
 			type: 'rectangle',
-			// shape geometry. this is an array of tuples of coordinates in the unit coordinate system (0 to 1)
+			// shape geometry. this is an array of pairs of coordinates in the unit coordinate system (0 to 1)
 			// different shapes may require different number of coordinates. polygon may have any number of coordinates.
 			geometry: [[0, 0], [1, 1]],
 			// shape radius. only applicable to circle, arc, and rectangle. rectangle may have multiple radii in the form
@@ -51,7 +51,7 @@ myState.createUI = function() {
 	});
 
 	this.shape2 = new myst.ui.Shape({
-		x: 90,
+		x: 100,
 		y: 60,
 		width: 50,
 		height: 50,
@@ -62,7 +62,7 @@ myState.createUI = function() {
 	});
 
 	this.shape3 = new myst.ui.Shape({
-		x: 160,
+		x: 170,
 		y: 60,
 		width: 50,
 		height: 50,
@@ -75,15 +75,43 @@ myState.createUI = function() {
 	});
 
 	this.shape4 = new myst.ui.Shape({
-		x: 230,
+		x: 240,
 		y: 60,
 		width: 50,
 		height: 50,
 		shape: {
 			type: 'polygon',
+			color: 'tomato',
+			geometry: [[0.3, 0], [0.7, 0], [1, 0.3], [1, 0.7], [0.7, 1], [0.3, 1], [0, 0.7], [0, 0.3]],
+			fill: true
+		}
+	});
+
+	this.shape5 = new myst.ui.Shape({
+		x: 310,
+		y: 60,
+		width: 50,
+		height: 50,
+		shape: {
+			type: 'circle',
+			color: 'green',
+			//geometry: [[0.5, 0.5]], // [0.5, 0.5] is the default geometry for circle and arc (center point)
+			fill: false,
+			border: 5
+		}
+	});
+	
+	this.shape6 = new myst.ui.Shape({
+		x: 30,
+		y: 150,
+		width: 50,
+		height: 50,
+		shape: {
+			type: 'arc',
 			color: 'orange',
-			fill: true,
-			geometry: [[0.25, 0], [0.75, 0], [1, 0.5], [0.75, 1], [0.25, 1], [0, 0.5]]
+			fill: false,
+			parameters: [90, 360], // start and end angles in degrees
+			border: 10
 		}
 	});
 
@@ -95,10 +123,13 @@ myState.init = function() {
 myState.draw = function() {
 	this.surface.clear();
 	// draw shapes
+	
 	this.shape1.draw();
 	this.shape2.draw();
 	this.shape3.draw();
 	this.shape4.draw();
+	this.shape5.draw();
+	this.shape6.draw();
 
 	//this.paint.rotate(45, [260, 180]);
 	//this.paint.rectFill(150, 150, 100, 100, 'tomato', 150);

@@ -12,7 +12,7 @@
 
 /**
  * @file myst.js
- * @version 0.9.4
+ * @version 0.9.4(*)
  * @author Danijel Durakovic
  * @copyright 2021
  */
@@ -1454,11 +1454,57 @@ myst.Render = function(ctx) {
 		color = (color === undefined) ? '#fff' : color;
 		start *= Math.PI / 180;
 		end *= Math.PI / 180;
-		//ctx.strokeStyle = color;
 		ctx.fillStyle = color;
-		//ctx.lineWidth = width;
 		ctx.beginPath();
 		ctx.arc(x, y, rad, start, end);
+		ctx.closePath();
+		ctx.fill();
+	};
+
+	/**
+	 * Renders a circle sector.
+	 *
+	 * @param {number} x - Sector x coordinate.
+	 * @param {number} y - Sector y coordinate.
+	 * @param {number} rad - Sector radius.
+	 * @param {number} start - Sector start angle in degrees.
+	 * @param {number} end - Sector end angle in degrees.
+	 * @param {string} [color="#fff"] - Sector color.
+	 * @param {number} [width=1] - Sector line width.
+	 */
+	this.sector = function(x, y, rad, start, end, color, width) {
+		color = (color === undefined) ? '#fff' : color;
+		width = (width === undefined) ? 1 : width;
+		start *= Math.PI / 180;
+		end *= Math.PI / 180;
+		ctx.strokeStyle = color;
+		ctx.lineWidth = width;
+		ctx.beginPath();
+		ctx.moveTo(x, y);
+		ctx.arc(x, y, rad, start, end);
+		ctx.lineTo(x, y);
+		ctx.stroke();
+	};
+
+	/**
+	 * Renders a filled circle sector.
+	 *
+	 * @param {number} x - Sector x coordinate.
+	 * @param {number} y - Sector y coordinate.
+	 * @param {number} rad - Sector radius.
+	 * @param {number} start - Sector start angle in degrees.
+	 * @param {number} end - Sector end angle in degrees.
+	 * @param {string} [color="#fff"] - Sector fill color.
+	 */
+	this.sectorFill = function(x, y, rad, start, end, color) {
+		color = (color === undefined) ? '#fff' : color;
+		start *= Math.PI / 180;
+		end *= Math.PI / 180;
+		ctx.fillStyle = color;
+		ctx.beginPath();
+		ctx.moveTo(x, y);
+		ctx.arc(x, y, rad, start, end);
+		ctx.lineTo(x, y);
 		ctx.closePath();
 		ctx.fill();
 	};
