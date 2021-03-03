@@ -51,6 +51,11 @@ function DraggableSquare(state) {
 		// stop dragging
 		dragging = false;
 	}).bindTo(state);
+	
+	// stop dragging when window loses focus mid-drag (for example when ctrl+tab is pressed);
+	window.onblur = function() {
+		dragging = false;
+	};
 }
 
 // create the main state

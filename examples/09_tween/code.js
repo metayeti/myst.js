@@ -13,14 +13,14 @@ function TweenableBox(state, options) {
 
 	var animationStage = 0;
 
-	var tweenDuration = 1000; // tween duration in milliseconds
+	var tweenDuration = 1500; // tween duration in milliseconds
 	var tweenProc = Math.floor; // tween value post-processing function (we use floor so we only get whole numbers)
 
 	var infoText = '';
 
 	this.draw = function() {
 		state.paint.graphics(graphics, x, y);
-		state.paint.text(infoText, 200, 150, '#c0c', 'center', 'bold 13px sans-serif');
+		state.paint.text(infoText, 200, 150, 'coral', 'center', 'bold 13px sans-serif');
 	};
 
 	function tweenDone() {

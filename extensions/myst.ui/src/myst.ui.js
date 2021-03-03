@@ -130,11 +130,8 @@ myst.ui = (function() { "use strict";
 			// "onRemoved" is triggered when the component is removed from a container
 			self._events.onRemoved = function() { invokeEvent(options.onRemoved, self); };
 			// "onResized" is triggered when the component changes size
-			self._events.onResized = function() {
-				self._requestRepaint = true;
-				invokeEvent(options.onResized, self);
-			};
-/*
+			self._events.onResized = function() { invokeEvent(options.onResized, self); };
+	/*
 				onEnabled: function() { invokeEvent(options.onEnabled, self); },
 				onDisabled: function() { invokeEvent(options.onDisabled, self); },
 				onMoved: function() { invokeEvent(options.onMoved, self); },
@@ -929,6 +926,8 @@ myst.ui = (function() { "use strict";
 		 * @class Tweenable
 		 * @classdesc Gives component superpowers.
 		 * @memberof atomic_components.
+		 *
+		 * @param {object} options - Constructor options.
 		 */
 		Tweenable: function(options, self) {
 
@@ -945,12 +944,16 @@ myst.ui = (function() { "use strict";
 			/**
 			 * Performs a tween.
 			 *
+			 * @function tween
+			 * @memberof atomic_components.Tweenable
+			 * @instance
+			 *
 			 * @param {object} properties - Collection of properties and corresponding values to tween.
 			 * @param {object} [options] - Tween options.
 			 * @param {number} [options.duration=240] - Tween duration in milliseconds.
 			 * @param {function} [options.ease=myst.ease.quadInOut] - Easing function.
-			 * TODO @param {number} [options.delay=0] - Tween delay in milliseconds.
-			 * TODO @param {function} [options.onDone] - Is called when tween is done animating.
+			 * @param {number} [options.delay=0] - TODO Tween delay in milliseconds.
+			 * @param {function} [options.onDone] - TODO Is called when tween is done animating.
 			 */
 			self.tween = function(properties, options) {
 				options = options || {};
@@ -978,10 +981,14 @@ myst.ui = (function() { "use strict";
 			/**
 			 * Fade out a component.
 			 *
+			 * @function fadeOut
+			 * @memberof atomic_components.Tweenable
+			 * @instance
+			 *
 			 * @param {object} [options] - Tween options.
 			 * @param {number} [options.duration=240] - Tween duration in milliseconds.
 			 * @param {function} [options.ease=myst.ease.quadInOut] - Easing function.
-			 * TODO @param {number} [options.delay=0] - Tween delay in milliseconds.
+			 * @param {number} [options.delay=0] - TODO Tween delay in milliseconds.
 			 */
 			self.fadeOut = function(options) {
 				self.tween({ alpha: 0 }, options);
@@ -990,10 +997,14 @@ myst.ui = (function() { "use strict";
 			/**
 			 * Fade in a component.
 			 *
+			 * @function fadeIn
+			 * @memberof atomic_components.Tweenable
+			 * @instance
+			 *
 			 * @param {object} [options] - Tween options.
 			 * @param {number} [options.duration=240] - Tween duration in milliseconds.
 			 * @param {function} [options.ease=myst.ease.quadInOut] - Easing function.
-			 * TODO @param {number} [options.delay=0] - Tween delay in milliseconds.
+			 * @param {number} [options.delay=0] - TODO Tween delay in milliseconds.
 			 */
 			self.fadeIn = function(options) {
 				self.tween({ alpha: 1 }, options);
@@ -1001,6 +1012,10 @@ myst.ui = (function() { "use strict";
 
 			/**
 			 * Fade a component to specific alpha value.
+			 *
+			 * @function fadeTo
+			 * @memberof atomic_components.Tweenable
+			 * @instance
 			 *
 			 * @param {number} alpha - Alpha value.
 			 * @param {object} [options] - Tween options.
@@ -1018,6 +1033,8 @@ myst.ui = (function() { "use strict";
 		 *
 		 * @class Graphics
 		 * @classdesc Displays graphics.
+		 *
+		 * @memberof atomic_components
 		 *
 		 * @param {object} options - Constructor options.
 		 * @param {object} options.texture - Component graphics.
@@ -1037,6 +1054,8 @@ myst.ui = (function() { "use strict";
 		 *
 		 * @class Tile
 		 * @classdesc Displays a tile from a tileset.
+		 *
+		 * @memberof atomic_components
 		 *
 		 * @param {object} options - Constructor options.
 		 * @param {object} options.texture - Component graphics.
@@ -1066,6 +1085,7 @@ myst.ui = (function() { "use strict";
 		 *
 		 * @class AbstractButton
 		 * @classdesc Defines a button abstraction with corresponding events.
+		 * @memberof atomic_components
 		 *
 		 * @param {object} options - Constructor options.
 		 */
@@ -1162,6 +1182,7 @@ myst.ui = (function() { "use strict";
 		 *
 		 * @class Container
 		 * @classdesc Defines a container abstraction.
+		 * @memberof atomic_components
 		 *
 		 * @param {object} options - Constructor options.
 		 * @param {object} [options.components] - Components to add to container.
@@ -1175,6 +1196,10 @@ myst.ui = (function() { "use strict";
 
 			/**
 			 * Adds components to the container.
+			 *
+			 * @function enable
+			 * @memberof atomic_components.Container
+			 * @instance
 			 *
 			 * @param {object} components - Components to be added.
 			 */
@@ -1201,6 +1226,10 @@ myst.ui = (function() { "use strict";
 			/**
 			 * Get the list of components.
 			 *
+			 * @function getComponents
+			 * @memberof atomic_components.Container
+			 * @instance
+			 *
 			 * @returns {array}
 			 */
 			self.getComponents = function() {
@@ -1210,6 +1239,10 @@ myst.ui = (function() { "use strict";
 			/**
 			 * Get the list of component keys.
 			 *
+			 * @function getComponentKeys
+			 * @memberof atomic_components.Container
+			 * @instance
+			 *
 			 * @returns {array}
 			 */
 			self.getComponentKeys = function() {
@@ -1217,7 +1250,29 @@ myst.ui = (function() { "use strict";
 			};
 
 			/**
+			 * Remove specific component from the container.
+			 *
+			 * @function remove
+			 * @memberof atomic_components.Container
+			 * @instance
+			 *
+			 * @param {string} componentKey - Key of component to remove.
+			 *
+			 * @return {bool} Removal success.
+			 */
+			self.remove = function(componentKey) {
+				//TODO
+				return false;
+			};
+
+			/**
 			 * Remove all components from the container.
+			 *
+			 * @function removeAll
+			 * @memberof atomic_components.Container
+			 * @instance
+			 *
+			 * @returns {object} Self.
 			 */
 			self.removeAll = function() {
 				self._componentList.forEach(function(componentObject) {
@@ -1245,7 +1300,7 @@ myst.ui = (function() { "use strict";
 				return self;
 			};
 
-			// add components from options
+			// initialize Container
 			if (options.components) {
 				self.add(options.components);
 			}
@@ -1269,7 +1324,7 @@ myst.ui = (function() { "use strict";
 		 *   {@link atomic_components.Debuggable|Debuggable}, {@link atomic_components.Tweenable|Tweenable}.
 		 *
 		 * @class Control
-		 * @classdesc A basic standalone control component.
+		 * @classdesc A plain control component.
 		 * @memberof public_components
 		 *
 		 * @param {object} options - Constructor options.
@@ -1289,7 +1344,14 @@ myst.ui = (function() { "use strict";
 		},
 
 		/**
-		 * Frame component.
+		 * Frame control. Extends {@link public_components.Control|Control},
+		 *   {@link atomic_components.Container|Container}
+		 *
+		 * @class Frame
+		 * @classdesc This component can be used as a container for other components.
+		 * @memberof public_components
+		 *
+		 * @param {object} options - Constructor options.
 		 */
 		Frame: function(options, self) {
 			self = self || this;
@@ -1345,59 +1407,354 @@ myst.ui = (function() { "use strict";
 			self._type = 'Shape';
 
 			var SHAPE_TYPE = {
-				rectangle: 0,
-				line: 1,
-				triangle: 2,
-				polygon: 3,
-				circle: 4,
-				arc: 5
+				rectangle: 1,
+				line: 2,
+				triangle: 3,
+				polygon: 4,
+				circle: 5,
+				arc: 6
 			};
 
-			self._shapeColor = '#000';
-			self._shapeFill = false;
-			self._shapeBorder = 1;
-			self._shapeGeometry = [];
-			self._shapeRadius = 0;
-			self._shapeParameters = [];
-			self._shapeType = SHAPE_TYPE.rectangle;
-			self._shapeRealUnits = false;
+			self._shapeRealUnits = null;
+			self._shapeColor = null;
+			self._shapeFill = null;
+			self._shapeBorder = null;
+			self._shapeType = null;
+			self._shapeGeometry = null;
+			self._shapeRadius = null;
+			self._shapeParameters = null;
 
+			var defaultShapeRealUnits = false;
+			var defaultShapeColor = '#000';
+			var defaultShapeFill = true;
+			var defaultShapeBorder = 1;
+			var defaultShapeType = SHAPE_TYPE.rectangle;
 
-			self.setShapeColor = function(shapeColor) {
+			function getDefaultShapeGeometry() {
+				switch (self._shapeType) {
+					case SHAPE_TYPE.rectangle: return [[0, 0], [1, 1]];
+					case SHAPE_TYPE.line: return [[0, 0], [1, 0]];
+					case SHAPE_TYPE.triangle: return [[0, 1], [0.5, 0], [1, 1]];
+					case SHAPE_TYPE.polygon: return [[0, 1], [0.5, 0], [1, 1]];
+					case SHAPE_TYPE.circle: return [[0.5, 0.5]];
+					case SHAPE_TYPE.arc: return [[0.5, 0.5]];
+				}
+			}
+
+			function getDefaultShapeRadius() {
+				switch (self._shapeType) {
+					case SHAPE_TYPE.circle:
+					case SHAPE_TYPE.arc:
+						return 0.5;
+					default:
+						return 0;
+				}
+			}
+
+			function getDefaultShapeParameters() {
+				switch (self._shapeType) {
+				}
+			}
+
+			/**
+			 * Sets shape color.
+			 *
+			 * @function setShapeColor
+			 * @memberof public_components.Shape
+			 * @instance
+			 *
+			 * @param {string} color - Shape color.
+			 *
+			 * @returns {object} Self.
+			 */
+			self.setShapeColor = function(color) {
+				self._shapeColor = color;
 				self._requestRepaint = true;
 			};
 
-			self.setShapeFill = function(shapeFill) {
-				self._shapeFill = Boolean(shapeFill);
+			/**
+			 * Sets shape fill.
+			 *
+			 * @function setShapeFill
+			 * @memberof public_components.Shape
+			 * @instance
+			 *
+			 * @param {bool} fill - Controls whether full shape is filled, or just the outlines.
+			 *
+			 * @returns {object} Self.
+			 */
+			self.setShapeFill = function(fill) {
+				self._shapeFill = Boolean(fill);
 				self._requestRepaint = true;
 			};
 
-			self.setShapeBorder = function(shapeBorder) {
+			/**
+			 * Sets shape border thickness.
+			 *
+			 * @function setShapeBorder
+			 * @memberof public_components.Shape
+			 * @instance
+			 *
+			 * @param {number} border - Shape border thickness.
+			 *
+			 * @returns {object} Self.
+			 */
+			self.setShapeBorder = function(border) {
+				self._shapeBorder = Mat.max(1, parseInt(border, 10));
 				self._requestRepaint = true;
 			};
 
-			self.setShapeGeometry = function(shapeGeometry) {
+			/**
+			 * Sets shape type.
+			 *
+			 * @function setShapeType
+			 * @memberof public_components.Shape
+			 * @instance
+			 *
+			 * @param {string} type
+			 *
+			 * @returns {object} Self.
+			 */
+			self.setShapeType = function(type) {
+				self._shapeType = SHAPE_TYPE[type] || defaultShapeType;
 				self._requestRepaint = true;
 			};
 
-			self.setShapeRadius = function(shapeRadius) {
+			/**
+			 * Sets shape geometry.
+			 *
+			 * @function setShapeGeometry
+			 * @memberof public_components.Shape
+			 * @instance
+			 *
+			 * @param {array} geometry
+			 *
+			 * @returns {object} Self.
+			 */
+			self.setShapeGeometry = function(geometry) {
 				self._requestRepaint = true;
 			};
 
-			self.setShapeParameters = function(shapeParameters) {
+			/**
+			 * Sets shape radius.
+			 *
+			 * @function setShapeRadius
+			 * @memberof public_components.Shape
+			 * @instance
+			 *
+			 * @param {number} radius
+			 *
+			 * @returns {object} Self.
+			 */
+			self.setShapeRadius = function(radius) {
+				self._shapeRadius = radius;
 				self._requestRepaint = true;
 			};
 
-			self.setShapeType = function(shapeType) {
+			/**
+			 * Sets shape parameters.
+			 *
+			 * @function setShapeParameters
+			 * @memberof public_components.Shape
+			 * @instance
+			 *
+			 * @param {array} parameters
+			 *
+			 * @returns {object} Self.
+			 */
+			self.setShapeParameters = function(parameters) {
+				self._shapeParameters = parameters;
 				self._requestRepaint = true;
 			};
 
+			/**
+			 * Sets shape real units.
+			 *
+			 * @function setShapeRealUnits
+			 * @memberof public_components.Shape
+			 * @instance
+			 *
+			 * @param {bool} shapeRealUnits
+			 *
+			 * @returns {object} Self.
+			 */
 			self.setShapeRealUnits = function(shapeRealUnits) {
 				self._shapeRealUnits = Boolean(shapeRealUnits);
 				self._requestRepaint = true;
 			};
 
-			self.setShape = function(shape) {
+			/**
+			 * Sets shape.
+			 *
+			 * @function setShape
+			 * @memberof public_components.Shape
+			 * @instance
+			 *
+			 * @param {object} options - Constructor options.
+			 * @param {bool} [options.realUnits=false]
+			 * @param {string} [options.color='#000']
+			 * @param {bool} [options.fill=true]
+			 * @param {number} [options.border]
+			 * @param {string} [options.type='rectangle']
+			 * @param {array} [options.geometry]
+			 * @param {number} [options.radius]
+			 * @param {array} [options.parameters]
+			 *
+			 * @returns {object} Self.
+			 */
+			self.setShape = function(shapeOptions) {
+				shapeOptions = shapeOptions || {};
+				self._requestRepaint = true;
+				// shape real units
+				if (shapeOptions.realUnits !== undefined) {
+					self._shapeRealUnits = Boolean(shapeOptions.realUnits);
+				}
+				else if (self._shapeRealUnits === null) {
+					self._shapeRealUnits = defaultShapeRealUnits;
+				}
+				// shape color
+				if (shapeOptions.color !== undefined) {
+					self._shapeColor = shapeOptions.color;
+				}
+				else if (self._shapeColor === null) {
+					self._shapeColor = defaultShapeColor;
+				}
+				// shape fill
+				if (shapeOptions.fill !== undefined) {
+					self._shapeFill = Boolean(shapeOptions.fill);
+				}
+				else if (self._shapeFill === null) {
+					self._shapeFill = defaultShapeFill;
+				}
+				// shape border
+				if (shapeOptions.border !== undefined) {
+					self._shapeBorder = Math.max(0, parseInt(shapeOptions.border, 10));
+				}
+				else if (self._shapeBorder === null) {
+					self._shapeBorder = defaultShapeBorder;
+				}
+				self._shapeBorder = (shapeOptions.border !== undefined) ? parseInt(shapeOptions.border, 10) : defaultShapeBorder;
+				// shape type
+				var previousShapeType = self._shapeType;
+				self._shapeType = SHAPE_TYPE[shapeOptions.type] || defaultShapeType;
+				var hasShapeChanged = self._shapeType !== previousShapeType;
+				// shape geometry
+				if (shapeOptions.geometry !== undefined) {
+					self._shapeGeometry = shapeOptions.geometry;
+				}
+				else if (self._shapeGeometry === null || hasShapeChanged) {
+					self._shapeGeometry = getDefaultShapeGeometry();
+				}
+				// shape radius
+				if (shapeOptions.radius !== undefined) {
+					self._shapeRadius = shapeOptions.radius;
+				}
+				else if (self._shapeRadius === null) {
+					self._shapeRadius = getDefaultShapeRadius();
+				}
+				console.log(self._shapeRadius);
+				// shape parameters
+				if (shapeOptions.parameters !== undefined) {
+					self._shapeParameters = shapeOptions.parameters;
+				}
+				else if (self._shapeParameters === null) {
+					self._shapeParameters = getDefaultShapeParameters();
+				}
+				return self;
+			};
+
+			self._events.onRepaint = function() { // @override
+				if (!self._shapeGeometry instanceof Array) {
+					return;
+				}
+				var n_points = self._shapeGeometry.length;
+				var shapeType = self._shapeType;
+				var shapeFill = self._shapeFill;
+				var shapeColor = self._shapeColor;
+				var shapeBorder = self._shapeBorder;
+				var shapeRadius = self._shapeRadius;
+
+				/**
+				 * Translate unit geometry to pixels.
+				 */
+				function translateUnitGeometry(geometry) {
+					var realGeometry = [];
+					var scale_x = self.getWidth();
+					var scale_y = self.getHeight();
+					var scale_min = Math.min(scale_x, scale_y);
+					for (var p = 0; p < n_points; p++) {
+						var pointUnitCoordinates = geometry[p];
+						if (pointUnitCoordinates instanceof Array && pointUnitCoordinates.length === 2) {
+							var px = pointUnitCoordinates[0] * scale_x;
+							var py = pointUnitCoordinates[1] * scale_y;
+							if (!shapeFill || shapeFill && shapeType === SHAPE_TYPE.line) {
+								// shrink shape by border
+								px = myst.clamp(px, shapeBorder, scale_x - shapeBorder);
+								py = myst.clamp(py, shapeBorder, scale_y - shapeBorder);
+							}
+							realGeometry.push([px, py]);
+						}
+					}
+					return realGeometry;
+				};
+
+				var geometry = (self._shapeRealUnits) ? self._shapeGeometry : translateUnitGeometry(self._shapeGeometry);
+
+				switch (shapeType) {
+					case SHAPE_TYPE.rectangle:
+						if (n_points < 2) {
+							return;
+						}
+						if (shapeFill) {
+							self.paint.rectFill(
+								geometry[0][0], geometry[0][1],
+								geometry[1][0] - geometry[0][0], geometry[1][1] - geometry[0][1],
+								shapeColor,
+								shapeRadius
+							);
+						}
+						else {
+							self.paint.rect(
+								geometry[0][0], geometry[0][1],
+								geometry[1][0] - geometry[0][0], geometry[1][1] - geometry[0][1],
+								shapeColor,
+								shapeBorder,
+								shapeRadius
+							);
+						}
+						break;
+					case SHAPE_TYPE.line:
+						if (n_points < 2) {
+							return;
+						}
+						self.paint.line(
+							geometry[0][0], geometry[0][1],
+							geometry[1][0], geometry[1][1],
+							shapeColor,
+							shapeBorder
+						);
+						break;
+					case SHAPE_TYPE.triangle:
+						if (n_points !== 3) {
+							return;
+						}
+						//-->FALLTHROUGH-->//
+					case SHAPE_TYPE.polygon:
+						if (n_points < 3) {
+							return;
+						}
+						if (shapeFill) {
+							self.paint.polygonFill(geometry, shapeColor);
+						}
+						else {
+							self.paint.polygon(geometry, shapeColor, shapeBorder);
+						}
+						break;
+					case SHAPE_TYPE.circle:
+						break;
+					case SHAPE_TYPE.arc:
+						break;
+				}
 			};
 
 			// initialize Shape
@@ -1706,6 +2063,7 @@ myst.ui = (function() { "use strict";
 		 *
 		 * @function init
 		 * @memberof public_functions
+		 * @instance
 		 *
 		 * @param {object} inputObject - myst.js Input object
 		 */
@@ -1718,6 +2076,7 @@ myst.ui = (function() { "use strict";
 		 *
 		 * @function createTile
 		 * @memberof public_functions
+		 * @instance
 		 *
 		 * @param {object} texture - Source graphics.
 		 * @param {number} tileX
@@ -1742,6 +2101,7 @@ myst.ui = (function() { "use strict";
 		 *
 		 * @function setGlobalContext
 		 * @memberof public_functions
+		 * @instance
 		 *
 		 * @param {object} stateContext - Context to set as global context.
 		 */
@@ -1751,6 +2111,6 @@ myst.ui = (function() { "use strict";
 
 	};
 
-	return myst.compose(public_components, public_functions);
+	return myst.compose({ atomic: atomic_components }, public_components, public_functions);
 
 }()); // end of myst.UI

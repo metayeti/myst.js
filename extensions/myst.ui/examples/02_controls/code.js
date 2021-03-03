@@ -1,5 +1,5 @@
 /*
- *  myst.ui.js Example 01 - Button
+ *  myst.ui.js Example 02 - Components
  *
  */
 
@@ -18,10 +18,10 @@ myState.createUI = function() {
 		autoResize: true
 	});
 
-	// create a shape
-	this.myShape = new myst.ui.Shape({
-		x: 95,
-		y: 95,
+	// create some shapes
+	this.shape1 = new myst.ui.Shape({
+		x: 20,
+		y: 60,
 		width: 50,
 		height: 50,
 		
@@ -47,19 +47,44 @@ myState.createUI = function() {
 			//parameters: []
 			// real units flag. set to true if you want to use pixel instead of unit coordinates. default is false
 			realUnits: false
-		},
-		
-		// the following are examples of various shapes we can achieve with the Shape component.
-		
-		/*
-		shape: {
-			color: 'coral',
-			fill: false,
-			type: 'triangle',
-			geometry: [[0, 0], [1, 0], [1, 1]]
 		}
-		*/		
-		
+	});
+
+	this.shape2 = new myst.ui.Shape({
+		x: 90,
+		y: 60,
+		width: 50,
+		height: 50,
+		shape: {
+			type: 'line',
+			geometry: [[0, 0], [1, 1]]
+		}
+	});
+
+	this.shape3 = new myst.ui.Shape({
+		x: 160,
+		y: 60,
+		width: 50,
+		height: 50,
+		shape: {
+			type: 'triangle',
+			geometry: [[0, 1], [0.5, 0], [1, 1]],
+			color: 'blue',
+			fill: false
+		}
+	});
+
+	this.shape4 = new myst.ui.Shape({
+		x: 230,
+		y: 60,
+		width: 50,
+		height: 50,
+		shape: {
+			type: 'polygon',
+			color: 'orange',
+			fill: true,
+			geometry: [[0.25, 0], [0.75, 0], [1, 0.5], [0.75, 1], [0.25, 1], [0, 0.5]]
+		}
 	});
 
 };
@@ -69,8 +94,11 @@ myState.init = function() {
 };
 myState.draw = function() {
 	this.surface.clear();
-	// draw button
-	this.myShape.draw();
+	// draw shapes
+	this.shape1.draw();
+	this.shape2.draw();
+	this.shape3.draw();
+	this.shape4.draw();
 
 	//this.paint.rotate(45, [260, 180]);
 	//this.paint.rectFill(150, 150, 100, 100, 'tomato', 150);

@@ -15,7 +15,7 @@ myState.init = function() {
 myState.draw = function() {
 	// every state inherits the global surface which can be drawn to
 	// this.paint is a shorthand for this.surface.render
-	this.surface.clear();
+	this.surface.clear(); // remember to clear your surface on each redraw
 	this.surface.render.rect(50, 20, 10, 10, 'red'); // full syntax
 	this.paint.rect(50, 70, 70, 30, 'orange'); // shorthand method
 	this.paint.circleFill(200, 120, 50, 'blue');
