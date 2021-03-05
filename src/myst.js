@@ -375,9 +375,9 @@ myst.insertionSort = function(list, comparef) {
 	var n = list.length;
 	if (n <= 1) { return; }
 	comparef = comparef || function(a, b) { return a > b; };
-	var i = 1;
+	var i = 1, j;
 	while (i < n) {
-		var j = i;
+		j = i;
 		while (j > 0 && comparef(list[j - 1], list[j])) {
 			myst.swap(list, j, j - 1);
 			j--;

@@ -1,4 +1,32 @@
-/*
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: myst.ui.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: myst.ui.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/*
  * myst.ui.js
  * UI extension for myst.js
  *
@@ -704,7 +732,7 @@ var atomic_components = {
 		self.isVisible = function() {
 			var component = self;
 			do {
-				if (component._alpha <= 0) {
+				if (component._alpha &lt;= 0) {
 					return false;
 				}
 			} while ((component = component._owner));
@@ -843,7 +871,7 @@ var atomic_components = {
 		 */
 		self.setZIndex = function(zIndex) {
 			self._zIndex = zIndex;
-			if (self._owner !== null && self._owner._reorderRenderList instanceof Function) {
+			if (self._owner !== null &amp;&amp; self._owner._reorderRenderList instanceof Function) {
 				self._owner._reorderRenderList();
 			}
 			return self;
@@ -889,7 +917,7 @@ var atomic_components = {
 				self._requestRepaint = false;
 			}
 			var alpha = self.getAlpha();
-			if (alpha <= 0) {
+			if (alpha &lt;= 0) {
 				return;
 			}
 			if (self._angle !== 0) {
@@ -897,11 +925,11 @@ var atomic_components = {
 				var centerY = Math.floor(self._y + self._height / 2);
 				self._context.paint.rotate(self._angle, [centerX, centerY]);
 			}
-			if (alpha < 1) {
+			if (alpha &lt; 1) {
 				self._context.paint.setAlpha(alpha);
 			}
 			self._context.paint.graphics(self._texSurface, self._x, self._y);
-			if (alpha < 1) {
+			if (alpha &lt; 1) {
 				self._context.paint.setAlpha();
 			}
 			if (self._angle !== 0) {
@@ -952,7 +980,7 @@ var atomic_components = {
 		var debugDisplayText = '';
 		function updateDebugDisplayText() {
 			debugDisplayText = '';
-			for (var i = 0; i < debugWatch.length; i++) {
+			for (var i = 0; i &lt; debugWatch.length; i++) {
 				debugDisplayText += self[debugWatch[i]] + ' ';
 			}
 		}
@@ -1024,12 +1052,7 @@ var atomic_components = {
 
 			myst.iter(properties, function(key, value) {
 				var memberfstr = key.charAt(0).toUpperCase() + key.slice(1);
-				var fromf = self['get' + memberfstr];
-				if (!(fromf instanceof Function)) {
-					console.error('"' + key + '" is not a valid tween property.');
-					return;
-				}
-				var from = fromf();
+				var from = self['get' + memberfstr]();
 				var to = value;
 				var setf = self['set' + memberfstr];
 				var tween = new myst.Tween(from, to, duration, setf, function() {
@@ -1202,7 +1225,7 @@ var atomic_components = {
 		}, _eventId).bindTo(self._rootContext);
 
 		input.on('move', function(coords) {
-			if (self._holding && self.isEnabled() && self.isVisible()) {
+			if (self._holding &amp;&amp; self.isEnabled() &amp;&amp; self.isVisible()) {
 				var prevPressed = self._pressed;
 				var nextPressed = _pointIn(coords);
 				if (prevPressed !== nextPressed) {
@@ -1217,7 +1240,7 @@ var atomic_components = {
 		}, _eventId).bindTo(self._rootContext);
 
 		input.on('release', function(coords) {
-			if (self._holding && self.isEnabled() && self.isVisible()) {
+			if (self._holding &amp;&amp; self.isEnabled() &amp;&amp; self.isVisible()) {
 				var prevPressed = self._pressed;
 				self._holding = self._pressed = false;
 				if (prevPressed) {
@@ -1486,7 +1509,7 @@ var public_components = {
 		 */
 		self._events.onRepaint = function() {
 			var n_components = self._renderList.length;
-			for (var i = 0; i < n_components; i++) {
+			for (var i = 0; i &lt; n_components; i++) {
 				//self._componentList[i].draw();
 				self._renderList[i].draw();
 			}
@@ -1875,12 +1898,12 @@ var public_components = {
 				var realGeometry = [];
 				var scale_x = self.getWidth();
 				var scale_y = self.getHeight();
-				for (var p = 0; p < n_points; p++) {
+				for (var p = 0; p &lt; n_points; p++) {
 					var pointUnitCoordinates = geometry[p];
-					if (pointUnitCoordinates instanceof Array && pointUnitCoordinates.length === 2) {
+					if (pointUnitCoordinates instanceof Array &amp;&amp; pointUnitCoordinates.length === 2) {
 						var px = pointUnitCoordinates[0] * scale_x;
 						var py = pointUnitCoordinates[1] * scale_y;
-						if (!shapeFill || shapeFill && shapeType === SHAPE_TYPE.line) {
+						if (!shapeFill || shapeFill &amp;&amp; shapeType === SHAPE_TYPE.line) {
 							// shrink shape by border
 							px = myst.clamp(px, shapeBorder, scale_x - shapeBorder);
 							py = myst.clamp(py, shapeBorder, scale_y - shapeBorder);
@@ -1903,14 +1926,14 @@ var public_components = {
 				if (radius instanceof Array) {
 					var realRadius = [];
 					var n_items = radius.length;
-					for (var i = 0; i < n_items; i++) {
+					for (var i = 0; i &lt; n_items; i++) {
 						realRadius.push(radius[i] * scale_min);
 					}
 					return realRadius;
 				}
 				else {
 					var ps = radius * scale_min;
-					if (!shapeFill && (shapeType === SHAPE_TYPE.circle ||
+					if (!shapeFill &amp;&amp; (shapeType === SHAPE_TYPE.circle ||
 							shapeType === SHAPE_TYPE.arc ||
 							shapeType == SHAPE_TYPE.pie)) {
 						ps = myst.clamp(ps * 2, shapeBorder, scale_min - shapeBorder) / 2;
@@ -1924,7 +1947,7 @@ var public_components = {
 
 			switch (shapeType) {
 				case SHAPE_TYPE.rectangle:
-					if (n_points < 2) {
+					if (n_points &lt; 2) {
 						return;
 					}
 					if (shapeFill) {
@@ -1946,7 +1969,7 @@ var public_components = {
 					}
 					break;
 				case SHAPE_TYPE.line:
-					if (n_points < 2) {
+					if (n_points &lt; 2) {
 						return;
 					}
 					self.paint.line(
@@ -1962,7 +1985,7 @@ var public_components = {
 					}
 					/* falls through */
 				case SHAPE_TYPE.polygon:
-					if (n_points < 3) {
+					if (n_points &lt; 3) {
 						return;
 					}
 					if (shapeFill) {
@@ -1973,7 +1996,7 @@ var public_components = {
 					}
 					break;
 				case SHAPE_TYPE.circle:
-					if (n_points < 1) {
+					if (n_points &lt; 1) {
 						return;
 					}
 					if (shapeFill) {
@@ -1984,7 +2007,7 @@ var public_components = {
 					}
 					break;
 				case SHAPE_TYPE.arc:
-					if (n_points < 1) {
+					if (n_points &lt; 1) {
 						return;
 					}
 					if (self._shapeFill) {
@@ -1995,7 +2018,7 @@ var public_components = {
 					}
 					break;
 				case SHAPE_TYPE.pie:
-					if (n_points < 1) {
+					if (n_points &lt; 1) {
 						return;
 					}
 					if (self._shapeFill) {
@@ -2191,3 +2214,26 @@ var public_functions = {
 return myst.compose({ atomic: atomic_components }, public_components, public_functions);
 
 }()); // end of myst.ui
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="atomic_components.html">atomic_components</a></li><li><a href="public_components.html">public_components</a></li><li><a href="public_functions.html">public_functions</a></li></ul><h3>Classes</h3><ul><li><a href="atomic_components.AbstractButton.html">AbstractButton</a></li><li><a href="atomic_components.Base.html">Base</a></li><li><a href="atomic_components.Container.html">Container</a></li><li><a href="atomic_components.Debuggable.html">Debuggable</a></li><li><a href="atomic_components.Graphics.html">Graphics</a></li><li><a href="atomic_components.Tile.html">Tile</a></li><li><a href="atomic_components.Tweenable.html">Tweenable</a></li><li><a href="public_components.Control.html">Control</a></li><li><a href="public_components.Frame.html">Frame</a></li><li><a href="public_components.Shape.html">Shape</a></li><li><a href="public_components.TileButton.html">TileButton</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Fri Mar 05 2021 05:29:06 GMT+0100 (Central European Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
