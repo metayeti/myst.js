@@ -106,7 +106,7 @@ var atomic_components = {
 		self._angle = fromOption(options.angle, 0);
 		self._background = null;
 		self._zIndex = fromOption(options.zIndex, 0);
-		self._enabled = fromOption(options.enabled, true);
+		self._enabled = Boolean(fromOption(options.enabled, true));
 		self._context = fromOption(options.context, globalContext);
 
 		self._rootContext = self.context;
@@ -132,6 +132,10 @@ var atomic_components = {
 		self._events.onRemoved = function() { invokeEvent(options.onRemoved, self); };
 		// "onResized" is triggered when the component changes size
 		self._events.onResized = function() { invokeEvent(options.onResized, self); };
+		// "onEnabled" is triggered when the component becomes enabled
+		self._events.onEnabled = function() { invokeEvent(options.onEnabled, self); };
+		// "onDisabled" is triggered when the component becomes disabled
+		self._events.onDisabled = function() { invokeEvent(options.onDisabled, self); };
 /*
 			onEnabled: function() { invokeEvent(options.onEnabled, self); },
 			onDisabled: function() { invokeEvent(options.onDisabled, self); },
@@ -153,7 +157,10 @@ var atomic_components = {
 		 * @returns {object} Self.
 		 */
 		self.enable = function() {
-			self._enabled = true;
+			if (self._enabled === false) {
+				self._enabled = true;
+				self._events.onEnabled();
+			}
 			return self;
 		};
 
@@ -167,7 +174,10 @@ var atomic_components = {
 		 * @returns {object} Self.
 		 */
 		self.disable = function() {
-			self._enabled = false;
+			if (self._enabled === true) {
+				self._enabled = false;
+				self._events.onDisabled();
+			}
 			return self;
 		};
 
@@ -2090,20 +2100,38 @@ var public_components = {
 
 		self._type = 'TileButton';
 
+		options.tiles = options.tiles || {};
+
+		var tileNormal = options.tiles.normal || [0, 0];
+		var tilePressed = options.tiles.pressed || [0, 0];
+		var tileDisabled = options.tiles.disabled || [0, 0];
+
 		self._events.onPress = function() { // @override
-			self._activeTile = options.tiles.pressed;
+			self._activeTile = tilePressed;
 			self._requestRepaint = true;
 			invokeEvent(options.onPress, self);
 		};
 
 		self._events.onRelease = function() { // @override
-			self._activeTile = options.tiles.normal;
+			self._activeTile = tileNormal;
 			self._requestRepaint = true;
 			invokeEvent(options.onRelease, self);
 		};
 
 		self._events.onClick = function() { // @override
 			invokeEvent(options.onClick, self);
+		};
+
+		self._events.onEnabled = function() { // @override
+			self._activeTile = tileNormal;
+			self._requestRepaint = true;
+			invokeEvent(options.onEnabled, self);
+		};
+
+		self._events.onDisabled = function() { // @override
+			self._activeTile = tileDisabled;
+			self._requestRepaint = true;
+			invokeEvent(options.onDisabled, self);
 		};
 	},
 
