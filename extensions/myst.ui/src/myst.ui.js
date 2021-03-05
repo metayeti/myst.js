@@ -105,6 +105,7 @@ var atomic_components = {
 		self._alpha = fromOption(options.alpha, 1);
 		self._angle = fromOption(options.angle, 0);
 		self._background = null;
+		self._zIndex = fromOption(options.zIndex, 0);
 		self._enabled = fromOption(options.enabled, true);
 		self._context = fromOption(options.context, globalContext);
 
@@ -188,6 +189,19 @@ var atomic_components = {
 				}
 			} while ((component = component._owner));
 			return true;
+		};
+
+		/**
+		 * Returns the component disabled state.
+		 *
+		 * @function isDisabled
+		 * @memberof atomic_components.Base
+		 * @instance
+		 *
+		 * @returns {bool} Disabled state.
+		 */
+		self.isDisabled = function() {
+			return !self.isEnabled();
 		};
 
 		/**
@@ -817,6 +831,38 @@ var atomic_components = {
 		};
 
 		/**
+		 * Set component z-index.
+		 *
+		 * @function setZIndex
+		 * @memberof atomic_components.Base
+		 * @instance
+		 *
+		 * @param {number} zIndex
+		 *
+		 * @returns {object} Self.
+		 */
+		self.setZIndex = function(zIndex) {
+			self._zIndex = zIndex;
+			if (self._owner !== null && self._owner._reorderRenderList instanceof Function) {
+				self._owner._reorderRenderList();
+			}
+			return self;
+		};
+
+		/**
+		 * Get component z-index.
+		 *
+		 * @function getZIndex
+		 * @memberof atomic_components.Base
+		 * @instance
+		 *
+		 * @returns {number}
+		 */
+		self.getZIndex = function() {
+			return self._zIndex;
+		};
+
+		/**
 		 * Forces component to repaint itself on next draw call.
 		 *
 		 * @function forceRepaint
@@ -838,7 +884,6 @@ var atomic_components = {
 		 */
 		self.draw = function() {
 			if (self._alwaysRepaint || self._requestRepaint) {
-				//console.log('repaint called');
 				self._surface.clear();
 				self._events.onRepaint();
 				self._requestRepaint = false;
@@ -953,6 +998,7 @@ var atomic_components = {
 					tween.finish();
 				}
 			});
+			_activeTweens = [];
 		}
 
 		/**
@@ -975,14 +1021,12 @@ var atomic_components = {
 			var easef = fromOption(options.ease, myst.ease.quadInOut);
 
 			finalizeAllTweens();
-			_activeTweens = [];
 
 			myst.iter(properties, function(key, value) {
 				var memberfstr = key.charAt(0).toUpperCase() + key.slice(1);
 				var from = self['get' + memberfstr]();
 				var to = value;
 				var setf = self['set' + memberfstr];
-				console.log(memberfstr, from, to, setf);
 				var tween = new myst.Tween(from, to, duration, setf, function() {
 					invokeEvent(options.onDone, self);
 				}, easef);
@@ -1108,7 +1152,6 @@ var atomic_components = {
 
 		// unique event identifier
 		var _eventId = '_@' + getNextEventId();
-		console.log(_eventId);
 
 		// "press" gets triggered whenever a button is pressed down
 		self._events.onPress = C_EMPTYF;
@@ -1208,6 +1251,28 @@ var atomic_components = {
 		self._componentList = [];
 		self._componentKeys = [];
 
+		// list of components that are ordered by z-index
+		self._renderList = [];
+
+		function _compareZ(a, b) { return a._zIndex > b._zIndex; }
+
+		/**
+		 * Reorder render list by z-index.
+		 */
+		self._reorderRenderList = function() {
+			myst.heapSort(self._renderList, _compareZ);
+		};
+
+		/**
+		 * Rebuild a render list and order by z-index.
+		 */
+		self._rebuildRenderList = function() {
+			self._renderList = [];
+			self._componentList.forEach(function(componentObject) {
+				myst.insertSorted(self._renderList, componentObject, _compareZ);
+			});
+		};
+
 		/**
 		 * Adds components to the container.
 		 *
@@ -1217,7 +1282,7 @@ var atomic_components = {
 		 *
 		 * @param {object} components - Components to be added.
 		 */
-		self.add = function(components) {
+		self.addComponents = function(components) {
 			myst.iter(components, function(componentKey, componentObject) {
 				if (self[componentKey]) { // disallow reserved or duplicate keys
 					console.error('Cannot add component "' + componentKey + '" due to a name clash.');
@@ -1233,6 +1298,10 @@ var atomic_components = {
 				componentObject._context = componentObject._owner = self;
 				// set root context to current root context
 				componentObject._rootContext = self._rootContext;
+				// insert ordered into render list
+				myst.insertSorted(self._renderList, componentObject, _compareZ);
+				console.log(self._renderList);
+				//var lastIndex = self._renderList.lastIndexOf(zIndex);
 				// invoke added event
 				if (componentObject._events.onAdded) {
 					componentObject._events.onAdded();
@@ -1276,7 +1345,7 @@ var atomic_components = {
 		 *
 		 * @param {string} componentKey - Key of component to remove.
 		 *
-		 * @return {bool} Removal success.
+		 * @return {object} Removed component.
 		 */
 		self.remove = function(componentKey) {
 			//TODO
@@ -1320,7 +1389,7 @@ var atomic_components = {
 
 		// initialize Container
 		if (options.components) {
-			self.add(options.components);
+			self.addComponents(options.components);
 		}
 	}
 
@@ -1387,9 +1456,10 @@ var public_components = {
 		 * Render the component and all children components.
 		 */
 		self._events.onRepaint = function() {
-			var n_components = self._componentList.length;
+			var n_components = self._renderList.length;
 			for (var i = 0; i < n_components; i++) {
-				self._componentList[i].draw();
+				//self._componentList[i].draw();
+				self._renderList[i].draw();
 			}
 		};
 
@@ -1431,8 +1501,7 @@ var public_components = {
 			polygon: 4,
 			circle: 5,
 			arc: 6,
-			pie: 7,
-			star: 8 //TODO
+			pie: 7
 		};
 
 		self._shapeRealUnits = null;
@@ -1516,11 +1585,13 @@ var public_components = {
 		 *
 		 * @returns {object} Self.
 		 */
+		/*
 		self.setShapeColor = function(color) {
 			self._shapeColor = color;
 			self._requestRepaint = true;
 			return self;
 		};
+		*/
 
 		/**
 		 * Sets shape fill.
@@ -1533,11 +1604,13 @@ var public_components = {
 		 *
 		 * @returns {object} Self.
 		 */
+		/*
 		self.setShapeFill = function(fill) {
 			self._shapeFill = Boolean(fill);
 			self._requestRepaint = true;
 			return self;
 		};
+		*/
 
 		/**
 		 * Sets shape border thickness.
@@ -1550,11 +1623,13 @@ var public_components = {
 		 *
 		 * @returns {object} Self.
 		 */
+		/*
 		self.setShapeBorder = function(border) {
 			self._shapeBorder = Mat.max(1, parseInt(border, 10));
 			self._requestRepaint = true;
 			return self;
 		};
+		*/
 
 		/**
 		 * Sets shape type.
@@ -1567,11 +1642,13 @@ var public_components = {
 		 *
 		 * @returns {object} Self.
 		 */
+		/*
 		self.setShapeType = function(type) {
 			self._shapeType = SHAPE_TYPE[type] || defaultShapeType;
 			self._requestRepaint = true;
 			return self;
 		};
+		*/
 
 		/**
 		 * Sets shape geometry.
@@ -1584,11 +1661,13 @@ var public_components = {
 		 *
 		 * @returns {object} Self.
 		 */
+		/*
 		self.setShapeGeometry = function(geometry) {
 			self._shapeGeometry = geometry;
 			self._requestRepaint = true;
 			return self;
 		};
+		*/
 
 		/**
 		 * Sets shape radius.
@@ -1601,11 +1680,13 @@ var public_components = {
 		 *
 		 * @returns {object} Self.
 		 */
+		/*
 		self.setShapeRadius = function(radius) {
 			self._shapeRadius = radius;
 			self._requestRepaint = true;
 			return self;
 		};
+		*/
 
 		/**
 		 * Sets shape parameters.
@@ -1618,11 +1699,13 @@ var public_components = {
 		 *
 		 * @returns {object} Self.
 		 */
+		/*
 		self.setShapeParameters = function(parameters) {
 			self._shapeParameters = parameters;
 			self._requestRepaint = true;
 			return self;
 		};
+		*/
 
 		/**
 		 * Sets shape real units.
@@ -1635,11 +1718,13 @@ var public_components = {
 		 *
 		 * @returns {object} Self.
 		 */
+		/*
 		self.setShapeRealUnits = function(shapeRealUnits) {
 			self._shapeRealUnits = Boolean(shapeRealUnits);
 			self._requestRepaint = true;
 			return self;
 		};
+		*/
 
 		/**
 		 * Sets shape.
@@ -1707,18 +1792,39 @@ var public_components = {
 			if (shapeOptions.radius !== undefined) {
 				self._shapeRadius = shapeOptions.radius;
 			}
-			else if (self._shapeRadius === null || hasShapeChanged) {
+			else if (self._shapeRadius === null) {
 				self._shapeRadius = getDefaultShapeRadius();
 			}
 			// shape parameters
 			if (shapeOptions.parameters !== undefined) {
 				self._shapeParameters = shapeOptions.parameters;
 			}
-			else if (self._shapeParameters === null || hasShapeChanged) {
+			else if (self._shapeParameters === null) {
 				self._shapeParameters = getDefaultShapeParameters();
 			}
 			return self;
 		};
+
+		/**
+		 * Returns shape parameters.
+		 *
+		 * @function getShape
+		 * @memberof public_components.Shape
+		 * @instance
+		 *
+		 * @returns {object}
+		 */
+		/*
+		self.getShape = function() {
+			return {
+				realUnits: self._shapeRealUnits,
+				color: self._shapeColor,
+				fill: self._shapeFill,
+				border: self._shapeBorder,
+				type: self.
+			};
+		};
+		*/
 
 		self._events.onRepaint = function() { // @override
 			if (!self._shapeGeometry instanceof Array) {
@@ -1852,7 +1958,6 @@ var public_components = {
 					if (n_points < 1) {
 						return;
 					}
-					console.log(shapeParameters);
 					if (self._shapeFill) {
 						self.paint.arcFill(geometry[0][0], geometry[0][1], shapeRadius, shapeParameters[0], shapeParameters[1], shapeColor);
 					}
@@ -1864,7 +1969,6 @@ var public_components = {
 					if (n_points < 1) {
 						return;
 					}
-					console.log(shapeParameters);
 					if (self._shapeFill) {
 						self.paint.sectorFill(geometry[0][0], geometry[0][1], shapeRadius, shapeParameters[0], shapeParameters[1], shapeColor);
 					}
@@ -2044,4 +2148,4 @@ var public_functions = {
 
 return myst.compose({ atomic: atomic_components }, public_components, public_functions);
 
-}()); // end of myst.UI
+}()); // end of myst.ui

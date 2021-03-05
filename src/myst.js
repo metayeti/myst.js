@@ -49,6 +49,10 @@ var C_VIEW_EXPAND = 4;
 /**
  * Composes an object from multiple component objects.
  *
+ * @function compose
+ * @memberof myst
+ * @instance
+ *
  * @param {...object} var_args - Component objects.
  *
  * @returns {object}
@@ -77,6 +81,10 @@ myst.compose = function(/**/) {
 /**
  * Returns a number limited to a given range.
  *
+ * @function clamp
+ * @memberof myst
+ * @instance
+ *
  * @param {number} number - Input number.
  * @param {number} min - Lower range boundary.
  * @param {number} max - Upper range boundary.
@@ -94,6 +102,10 @@ myst.clamp = function(number, min, max) {
 /**
  * Returns a random integer in range (inclusive).
  *
+ * @function getRandomInt
+ * @memberof myst
+ * @instance
+ *
  * @param {number} min - Lower range boundary.
  * @param {number} max - Upper range boundary.
  *
@@ -106,6 +118,10 @@ myst.getRandomInt = function(min, max) {
 /**
  * Returns the result of a coin flip.
  *
+ * @function coinFlip
+ * @memberof myst
+ * @instance
+ *
  * @returns {bool}
  */
 myst.coinFlip = function() {
@@ -114,6 +130,10 @@ myst.coinFlip = function() {
 
 /**
  * Shuffles a list of elements. This method modifies the original array.
+ *
+ * @function shuffle
+ * @memberof myst
+ * @instance
  *
  * @param {array} list
  */
@@ -131,6 +151,10 @@ myst.shuffle = function(list) {
 /**
  * Picks an element from a list at random.
  *
+ * @function choose
+ * @memberof myst
+ * @instance
+ *
  * @param {array} list
  *
  * @returns {object}
@@ -143,6 +167,10 @@ myst.choose = function(list) {
 
 /**
  * Picks an element from a list at random, and removes it from the list.
+ *
+ * @function pick
+ * @memberof myst
+ * @instance
  *
  * @param {array} list
  *
@@ -157,6 +185,10 @@ myst.pick = function(list) {
 
 /**
  * Checks whether a point resides within a given rectangle.
+ *
+ * @function pointInRect
+ * @memberof myst
+ * @instance
  *
  * @param {number} x - Point x coordinate.
  * @param {number} y - Point y coordinate.
@@ -174,6 +206,10 @@ myst.pointInRect = function(x, y, rx, ry, rw, rh) {
 /**
  * Checks whether a point resides within a given circle.
  *
+ * @function pointInCircle
+ * @memberof myst
+ * @instance
+ *
  * @param {number} x - Point x coordinate.
  * @param {number} y - Point y coordinate.
  * @param {number} cx - Circle x center coordinate.
@@ -188,6 +224,10 @@ myst.pointInCircle = function(x, y, cx, cy, radius) {
 
 /**
  * Checks whether two line segments A-B and C-D intersect. Ignores colinear segment intersections.
+ *
+ * @function linesIntersect
+ * @memberof myst
+ * @instance
  *
  * @param {number} ax - Point A x coordinate.
  * @param {number} ay - Point A y coordinate.
@@ -211,6 +251,10 @@ myst.linesIntersect = function(ax, ay, bx, by, cx, cy, dx, dy) {
 /**
  * Returns the distance from point A to point B.
  *
+ * @function pointToPointDistance
+ * @memberof myst
+ * @instance
+ *
  * @param {number} x - Point A x coordinate.
  * @param {number} y - Point A y coordinate.
  * @param {number} x - Point B x coordinate.
@@ -224,6 +268,10 @@ myst.pointToPointDistance = function(ax, ay, bx, by) {
 
 /**
  * Returns the distance from point P to line segment A-B.
+ *
+ * @function pointToLineDistance
+ * @memberof myst
+ * @instance
  *
  * @param {number} x - Point P x coordinate.
  * @param {number} y - Point P y coordinate.
@@ -250,6 +298,9 @@ myst.pointToLineDistance = function(x, y, ax, ay, bx, by) {
 /**
  * Moves point A towards point B by a difference of d.
  *
+ * @function movePoint
+ * @memberof myst
+ * @instance
  *
  * @param {number} ax - Point A x coordinate.
  * @param {number} ay - Point A y coordinate.
@@ -270,6 +321,10 @@ myst.movePoint = function(ax, ay, bx, by, d) {
 /**
  * Rotate point A around point B by angle.
  *
+ * @function rotatePoint
+ * @memberof myst
+ * @instance
+ *
  * @param {number} ax - Point A x coordinate.
  * @param {number} ay - Point A y coordinate.
  * @param {number} bx - Point B x coordinate.
@@ -289,7 +344,128 @@ myst.rotatePoint = function(ax, ay, bx, by, angle) {
 };
 
 /**
+ * Swap two items in a list.
+ *
+ * @function swap
+ * @memberof myst
+ * @instance
+ *
+ * @param {array} list - List of items.
+ * @param {number} i - First index.
+ * @param {number} j - Second index.
+ */
+myst.swap = function(list, i, j) {
+	var temp = list[i];
+	list[i] = list[j];
+	list[j] = temp;
+};
+
+/**
+ * Perform an insertion sort over a list of items.
+ *
+ * @function insertionSort
+ * @memberof myst
+ * @instance
+ *
+ * @param {array} list - List of sortable items.
+ * @param {function} [comparef] - Comparator function.
+ */
+myst.insertionSort = function(list, comparef) {
+	if (!(list instanceof Array)) {
+		return;
+	}
+	var n = list.length;
+	if (n <= 1) {
+		return;
+	}
+	comparef = comparef || function(a, b) { return a > b; };
+	var i = 1;
+	while (i < n) {
+		var j = i;
+		while (j > 0 && comparef(list[j - 1], list[j])) {
+			myst.swap(list, j, j - 1);
+			j--;
+		}
+		i++;
+	}
+};
+
+/**
+ * Perform a heap sort over a list of items.
+ *
+ * @function heapSort
+ * @memberof myst
+ * @instance
+ *
+ * @param {array} list - List of sortable items.
+ * @param {function} [comparef] - Comparator function.
+ */
+myst.heapSort = function(list, comparef) {
+	if (!(list instanceof Array)) {
+		return;
+	}
+	var n = list.length;
+	if (n <= 1) {
+		return;
+	}
+	comparef = comparef || function(a, b) { return a > b; };
+	function heap(i) {
+		var max = i;
+		do {
+			var left = 2 * i + 1;
+			var right = 2 * i + 2;
+			if (left < n && comparef(list[left], list[max])) { max = left; }
+			if (right < n && comparef(list[right], list[max])) { max = right; }
+			if (max !== i) {
+				myst.swap(list, i, max);
+				i = max;
+			}
+		} while (max !== i);
+	}
+	var i, pivot = Math.floor(n / 2);
+	for (i = pivot; i >= 0; i--) {
+		heap(i);
+	}
+	for (i = n - 1; i > 0; i--) {
+		myst.swap(list, 0, i);
+		n--;
+		heap(0);
+	}
+};
+
+/**
+ * Insert an item into a sorted list.
+ *
+ * @function insertSorted
+ * @memberof myst
+ * @instance
+ *
+ * @param {array} list - List of sorted items.
+ * @param {function} [comparef] - Comparator function.
+ */
+myst.insertSorted = function(list, element, comparef) {
+	if (!(list instanceof Array) || element === undefined) {
+		return;
+	}
+	comparef = comparef || function(a, b) { return a > b; };
+	var insertIndex = (function() {
+		var n = list.length;
+		for (var i = 0; i < n; i++) {
+			if (comparef(list[i], element)) {
+				return i - 1;
+			}
+		}
+		return n;
+	}());
+	list.splice(insertIndex + 1, 0, element);
+};
+
+/**
  * Iterates over non-function members of an object.
+ *
+ * @function iter
+ * @memberof myst
+ * @instance
  *
  * @param {object} collection
  * @param {iterCallback} callback
@@ -311,6 +487,10 @@ myst.iter = function(object, callback) {
 /**
  * Applies a function to an arbitrary group of objects.
  *
+ * @function applyToGroup
+ * @memberof myst
+ * @instance
+ *
  * @param {object} group - Collection of objects.
  * @param {string} fname - Function to call on objects.
  * @param {array} [fargs] - List of arguments to apply to the function.
@@ -328,6 +508,10 @@ myst.applyToGroup = function(group, fname, fargs) {
 
 /**
  * Retreives the extension of a filename. Outputs lowercase.
+ *
+ * @function getFilenameExtension
+ * @memberof myst
+ * @instance
  *
  * @param {string} filename
  *
