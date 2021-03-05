@@ -371,13 +371,9 @@ myst.swap = function(list, i, j) {
  * @param {function} [comparef] - Comparator function.
  */
 myst.insertionSort = function(list, comparef) {
-	if (!(list instanceof Array)) {
-		return;
-	}
+	if (!(list instanceof Array)) { return; }
 	var n = list.length;
-	if (n <= 1) {
-		return;
-	}
+	if (n <= 1) { return; }
 	comparef = comparef || function(a, b) { return a > b; };
 	var i = 1;
 	while (i < n) {
@@ -401,15 +397,11 @@ myst.insertionSort = function(list, comparef) {
  * @param {function} [comparef] - Comparator function.
  */
 myst.heapSort = function(list, comparef) {
-	if (!(list instanceof Array)) {
-		return;
-	}
+	if (!(list instanceof Array)) { return; }
 	var n = list.length;
-	if (n <= 1) {
-		return;
-	}
+	if (n <= 1) { return; }
 	comparef = comparef || function(a, b) { return a > b; };
-	function heap(i) {
+	function heapify(i) {
 		var max = i;
 		do {
 			var left = 2 * i + 1;
@@ -422,14 +414,14 @@ myst.heapSort = function(list, comparef) {
 			}
 		} while (max !== i);
 	}
-	var i, pivot = Math.floor(n / 2);
-	for (i = pivot; i >= 0; i--) {
-		heap(i);
+	var i, half = Math.floor(n / 2);
+	for (i = half; i >= 0; i--) {
+		heapify(i);
 	}
 	for (i = n - 1; i > 0; i--) {
 		myst.swap(list, 0, i);
 		n--;
-		heap(0);
+		heapify(0);
 	}
 };
 
@@ -444,9 +436,7 @@ myst.heapSort = function(list, comparef) {
  * @param {function} [comparef] - Comparator function.
  */
 myst.sortedInsert = function(list, element, comparef) {
-	if (!(list instanceof Array) || element === undefined) {
-		return;
-	}
+	if (!(list instanceof Array) || element === undefined) { return; }
 	comparef = comparef || function(a, b) { return a > b; };
 	var n = list.length;
 	for (var i = 0; i < n; i++) {

@@ -1289,7 +1289,7 @@ var atomic_components = {
 					return self;
 				}
 				if (componentObject._owner !== null) {
-					console.error('Cannot add "' + componentKey + '", component is already owned.');
+					console.error('Cannot add "' + componentKey + '", component is owned.');
 					return self;
 				}
 				self._componentList.push(self[componentKey] = componentObject);
@@ -1300,7 +1300,6 @@ var atomic_components = {
 				componentObject._rootContext = self._rootContext;
 				// insert ordered into render list
 				myst.sortedInsert(self._renderList, componentObject, _compareZ);
-				//var lastIndex = self._renderList.lastIndexOf(zIndex);
 				// invoke added event
 				if (componentObject._events.onAdded) {
 					componentObject._events.onAdded();
@@ -1347,8 +1346,32 @@ var atomic_components = {
 		 * @return {object} Removed component.
 		 */
 		self.remove = function(componentKey) {
-			//TODO
-			return false;
+			var componentIndex = self._componentKeys.indexOf(componentKey);
+			if (componentIndex === -1) {
+				console.error('Cannot remove "' + componentKey + '", component not found.');
+				return;
+			}
+			var componentObject = self._componentList[componentIndex];
+			// unregister any events attached to components
+			if (componentObject.unregisterEvents) {
+				componentObject.unregisterEvents();
+			}
+			// recursively remove all contained containers
+			if (componentObject.removeAll) {
+				componentObject.removeAll();
+			}
+			// invoke removed event
+			if (componentObject._events.onRemoved) {
+				componentObject._events.onRemoved();
+			}
+			// remove component from self
+			delete self[componentKey];
+			// remove from component list
+			self._componentList.splice(componentIndex, 1);
+			// remove from key list
+			self._componentKeys.splice(componentIndex, 1);
+			// rebuild render list
+			self._rebuildRenderList();
 		};
 
 		/**
@@ -1375,14 +1398,16 @@ var atomic_components = {
 					componentObject._events.onRemoved();
 				}
 			});
-			// clear component lists
-			self._componentList = [];
-			// clear component keys
+			// remove components from self
 			self._componentKeys.forEach(function(componentKey) {
 				delete self[componentKey];
 			});
+			// clear component lists
+			self._componentList = [];
 			// clear component key list
 			self._componentKeys = [];
+			// clear render list
+			self._renderList = [];
 			return self;
 		};
 
@@ -1826,7 +1851,7 @@ var public_components = {
 		*/
 
 		self._events.onRepaint = function() { // @override
-			if (!self._shapeGeometry instanceof Array) {
+			if (!(self._shapeGeometry instanceof Array)) {
 				return;
 			}
 			var n_points = self._shapeGeometry.length;
@@ -1859,7 +1884,7 @@ var public_components = {
 					}
 				}
 				return realGeometry;
-			};
+			}
 
 			/**
 			 * Translate unit radius to pixels.
@@ -1930,7 +1955,7 @@ var public_components = {
 					if (n_points > 3) {
 						geometry.splice(3);
 					}
-					//-->FALLTHROUGH-->//
+					/* falls through */
 				case SHAPE_TYPE.polygon:
 					if (n_points < 3) {
 						return;
