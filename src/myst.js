@@ -436,28 +436,26 @@ myst.heapSort = function(list, comparef) {
 /**
  * Insert an item into a sorted list.
  *
- * @function insertSorted
+ * @function sortedInsert
  * @memberof myst
  * @instance
  *
  * @param {array} list - List of sorted items.
  * @param {function} [comparef] - Comparator function.
  */
-myst.insertSorted = function(list, element, comparef) {
+myst.sortedInsert = function(list, element, comparef) {
 	if (!(list instanceof Array) || element === undefined) {
 		return;
 	}
 	comparef = comparef || function(a, b) { return a > b; };
-	var insertIndex = (function() {
-		var n = list.length;
-		for (var i = 0; i < n; i++) {
-			if (comparef(list[i], element)) {
-				return i - 1;
-			}
+	var n = list.length;
+	for (var i = 0; i < n; i++) {
+		if (comparef(list[i], element)) {
+			list.splice(i, 0, element);
+			return;
 		}
-		return n;
-	}());
-	list.splice(insertIndex + 1, 0, element);
+	}
+	list.push(element);
 };
 
 /**

@@ -1269,7 +1269,7 @@ var atomic_components = {
 		self._rebuildRenderList = function() {
 			self._renderList = [];
 			self._componentList.forEach(function(componentObject) {
-				myst.insertSorted(self._renderList, componentObject, _compareZ);
+				myst.sortedInsert(self._renderList, componentObject, _compareZ);
 			});
 		};
 
@@ -1299,8 +1299,7 @@ var atomic_components = {
 				// set root context to current root context
 				componentObject._rootContext = self._rootContext;
 				// insert ordered into render list
-				myst.insertSorted(self._renderList, componentObject, _compareZ);
-				console.log(self._renderList);
+				myst.sortedInsert(self._renderList, componentObject, _compareZ);
 				//var lastIndex = self._renderList.lastIndexOf(zIndex);
 				// invoke added event
 				if (componentObject._events.onAdded) {
