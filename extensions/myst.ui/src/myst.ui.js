@@ -137,8 +137,6 @@ var atomic_components = {
 		// "onDisabled" is triggered when the component becomes disabled
 		self._events.onDisabled = function() { invokeEvent(options.onDisabled, self); };
 /*
-			onEnabled: function() { invokeEvent(options.onEnabled, self); },
-			onDisabled: function() { invokeEvent(options.onDisabled, self); },
 			onMoved: function() { invokeEvent(options.onMoved, self); },
 			onAlphaSet: function() { invokeEvent(options.onAlphaSet, self); },
 			onAngleSet: function() { invokeEvent(options.onAngleSet, self); }
@@ -919,20 +917,6 @@ var atomic_components = {
 			}
 		};
 
-		/**
-		 * Clone this component.
-		 *
-		 * @function clone
-		 * @memberof atomic_components.Base
-		 * @instance
-		 */
-		self.clone = function() {
-			// TODO
-			var clonedComponent = new atomic_components.Base({});
-			myst.iter(self, function(memberKey, memberValue) {
-			});
-		};
-
 		// initialize Base
 		if (options.background) {
 			self.setBackground(options.background);
@@ -1237,7 +1221,7 @@ var atomic_components = {
 			}
 		}, _eventId).bindTo(self._rootContext);
 
-		self.unregisterEvents = function() {
+		self._detachListeners = function() {
 			if (_eventId) {
 				input.off('press', _eventId);
 				input.off('move', _eventId);
@@ -1269,23 +1253,28 @@ var atomic_components = {
 		// list of components ordered by z-index
 		self._renderList = [];
 
-		function _compareZ(a, b) { return a._zIndex > b._zIndex; }
+		function _compareZ(a, b) { return a._zIndex - b._zIndex; }
 
 		/**
 		 * Reorder render list by z-index.
 		 */
 		self._reorderRenderList = function() {
-			myst.heapSort(self._renderList, _compareZ);
+			//myst.sort(self._renderList, _compareZ);
+			self._renderList.sort(_compareZ);
 		};
 
 		/**
-		 * Rebuild a render list and order by z-index.
+		 * Rebuild render list ordering by z-index.
 		 */
 		self._rebuildRenderList = function() {
-			self._renderList = [];
+			self._renderList = self._componentList.slice();
+			//myst.sort(self._renderList, _compareZ);
+			self._renderList.sort(_compareZ);
+			/*
 			self._componentList.forEach(function(componentObject) {
-				myst.sortedInsert(self._renderList, componentObject, _compareZ);
+				myst.insertSorted(self._renderList, componentObject, _compareZ);
 			});
+			*/
 		};
 
 		/**
@@ -1301,25 +1290,27 @@ var atomic_components = {
 			myst.iter(components, function(componentKey, componentObject) {
 				if (self[componentKey]) { // disallow reserved or duplicate keys
 					console.error('Cannot add component "' + componentKey + '" due to a name clash.');
-					return self;
+					return;
 				}
-				if (componentObject._owner !== null) {
+				if (componentObject._owner !== null) { // disallow owned components
 					console.error('Cannot add "' + componentKey + '", component is owned.');
-					return self;
+					return;
 				}
 				self._componentList.push(self[componentKey] = componentObject);
 				self._componentKeys.push(componentKey);
 				// set component context to this container
 				componentObject._context = componentObject._owner = self;
-				// set root context to current root context
+				// set root context to container's root context
 				componentObject._rootContext = self._rootContext;
 				// insert ordered into render list
-				myst.sortedInsert(self._renderList, componentObject, _compareZ);
+				//myst.insertSorted(self._renderList, componentObject, _compareZ);
 				// invoke added event
 				if (componentObject._events.onAdded) {
 					componentObject._events.onAdded();
 				}
 			});
+			// rebuild render list
+			self._rebuildRenderList();
 			return self;
 		};
 
@@ -1367,9 +1358,9 @@ var atomic_components = {
 				return;
 			}
 			var componentObject = self._componentList[componentIndex];
-			// unregister any events attached to components
-			if (componentObject.unregisterEvents) {
-				componentObject.unregisterEvents();
+			// detach events attached to components
+			if (componentObject._detachListeners) {
+				componentObject._detachListeners();
 			}
 			// recursively remove all contained containers
 			if (componentObject.removeAll) {
@@ -1400,9 +1391,9 @@ var atomic_components = {
 		 */
 		self.removeAll = function() {
 			self._componentList.forEach(function(componentObject) {
-				// unregister any events attached to components
-				if (componentObject.unregisterEvents) {
-					componentObject.unregisterEvents();
+				// detach events attached to components
+				if (componentObject._detachListeners) {
+					componentObject._detachListeners();
 				}
 				// recursively remove all contained containers
 				if (componentObject.removeAll) {
@@ -1497,7 +1488,6 @@ var public_components = {
 		self._events.onRepaint = function() {
 			var n_components = self._renderList.length;
 			for (var i = 0; i < n_components; i++) {
-				//self._componentList[i].draw();
 				self._renderList[i].draw();
 			}
 		};
@@ -2038,6 +2028,19 @@ var public_components = {
 	TileImage: function(options, self) {
 	},
 
+	/**
+	 * Label control. Extends {@link public_components.Control|Control}.
+	 *
+	 * @class Label
+	 * @classdesc A label that can display arbitrary text.
+	 * @memberof public_components
+	 *
+	 * @param {object} options - Constructor options.
+	 * @param {string} [options.text] - Label text. Use "\n" for newline.
+	 * @param {string|object} [options.font] - Either a font style string, or a bitmap font.
+	 * @param {string} [options.color=#000] - Text color.
+	 * @param {bool} [options.autoResize=true] - Autoresize label to match text contents.
+	 */
 	Label: function(options, self) {
 		self = self || this;
 		options = options || {};
@@ -2056,6 +2059,9 @@ var public_components = {
 		 * Set label text.
 		 */
 		self.setText = function(text) {
+		};
+
+		self._events.onRepaint = function() { // @override
 		};
 
 		// initialize Label

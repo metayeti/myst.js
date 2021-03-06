@@ -14,7 +14,7 @@ myState.createUI = function() {
 	// a Frame is a container component that can hold multiple other components, including other Frames
 	// we use "debug" and "debugColor" options to help us visualize container geometry
 	this.myFrame = new myst.ui.Frame({
-		width: 210,
+		width: 200,
 		height: 200,
 		background: '#eee',
 		debug: true,
@@ -58,7 +58,7 @@ myState.createUI = function() {
 						debugColor: '#5a0',
 						components: {
 							myControl: new myst.ui.Control({
-								x: 50,
+								x: 40,
 								y: 28,
 								width: 80,
 								height: 25,

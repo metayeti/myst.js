@@ -37,7 +37,7 @@ myState.createUI = function() {
 					this.enable(); // enable button again
 				}
 			});
-		}		
+		}
 	});
 
 	// center the component

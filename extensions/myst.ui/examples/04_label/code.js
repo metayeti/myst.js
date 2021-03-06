@@ -26,7 +26,7 @@ myState.createUI = function() {
 			geometry: [[0, 0], [1, 1]],
 			color: 'orange'
 		},
-		zIndex: 2
+		zIndex: 0
 	});
 	
 	this.shape2 = new myst.ui.Shape({
@@ -52,7 +52,7 @@ myState.createUI = function() {
 			geometry: [[0, 0], [1, 1]],
 			color: 'blue'
 		},
-		zIndex: 2
+		zIndex: 1
 	});
 	
 	this.frame.addComponents({shape1: this.shape1, shape2: this.shape2, shape3: this.shape3});

@@ -1,6 +1,5 @@
 ## next
 - `FEATURE` Added `sector` and `sectorFill` functions to `Render`.
-- `FEATURE` Added `swap`, `insertionSort`, `heapSort` and `sortedInsert` functions.
 
 ## 0.9.4 (February 7, 2021)
 - `BUGFIX` Fixed `Render.circle` and `Render.arc` so they don't continue drawing from old paths.
