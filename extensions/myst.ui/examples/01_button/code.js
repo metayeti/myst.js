@@ -32,7 +32,7 @@ myState.createUI = function() {
 			this.disable(); // disable button during spin
 			this.tween({ angle: this.getAngle() + 360 }, { // animate "angle" property
 				duration: 1000,
-				ease: myst.ease.easeInOut,
+				ease: myst.ease.quadInOut,
 				onDone: function() {
 					this.enable(); // enable button again
 				}

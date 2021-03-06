@@ -9,11 +9,22 @@
 	<div id="myst-container">
 		<div class="info">myst.js example | <span class="hl">09_tween</span></div>
 		<canvas id="myst-example" width="400" height="300"></canvas>
-		<div class="description">This example demonstrates usage of Tween class.</div>
+		<div class="description">This example demonstrates usage of Tween class. Select the easing method below, then press the button.</div>
 		<a href="../08_keyinput/index.html" class="nav-btn back">
 			<span class="icon"></span>
 			<span class="label">Previous</span>
 		</a>
+		<div class="easing-selection">
+			<h2>Select Easing Function</h2>
+			<select id="selectease">
+				<option selected>linear</option>
+				<option>quadIn</option>
+				<option>quadOut</option>
+				<option>quadInOut</option>
+				<option>backIn</option>
+				<option>backOut</option>
+			</select>
+		</div>
 	</div>
 	<script src="../../src/myst.js"></script>
 	<script src="code.js"></script>

@@ -160,3 +160,32 @@ body {
 #myst-container .nav-btn.next:focus .icon{
 	border-color: transparent transparent transparent #fff;
 }
+.easing-selection {
+	position: absolute;
+	width: 500px;
+	left: 0;
+	right: 0;
+	top: 420px;
+	margin: 0 auto;
+}
+.easing-selection h2 {
+	font-family: sans-serif;
+	font-size: 18px;
+	font-weight: 700;
+	text-align: center;
+}
+.easing-selection select {
+	position: absolute;
+	left: 0;
+	right: 0;
+	margin: 0 auto;
+	padding-left: 3px;
+	width: 200px;
+	height: 35px;
+	font-family: sans-serif;
+	font-size: 16px;
+	background-color: #ffe;
+	color: #000;
+	border: 1px solid #775;
+	outline: 0;
+}

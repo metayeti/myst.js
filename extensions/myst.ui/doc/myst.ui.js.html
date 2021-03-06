@@ -134,7 +134,7 @@ var atomic_components = {
 		self._angle = fromOption(options.angle, 0);
 		self._background = null;
 		self._zIndex = fromOption(options.zIndex, 0);
-		self._enabled = fromOption(options.enabled, true);
+		self._enabled = Boolean(fromOption(options.enabled, true));
 		self._context = fromOption(options.context, globalContext);
 
 		self._rootContext = self.context;
@@ -160,9 +160,11 @@ var atomic_components = {
 		self._events.onRemoved = function() { invokeEvent(options.onRemoved, self); };
 		// "onResized" is triggered when the component changes size
 		self._events.onResized = function() { invokeEvent(options.onResized, self); };
+		// "onEnabled" is triggered when the component becomes enabled
+		self._events.onEnabled = function() { invokeEvent(options.onEnabled, self); };
+		// "onDisabled" is triggered when the component becomes disabled
+		self._events.onDisabled = function() { invokeEvent(options.onDisabled, self); };
 /*
-			onEnabled: function() { invokeEvent(options.onEnabled, self); },
-			onDisabled: function() { invokeEvent(options.onDisabled, self); },
 			onMoved: function() { invokeEvent(options.onMoved, self); },
 			onAlphaSet: function() { invokeEvent(options.onAlphaSet, self); },
 			onAngleSet: function() { invokeEvent(options.onAngleSet, self); }
@@ -181,7 +183,10 @@ var atomic_components = {
 		 * @returns {object} Self.
 		 */
 		self.enable = function() {
-			self._enabled = true;
+			if (self._enabled === false) {
+				self._enabled = true;
+				self._events.onEnabled();
+			}
 			return self;
 		};
 
@@ -195,7 +200,10 @@ var atomic_components = {
 		 * @returns {object} Self.
 		 */
 		self.disable = function() {
-			self._enabled = false;
+			if (self._enabled === true) {
+				self._enabled = false;
+				self._events.onDisabled();
+			}
 			return self;
 		};
 
@@ -937,20 +945,6 @@ var atomic_components = {
 			}
 		};
 
-		/**
-		 * Clone this component.
-		 *
-		 * @function clone
-		 * @memberof atomic_components.Base
-		 * @instance
-		 */
-		self.clone = function() {
-			// TODO
-			var clonedComponent = new atomic_components.Base({});
-			myst.iter(self, function(memberKey, memberValue) {
-			});
-		};
-
 		// initialize Base
 		if (options.background) {
 			self.setBackground(options.background);
@@ -1052,7 +1046,12 @@ var atomic_components = {
 
 			myst.iter(properties, function(key, value) {
 				var memberfstr = key.charAt(0).toUpperCase() + key.slice(1);
-				var from = self['get' + memberfstr]();
+				var fromf = self['get' + memberfstr];
+				if (!(fromf instanceof Function)) {
+					console.error('"' + key + '" is not a valid tween property.');
+					return;
+				}
+				var from = fromf();
 				var to = value;
 				var setf = self['set' + memberfstr];
 				var tween = new myst.Tween(from, to, duration, setf, function() {
@@ -1250,7 +1249,7 @@ var atomic_components = {
 			}
 		}, _eventId).bindTo(self._rootContext);
 
-		self.unregisterEvents = function() {
+		self._detachListeners = function() {
 			if (_eventId) {
 				input.off('press', _eventId);
 				input.off('move', _eventId);
@@ -1282,23 +1281,28 @@ var atomic_components = {
 		// list of components ordered by z-index
 		self._renderList = [];
 
-		function _compareZ(a, b) { return a._zIndex > b._zIndex; }
+		function _compareZ(a, b) { return a._zIndex - b._zIndex; }
 
 		/**
 		 * Reorder render list by z-index.
 		 */
 		self._reorderRenderList = function() {
-			myst.heapSort(self._renderList, _compareZ);
+			//myst.sort(self._renderList, _compareZ);
+			self._renderList.sort(_compareZ);
 		};
 
 		/**
-		 * Rebuild a render list and order by z-index.
+		 * Rebuild render list ordering by z-index.
 		 */
 		self._rebuildRenderList = function() {
-			self._renderList = [];
+			self._renderList = self._componentList.slice();
+			//myst.sort(self._renderList, _compareZ);
+			self._renderList.sort(_compareZ);
+			/*
 			self._componentList.forEach(function(componentObject) {
-				myst.sortedInsert(self._renderList, componentObject, _compareZ);
+				myst.insertSorted(self._renderList, componentObject, _compareZ);
 			});
+			*/
 		};
 
 		/**
@@ -1314,25 +1318,27 @@ var atomic_components = {
 			myst.iter(components, function(componentKey, componentObject) {
 				if (self[componentKey]) { // disallow reserved or duplicate keys
 					console.error('Cannot add component "' + componentKey + '" due to a name clash.');
-					return self;
+					return;
 				}
-				if (componentObject._owner !== null) {
+				if (componentObject._owner !== null) { // disallow owned components
 					console.error('Cannot add "' + componentKey + '", component is owned.');
-					return self;
+					return;
 				}
 				self._componentList.push(self[componentKey] = componentObject);
 				self._componentKeys.push(componentKey);
 				// set component context to this container
 				componentObject._context = componentObject._owner = self;
-				// set root context to current root context
+				// set root context to container's root context
 				componentObject._rootContext = self._rootContext;
 				// insert ordered into render list
-				myst.sortedInsert(self._renderList, componentObject, _compareZ);
+				//myst.insertSorted(self._renderList, componentObject, _compareZ);
 				// invoke added event
 				if (componentObject._events.onAdded) {
 					componentObject._events.onAdded();
 				}
 			});
+			// rebuild render list
+			self._rebuildRenderList();
 			return self;
 		};
 
@@ -1380,9 +1386,9 @@ var atomic_components = {
 				return;
 			}
 			var componentObject = self._componentList[componentIndex];
-			// unregister any events attached to components
-			if (componentObject.unregisterEvents) {
-				componentObject.unregisterEvents();
+			// detach events attached to components
+			if (componentObject._detachListeners) {
+				componentObject._detachListeners();
 			}
 			// recursively remove all contained containers
 			if (componentObject.removeAll) {
@@ -1413,9 +1419,9 @@ var atomic_components = {
 		 */
 		self.removeAll = function() {
 			self._componentList.forEach(function(componentObject) {
-				// unregister any events attached to components
-				if (componentObject.unregisterEvents) {
-					componentObject.unregisterEvents();
+				// detach events attached to components
+				if (componentObject._detachListeners) {
+					componentObject._detachListeners();
 				}
 				// recursively remove all contained containers
 				if (componentObject.removeAll) {
@@ -1487,7 +1493,7 @@ var public_components = {
 	 *   {@link atomic_components.Container|Container}
 	 *
 	 * @class Frame
-	 * @classdesc This component can be used as a container for other components.
+	 * @classdesc This control can be used as a container for other controls.
 	 * @memberof public_components
 	 *
 	 * @param {object} options - Constructor options.
@@ -1510,7 +1516,6 @@ var public_components = {
 		self._events.onRepaint = function() {
 			var n_components = self._renderList.length;
 			for (var i = 0; i &lt; n_components; i++) {
-				//self._componentList[i].draw();
 				self._renderList[i].draw();
 			}
 		};
@@ -2051,6 +2056,19 @@ var public_components = {
 	TileImage: function(options, self) {
 	},
 
+	/**
+	 * Label control. Extends {@link public_components.Control|Control}.
+	 *
+	 * @class Label
+	 * @classdesc A label that can display arbitrary text.
+	 * @memberof public_components
+	 *
+	 * @param {object} options - Constructor options.
+	 * @param {string} [options.text] - Label text. Use "\n" for newline.
+	 * @param {string|object} [options.font] - Either a font style string, or a bitmap font.
+	 * @param {string} [options.color=#000] - Text color.
+	 * @param {bool} [options.autoResize=true] - Autoresize label to match text contents.
+	 */
 	Label: function(options, self) {
 		self = self || this;
 		options = options || {};
@@ -2069,6 +2087,9 @@ var public_components = {
 		 * Set label text.
 		 */
 		self.setText = function(text) {
+		};
+
+		self._events.onRepaint = function() { // @override
 		};
 
 		// initialize Label
@@ -2113,20 +2134,38 @@ var public_components = {
 
 		self._type = 'TileButton';
 
+		options.tiles = options.tiles || {};
+
+		var tileNormal = options.tiles.normal || [0, 0];
+		var tilePressed = options.tiles.pressed || [0, 0];
+		var tileDisabled = options.tiles.disabled || [0, 0];
+
 		self._events.onPress = function() { // @override
-			self._activeTile = options.tiles.pressed;
+			self._activeTile = tilePressed;
 			self._requestRepaint = true;
 			invokeEvent(options.onPress, self);
 		};
 
 		self._events.onRelease = function() { // @override
-			self._activeTile = options.tiles.normal;
+			self._activeTile = tileNormal;
 			self._requestRepaint = true;
 			invokeEvent(options.onRelease, self);
 		};
 
 		self._events.onClick = function() { // @override
 			invokeEvent(options.onClick, self);
+		};
+
+		self._events.onEnabled = function() { // @override
+			self._activeTile = tileNormal;
+			self._requestRepaint = true;
+			invokeEvent(options.onEnabled, self);
+		};
+
+		self._events.onDisabled = function() { // @override
+			self._activeTile = tileDisabled;
+			self._requestRepaint = true;
+			invokeEvent(options.onDisabled, self);
 		};
 	},
 
@@ -2224,13 +2263,13 @@ return myst.compose({ atomic: atomic_components }, public_components, public_fun
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="atomic_components.html">atomic_components</a></li><li><a href="public_components.html">public_components</a></li><li><a href="public_functions.html">public_functions</a></li></ul><h3>Classes</h3><ul><li><a href="atomic_components.AbstractButton.html">AbstractButton</a></li><li><a href="atomic_components.Base.html">Base</a></li><li><a href="atomic_components.Container.html">Container</a></li><li><a href="atomic_components.Debuggable.html">Debuggable</a></li><li><a href="atomic_components.Graphics.html">Graphics</a></li><li><a href="atomic_components.Tile.html">Tile</a></li><li><a href="atomic_components.Tweenable.html">Tweenable</a></li><li><a href="public_components.Control.html">Control</a></li><li><a href="public_components.Frame.html">Frame</a></li><li><a href="public_components.Shape.html">Shape</a></li><li><a href="public_components.TileButton.html">TileButton</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="atomic_components.html">atomic_components</a></li><li><a href="public_components.html">public_components</a></li><li><a href="public_functions.html">public_functions</a></li></ul><h3>Classes</h3><ul><li><a href="atomic_components.AbstractButton.html">AbstractButton</a></li><li><a href="atomic_components.Base.html">Base</a></li><li><a href="atomic_components.Container.html">Container</a></li><li><a href="atomic_components.Debuggable.html">Debuggable</a></li><li><a href="atomic_components.Graphics.html">Graphics</a></li><li><a href="atomic_components.Tile.html">Tile</a></li><li><a href="atomic_components.Tweenable.html">Tweenable</a></li><li><a href="public_components.Control.html">Control</a></li><li><a href="public_components.Frame.html">Frame</a></li><li><a href="public_components.Label.html">Label</a></li><li><a href="public_components.Shape.html">Shape</a></li><li><a href="public_components.TileButton.html">TileButton</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Fri Mar 05 2021 05:29:06 GMT+0100 (Central European Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Sat Mar 06 2021 18:33:43 GMT+0100 (Central European Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -93,14 +93,14 @@ function updateSelectExplanation(optionElement) {
 	viewExplanationElement.innerText = info;
 }
 
-selectview.addEventListener('change', function() {
-	var optionElement = selectViewElement.options[selectview.selectedIndex];
+selectViewElement.addEventListener('change', function() {
+	var optionElement = selectViewElement.options[selectViewElement.selectedIndex];
 	var mode = optionElement.text;
 	myGame.setViewMode(mode);
 	updateSelectExplanation(optionElement);
 });
 
-updateSelectExplanation(selectview.options[0]);
+updateSelectExplanation(selectViewElement.options[0]);
 
 // run game on window load
 window.addEventListener('load', myGame.run);

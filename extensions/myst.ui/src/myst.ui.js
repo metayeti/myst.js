@@ -798,14 +798,16 @@ var atomic_components = {
 		 * @memberof atomic_components.Base
 		 * @instance
 		 *
-		 * @param {string} color - Component background color.
+		 * @param {string} [color] - Component background color.
 		 *
 		 * @returns {object} Self.
 		 */
 		self.setBackground = function(color) {
-			self._background = color;
-			self._surface.setFillClearMethod(color);
-			self._requestRepaint = true;
+			if (color) {
+				self._background = color;
+				self._surface.setFillClearMethod(color);
+				self._requestRepaint = true;
+			}
 			return self;
 		};
 
@@ -839,7 +841,8 @@ var atomic_components = {
 		};
 
 		/**
-		 * Set component z-index.
+		 * Set component z-index. Z-index only takes effect when component is owned by a container component.
+		 *   Components with higher z-index will be rendered last.
 		 *
 		 * @function setZIndex
 		 * @memberof atomic_components.Base
@@ -858,7 +861,7 @@ var atomic_components = {
 		};
 
 		/**
-		 * Get component z-index.
+		 * Returns component z-index.
 		 *
 		 * @function getZIndex
 		 * @memberof atomic_components.Base
@@ -1259,7 +1262,6 @@ var atomic_components = {
 		 * Reorder render list by z-index.
 		 */
 		self._reorderRenderList = function() {
-			//myst.sort(self._renderList, _compareZ);
 			self._renderList.sort(_compareZ);
 		};
 
@@ -1268,13 +1270,7 @@ var atomic_components = {
 		 */
 		self._rebuildRenderList = function() {
 			self._renderList = self._componentList.slice();
-			//myst.sort(self._renderList, _compareZ);
 			self._renderList.sort(_compareZ);
-			/*
-			self._componentList.forEach(function(componentObject) {
-				myst.insertSorted(self._renderList, componentObject, _compareZ);
-			});
-			*/
 		};
 
 		/**
@@ -1302,8 +1298,6 @@ var atomic_components = {
 				componentObject._context = componentObject._owner = self;
 				// set root context to container's root context
 				componentObject._rootContext = self._rootContext;
-				// insert ordered into render list
-				//myst.insertSorted(self._renderList, componentObject, _compareZ);
 				// invoke added event
 				if (componentObject._events.onAdded) {
 					componentObject._events.onAdded();
@@ -1465,7 +1459,7 @@ var public_components = {
 	 *   {@link atomic_components.Container|Container}
 	 *
 	 * @class Frame
-	 * @classdesc This component can be used as a container for other components.
+	 * @classdesc This control can be used as a container for other controls.
 	 * @memberof public_components
 	 *
 	 * @param {object} options - Constructor options.
@@ -1602,158 +1596,6 @@ var public_components = {
 					return [];
 			}
 		}
-
-		/**
-		 * Sets shape color.
-		 *
-		 * @function setShapeColor
-		 * @memberof public_components.Shape
-		 * @instance
-		 *
-		 * @param {string} color - Shape color.
-		 *
-		 * @returns {object} Self.
-		 */
-		/*
-		self.setShapeColor = function(color) {
-			self._shapeColor = color;
-			self._requestRepaint = true;
-			return self;
-		};
-		*/
-
-		/**
-		 * Sets shape fill.
-		 *
-		 * @function setShapeFill
-		 * @memberof public_components.Shape
-		 * @instance
-		 *
-		 * @param {bool} fill - Controls whether full shape is filled, or just the outlines.
-		 *
-		 * @returns {object} Self.
-		 */
-		/*
-		self.setShapeFill = function(fill) {
-			self._shapeFill = Boolean(fill);
-			self._requestRepaint = true;
-			return self;
-		};
-		*/
-
-		/**
-		 * Sets shape border thickness.
-		 *
-		 * @function setShapeBorder
-		 * @memberof public_components.Shape
-		 * @instance
-		 *
-		 * @param {number} border - Shape border thickness.
-		 *
-		 * @returns {object} Self.
-		 */
-		/*
-		self.setShapeBorder = function(border) {
-			self._shapeBorder = Mat.max(1, parseInt(border, 10));
-			self._requestRepaint = true;
-			return self;
-		};
-		*/
-
-		/**
-		 * Sets shape type.
-		 *
-		 * @function setShapeType
-		 * @memberof public_components.Shape
-		 * @instance
-		 *
-		 * @param {string} type
-		 *
-		 * @returns {object} Self.
-		 */
-		/*
-		self.setShapeType = function(type) {
-			self._shapeType = SHAPE_TYPE[type] || defaultShapeType;
-			self._requestRepaint = true;
-			return self;
-		};
-		*/
-
-		/**
-		 * Sets shape geometry.
-		 *
-		 * @function setShapeGeometry
-		 * @memberof public_components.Shape
-		 * @instance
-		 *
-		 * @param {array} geometry
-		 *
-		 * @returns {object} Self.
-		 */
-		/*
-		self.setShapeGeometry = function(geometry) {
-			self._shapeGeometry = geometry;
-			self._requestRepaint = true;
-			return self;
-		};
-		*/
-
-		/**
-		 * Sets shape radius.
-		 *
-		 * @function setShapeRadius
-		 * @memberof public_components.Shape
-		 * @instance
-		 *
-		 * @param {number} radius
-		 *
-		 * @returns {object} Self.
-		 */
-		/*
-		self.setShapeRadius = function(radius) {
-			self._shapeRadius = radius;
-			self._requestRepaint = true;
-			return self;
-		};
-		*/
-
-		/**
-		 * Sets shape parameters.
-		 *
-		 * @function setShapeParameters
-		 * @memberof public_components.Shape
-		 * @instance
-		 *
-		 * @param {array} parameters
-		 *
-		 * @returns {object} Self.
-		 */
-		/*
-		self.setShapeParameters = function(parameters) {
-			self._shapeParameters = parameters;
-			self._requestRepaint = true;
-			return self;
-		};
-		*/
-
-		/**
-		 * Sets shape real units.
-		 *
-		 * @function setShapeRealUnits
-		 * @memberof public_components.Shape
-		 * @instance
-		 *
-		 * @param {bool} shapeRealUnits
-		 *
-		 * @returns {object} Self.
-		 */
-		/*
-		self.setShapeRealUnits = function(shapeRealUnits) {
-			self._shapeRealUnits = Boolean(shapeRealUnits);
-			self._requestRepaint = true;
-			return self;
-		};
-		*/
 
 		/**
 		 * Sets shape.

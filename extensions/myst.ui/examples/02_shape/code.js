@@ -86,10 +86,10 @@ myState.createUI = function() {
 		height: 50,
 		shape: {
 			type: 'circle',
-			color: 'skyblue',
+			color: 'dodgerblue',
 			//geometry: [[0.5, 0.5]], // [0.5, 0.5] is the default geometry for circle and arc (center point)
 			fill: false,
-			border: 2
+			border: 1
 		}
 	});
 	
@@ -100,7 +100,7 @@ myState.createUI = function() {
 		height: 50,
 		shape: {
 			type: 'arc',
-			color: 'orange',
+			color: 'skyblue',
 			fill: false,
 			parameters: [90, 360], // start and end angles in degrees
 			border: 10
@@ -114,7 +114,7 @@ myState.createUI = function() {
 		height: 50,
 		shape: {
 			type: 'pie',
-			color: 'dodgerblue',
+			color: 'green',
 			parameters: [-90, 180],
 			fill: false,
 			border: 1
@@ -128,7 +128,7 @@ myState.createUI = function() {
 		height: 70,
 		shape: {
 			type: 'polygon',
-			color: '#c4b',
+			color: 'orange',
 			geometry: [[0.5, 0], [0.17, 1], [1, 0.37], [0, 0.37], [0.83, 1]],
 			fill: false
 		}
@@ -141,7 +141,7 @@ myState.createUI = function() {
 		height: 70,
 		shape: {
 			type: 'polygon',
-			color: 'orange',
+			color: 'limegreen',
 			geometry: [[0.5, 0], [0.17, 1], [1, 0.37], [0, 0.37], [0.83, 1]],
 			fill: true
 		}
