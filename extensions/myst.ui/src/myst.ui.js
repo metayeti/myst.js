@@ -1895,7 +1895,7 @@ var public_components = {
 		self._type = 'Label';
 
 		self._autoResize = fromOption(options.autoResize, false);
-		self._text = '';
+		self._text = fromOption(options.text, '');
 
 		/**
 		 * Set label text.
@@ -1908,6 +1908,18 @@ var public_components = {
 
 		// initialize Label
 		self.setText(options.text);
+	},
+
+	/**
+	 * Link label control. Extends {@link public_components.Control|Control}.
+	 *
+	 * @class Label
+	 * @classdesc A label that can be clicked.
+	 * @memberof public_components
+	 *
+	 * @param {object} options - Constructor options.
+	 */
+	LinkLabel: function(options, self) {
 	},
 
 	BitmapLabel: function(options, self) {

@@ -657,7 +657,7 @@ myst.ease = {
 		return (4 - 2 * t) * t - 1;
 	},
 	backIn: function(t) {
-		return t * t * t - t * (0.8) * Math.sin(t * Math.PI);
+		return t * t * t - t * (0.4) * Math.sin(t * Math.PI);
 	},
 	backOut: function(t) {
 		return t * t * t - t * (-1.2) * Math.sin(t * Math.PI);
