@@ -15,31 +15,28 @@ myState.createUI = function() {
 		x: 30,
 		y: 70,
 		width: 50,
-		height: 50,
-		
-		// set the shape type and appearance with the "shape" entry. we may change shape at runtime
+		height: 50,	
+		// set shape type and appearance.  we may change shape at runtime
 		// by calling setShape({...}) with one or more of the same parameters as listed below
-		shape: {			
-			// shape color. default is #000
-			color: '#c2f',
-			// whether or not to fill the shape. when false, only the border is displayed. default is true
-			fill: false,
-			// border thickness. default is 1
-			border: 1,
-			// type of shape. can be any of the following: rectangle, line, triangle, polygon, circle, arc, pie
-			type: 'rectangle',
-			// shape geometry. this is an array of pairs of coordinates in the unit coordinate system (0 to 1)
-			// different shapes may require different number of coordinates. polygon may have any number of coordinates.
-			geometry: [[0, 0], [1, 1]],
-			// shape radius. only applicable to circle, arc, and rectangle. rectangle may have multiple radii in the form
-			// of an array (one radius for each corner, top-left first, clockwise). these values may be 0 to 1
-			radius: 0,
-			// additional shape parameters in the form of a list of values. only applicable to shapes that require these
-			// (such as arc)
-			//parameters: []
-			// real units flag. set to true if you want to use pixel instead of unit coordinates. default is false
-			realUnits: false
-		}
+		// shape color. default is #000
+		color: '#c2f',
+		// whether or not to fill the shape. when false, only the border is displayed. default is true
+		fill: false,
+		// border thickness. default is 1
+		border: 1,
+		// type of shape. can be any of the following: rectangle, line, triangle, polygon, circle, arc, pie
+		type: 'rectangle',
+		// shape geometry. this is an array of pairs of coordinates in the unit coordinate system (0 to 1)
+		// different shapes may require different number of coordinates. polygon may have any number of coordinates.
+		geometry: [[0, 0], [1, 1]],
+		// shape radius. only applicable to circle, arc, and rectangle. rectangle may have multiple radii in the form
+		// of an array (one radius for each corner, top-left first, clockwise). these values may be 0 to 1
+		radius: 0,
+		// additional shape parameters in the form of a list of values. only applicable to shapes that require these
+		// (such as arc)
+		//parameters: []
+		// real units flag. set to true if you want to use pixel instead of unit coordinates. default is false
+		realUnits: false
 	});
 
 	this.shape2 = new myst.ui.Shape({
@@ -47,10 +44,8 @@ myState.createUI = function() {
 		y: 70,
 		width: 50,
 		height: 50,
-		shape: {
-			type: 'line',
-			geometry: [[0, 0], [1, 1]]
-		}
+		type: 'line',
+		geometry: [[0, 0], [1, 1]]
 	});
 
 	this.shape3 = new myst.ui.Shape({
@@ -58,12 +53,10 @@ myState.createUI = function() {
 		y: 70,
 		width: 50,
 		height: 50,
-		shape: {
-			type: 'triangle',
-			geometry: [[0, 1], [0.5, 0], [1, 1]],
-			color: 'blue',
-			fill: false
-		}
+		type: 'triangle',
+		geometry: [[0, 1], [0.5, 0], [1, 1]],
+		color: 'blue',
+		fill: false
 	});
 
 	this.shape4 = new myst.ui.Shape({
@@ -71,12 +64,10 @@ myState.createUI = function() {
 		y: 70,
 		width: 50,
 		height: 50,
-		shape: {
-			type: 'polygon',
-			color: 'tomato',
-			geometry: [[0.3, 0], [0.7, 0], [1, 0.3], [1, 0.7], [0.7, 1], [0.3, 1], [0, 0.7], [0, 0.3]],
-			fill: true
-		}
+		type: 'polygon',
+		color: 'tomato',
+		geometry: [[0.3, 0], [0.7, 0], [1, 0.3], [1, 0.7], [0.7, 1], [0.3, 1], [0, 0.7], [0, 0.3]],
+		fill: true
 	});
 
 	this.shape5 = new myst.ui.Shape({
@@ -84,13 +75,11 @@ myState.createUI = function() {
 		y: 70,
 		width: 50,
 		height: 50,
-		shape: {
-			type: 'circle',
-			color: 'dodgerblue',
-			//geometry: [[0.5, 0.5]], // [0.5, 0.5] is the default geometry for circle and arc (center point)
-			fill: false,
-			border: 1
-		}
+		type: 'circle',
+		color: 'dodgerblue',
+		//geometry: [[0.5, 0.5]], // [0.5, 0.5] is the default geometry for circle and arc (center point)
+		fill: false,
+		border: 1
 	});
 	
 	this.shape6 = new myst.ui.Shape({
@@ -98,13 +87,11 @@ myState.createUI = function() {
 		y: 170,
 		width: 50,
 		height: 50,
-		shape: {
-			type: 'arc',
-			color: 'skyblue',
-			fill: false,
-			parameters: [90, 360], // start and end angles in degrees
-			border: 10
-		}
+		type: 'arc',
+		color: 'skyblue',
+		fill: false,
+		parameters: [90, 360], // start and end angles in degrees
+		border: 10
 	});
 	
 	this.shape7 = new myst.ui.Shape({
@@ -112,13 +99,11 @@ myState.createUI = function() {
 		y: 170,
 		width: 50,
 		height: 50,
-		shape: {
-			type: 'pie',
-			color: 'green',
-			parameters: [-90, 180],
-			fill: false,
-			border: 1
-		}
+		type: 'pie',
+		color: 'green',
+		parameters: [-90, 180],
+		fill: false,
+		border: 1
 	});
 	
 	this.shape8 = new myst.ui.Shape({
@@ -126,12 +111,10 @@ myState.createUI = function() {
 		y: 160,
 		width: 70,
 		height: 70,
-		shape: {
-			type: 'polygon',
-			color: 'orange',
-			geometry: [[0.5, 0], [0.17, 1], [1, 0.37], [0, 0.37], [0.83, 1]],
-			fill: false
-		}
+		type: 'polygon',
+		color: 'orange',
+		geometry: [[0.5, 0], [0.17, 1], [1, 0.37], [0, 0.37], [0.83, 1]],
+		fill: false
 	});
 	
 	this.shape9 = new myst.ui.Shape({
@@ -139,12 +122,10 @@ myState.createUI = function() {
 		y: 160,
 		width: 70,
 		height: 70,
-		shape: {
-			type: 'polygon',
-			color: 'limegreen',
-			geometry: [[0.5, 0], [0.17, 1], [1, 0.37], [0, 0.37], [0.83, 1]],
-			fill: true
-		}
+		type: 'polygon',
+		color: 'limegreen',
+		geometry: [[0.5, 0], [0.17, 1], [1, 0.37], [0, 0.37], [0.83, 1]],
+		fill: true
 	});
 
 };

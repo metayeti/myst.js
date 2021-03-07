@@ -1851,7 +1851,7 @@ var public_components = {
 		};
 
 		// initialize Shape
-		self.setShape(options.shape);
+		self.setShape(options);
 	},
 
 	Image: function(options, self) {
