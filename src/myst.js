@@ -100,7 +100,7 @@ myst.clamp = function(number, min, max) {
 };
 
 /**
- * Returns a random integer in range (inclusive).
+ * Returns a random integer in range.
  *
  * @function getRandomInt
  * @memberof myst
@@ -112,7 +112,7 @@ myst.clamp = function(number, min, max) {
  * @returns {number}
  */
 myst.getRandomInt = function(min, max) {
-	return Math.floor(Math.random() * (max - min + 1)) + min;
+	return Math.floor(Math.random() * (max - min + 1) + min);
 };
 
 /**
@@ -126,6 +126,22 @@ myst.getRandomInt = function(min, max) {
  */
 myst.coinFlip = function() {
 	return 1 == Math.floor(Math.random() * 2);
+};
+
+/**
+ * Returns the result of a dice roll.
+ *
+ * @function diceRoll
+ * @memberof myst
+ * @instance
+ *
+ * @param {number} [N=6] - Number of sides on the dice.
+ *
+ * @returns {number}
+ */
+myst.diceRoll = function(N) {
+	N = (N >= 1) ? N : 6;
+	return Math.floor(Math.random() * N) + 1;
 };
 
 /**

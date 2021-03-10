@@ -1,6 +1,8 @@
 ## next
 - `FEATURE` Added `sector` and `sectorFill` functions to `Render`.
 - `BUGFIX` Fixed the "bounce" of the `myst.ease.backIn` easing function to be closer to that of `myst.ease.backOut`.
+- `FEATURE` Added `diceRoll` function.
+- `BUGFIX` Fixed `getRandomInt` function to always return integer.
 
 ## 0.9.4 (February 7, 2021)
 - `BUGFIX` Fixed `Render.circle` and `Render.arc` so they don't continue drawing from old paths.

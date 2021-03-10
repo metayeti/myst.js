@@ -99,14 +99,3 @@ QUnit.test("myst.compose", function(assert) {
 	expected = {};
 	assert.deepEqual(composed, expected, "Compose a single empty object");
 });
-
-///////////////////////////////////////////////////////////////////////////////
-//
-//  TEST: myst.sort
-//
-//  Tests the sorting function.
-//
-///////////////////////////////////////////////////////////////////////////////
-QUnit.test("myst.compose", function(assert) {
-	
-});
