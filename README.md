@@ -6,8 +6,6 @@ the stable version from the main branch instead.
 
 myst.js is a lightweight HTML5 game development toolkit intended for 2D game development.
 
-Version 0.9.4
-
 ## Features
 
 - Single file (minified: 16.6KB) with zero external dependencies
