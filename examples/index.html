@@ -6,10 +6,29 @@
 	<meta name="keywords" content="myst.js, examples">
 	<meta name="author" content="Danijel Durakovic">
 	<title>myst.js examples</title>
+	<!-- stylesheets -->
+	<link rel="stylesheet" href="app/css/host_app.css">
 </head>
 <body>
 	<!-- header -->
 	<header>
+		<!-- example category selector -->
+		<div class="example-select category">
+			<select name="category-select">
+				<option value="">myst.js</option>
+				<option value="">myst.ui.js</option>
+				<option value="">myst.map.js</option>
+			</select>
+		</div>
+		<!-- example selector -->
+		<div class="example-select example">
+			<select name="example-select">
+				<option value="">01_basic</option>
+				<option value="">02_bouncybox</option>
+			</select>
+		</div>
+		<!-- load example button -->
+		<button class="button-loadexample">Load Example</button>
 	</header>
 	<!-- main content -->
 	<main>
