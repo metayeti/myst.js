@@ -3,35 +3,64 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="description" content="myst.js example application">
-	<meta name="keywords" content="myst.js, examples">
 	<meta name="author" content="Danijel Durakovic">
-	<title>myst.js examples</title>
+	<title>myst.js example viewer</title>
 	<!-- stylesheets -->
-	<link rel="stylesheet" href="app/css/host_app.css">
+	<link rel="stylesheet" href="app/css/reset.css">
+	<link rel="stylesheet" href="app/css/host.css">
 </head>
 <body>
 	<!-- header -->
 	<header>
-		<!-- example category selector -->
-		<div class="example-select category">
-			<select name="category-select">
-				<option value="">myst.js</option>
-				<option value="">myst.ui.js</option>
-				<option value="">myst.map.js</option>
+		<!-- category selector -->
+		<div class="header-element selector">
+			<select name="select-category">
+				<option value="myst_js">myst.js</option>
 			</select>
 		</div>
 		<!-- example selector -->
-		<div class="example-select example">
-			<select name="example-select">
+		<div class="header-element selector">
+			<select name="select-example">
 				<option value="">01_basic</option>
-				<option value="">02_bouncybox</option>
 			</select>
 		</div>
-		<!-- load example button -->
-		<button class="button-loadexample">Load Example</button>
+		<!-- load button -->
+		<button class="header-element button-loadexample">Load Example</button>
+		<!-- separator -->
+		<div class="header-element separator"></div>
+		<!-- run button -->
+		<button class="header-element button-run">
+			<span class="icon"></span>
+			<span class="caption">Run (F8)</span>
+		</button>
+		<!-- separator -->
+		<div class="header-element separator"></div>
+		<!-- rotate layout button -->
+		<button class="header-element tool-button button-reorient" title="Reorient layout"></button>
+		<!-- dark mode button -->
+		<button class="header-element tool-button button-darkmode" title="Toggle dark mode"></button>
+		<!-- powered by caption -->
+		<div class="powered-by">Powered by <a href="#">myst.js</a></div>
 	</header>
 	<!-- main content -->
-	<main>
+	<main class="vertical-split">
+		<!-- code view -->
+		<div class="code layout-view">
+		</div>
+		<!-- example view -->
+		<div class="example layout-view">
+		</div>
+		<!-- layout sizer -->
+		<div class="layout-sizer"></div>
 	</main>
+	<!-- scripts -->
+	<script src="app/src/db.js"></script>
+	<script src="app/src/host.js"></script>
+
+	<!--
+		Copyright (c) 2021 Danijel Durakovic
+		MIT License
+	-->
+
 </body>
 </html>
