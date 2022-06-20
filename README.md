@@ -1,8 +1,8 @@
 ![myst.js](/logo.png?raw=true)
 
-0.9.5
-
 myst.js is a lightweight HTML5 game development toolkit intended for 2D game development.
+
+Version 0.9.5
 
 ## Features
 
