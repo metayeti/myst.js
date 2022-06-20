@@ -1,8 +1,6 @@
 ![myst.js](/logo.png?raw=true)
 
-:warning: You've wandered into the **development branch**. The code here may not be stable and the
-repository may or may not be in a coherent state. If you are looking for library files, grab
-the stable version from the main branch instead.
+0.9.5
 
 myst.js is a lightweight HTML5 game development toolkit intended for 2D game development.
 
