@@ -189,7 +189,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="myst.js.html">myst.js</a>, <a href="myst.js.html#line760">line 760</a>
+        <a href="myst.js.html">myst.js</a>, <a href="myst.js.html#line659">line 659</a>
     </li></ul></dd>
     
 
@@ -392,7 +392,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="myst.js.html">myst.js</a>, <a href="myst.js.html#line487">line 487</a>
+        <a href="myst.js.html">myst.js</a>, <a href="myst.js.html#line386">line 386</a>
     </li></ul></dd>
     
 
@@ -529,7 +529,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="myst.js.html">myst.js</a>, <a href="myst.js.html#line151">line 151</a>
+        <a href="myst.js.html">myst.js</a>, <a href="myst.js.html#line167">line 167</a>
     </li></ul></dd>
     
 
@@ -1057,6 +1057,181 @@
     
 
     
+    <h4 class="name" id="diceRoll"><span class="type-signature"></span>diceRoll<span class="signature">(N<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {number}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Returns the result of a dice roll.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>N</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    6
+                
+                </td>
+            
+
+            <td class="description last">Number of sides on the dice.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="myst.js.html">myst.js</a>, <a href="myst.js.html#line131">line 131</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">number</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
     <h4 class="name" id="getFilenameExtension"><span class="type-signature"></span>getFilenameExtension<span class="signature">(filename)</span><span class="type-signature"> &rarr; {string}</span></h4>
     
 
@@ -1158,7 +1333,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="myst.js.html">myst.js</a>, <a href="myst.js.html#line509">line 509</a>
+        <a href="myst.js.html">myst.js</a>, <a href="myst.js.html#line408">line 408</a>
     </li></ul></dd>
     
 
@@ -1220,7 +1395,7 @@
 
 
 <div class="description">
-    Returns a random integer in range (inclusive).
+    Returns a random integer in range.
 </div>
 
 
@@ -1390,546 +1565,6 @@
     
 
     
-    <h4 class="name" id="heapSort"><span class="type-signature"></span>heapSort<span class="signature">(list, comparef<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Perform a heap sort over a list of items.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>list</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">array</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">List of sortable items.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>comparef</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">function</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">Comparator function.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="myst.js.html">myst.js</a>, <a href="myst.js.html#line393">line 393</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="insertionSort"><span class="type-signature"></span>insertionSort<span class="signature">(list, comparef<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Perform an insertion sort over a list of items.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>list</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">array</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">List of sortable items.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>comparef</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">function</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">Comparator function.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="myst.js.html">myst.js</a>, <a href="myst.js.html#line363">line 363</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="insertSorted"><span class="type-signature"></span>insertSorted<span class="signature">(list, comparef<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Insert an item into a sorted list.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>list</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">array</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">List of sorted items.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>comparef</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">function</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">Comparator function.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="myst.js.html">myst.js</a>, <a href="myst.js.html#line436">line 436</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    
     <h4 class="name" id="iter"><span class="type-signature"></span>iter<span class="signature">(collection, callback)</span><span class="type-signature"></span></h4>
     
 
@@ -2054,7 +1689,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="myst.js.html">myst.js</a>, <a href="myst.js.html#line463">line 463</a>
+        <a href="myst.js.html">myst.js</a>, <a href="myst.js.html#line362">line 362</a>
     </li></ul></dd>
     
 
@@ -2352,7 +1987,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="myst.js.html">myst.js</a>, <a href="myst.js.html#line225">line 225</a>
+        <a href="myst.js.html">myst.js</a>, <a href="myst.js.html#line241">line 241</a>
     </li></ul></dd>
     
 
@@ -2599,7 +2234,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="myst.js.html">myst.js</a>, <a href="myst.js.html#line298">line 298</a>
+        <a href="myst.js.html">myst.js</a>, <a href="myst.js.html#line314">line 314</a>
     </li></ul></dd>
     
 
@@ -2758,7 +2393,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="myst.js.html">myst.js</a>, <a href="myst.js.html#line168">line 168</a>
+        <a href="myst.js.html">myst.js</a>, <a href="myst.js.html#line184">line 184</a>
     </li></ul></dd>
     
 
@@ -3005,7 +2640,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="myst.js.html">myst.js</a>, <a href="myst.js.html#line206">line 206</a>
+        <a href="myst.js.html">myst.js</a>, <a href="myst.js.html#line222">line 222</a>
     </li></ul></dd>
     
 
@@ -3275,7 +2910,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="myst.js.html">myst.js</a>, <a href="myst.js.html#line186">line 186</a>
+        <a href="myst.js.html">myst.js</a>, <a href="myst.js.html#line202">line 202</a>
     </li></ul></dd>
     
 
@@ -3545,7 +3180,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="myst.js.html">myst.js</a>, <a href="myst.js.html#line269">line 269</a>
+        <a href="myst.js.html">myst.js</a>, <a href="myst.js.html#line285">line 285</a>
     </li></ul></dd>
     
 
@@ -3769,7 +3404,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="myst.js.html">myst.js</a>, <a href="myst.js.html#line251">line 251</a>
+        <a href="myst.js.html">myst.js</a>, <a href="myst.js.html#line267">line 267</a>
     </li></ul></dd>
     
 
@@ -4016,7 +3651,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="myst.js.html">myst.js</a>, <a href="myst.js.html#line321">line 321</a>
+        <a href="myst.js.html">myst.js</a>, <a href="myst.js.html#line337">line 337</a>
     </li></ul></dd>
     
 
@@ -4175,190 +3810,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="myst.js.html">myst.js</a>, <a href="myst.js.html#line131">line 131</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="swap"><span class="type-signature"></span>swap<span class="signature">(list, i, j)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Swap two items in a list.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>list</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">array</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">List of items.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>i</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">First index.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>j</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Second index.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="myst.js.html">myst.js</a>, <a href="myst.js.html#line346">line 346</a>
+        <a href="myst.js.html">myst.js</a>, <a href="myst.js.html#line147">line 147</a>
     </li></ul></dd>
     
 
@@ -4410,7 +3862,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Fri Mar 05 2021 03:31:25 GMT+0100 (Central European Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Tue Jun 21 2022 01:32:21 GMT+0200 (Central European Summer Time)
 </footer>
 
 <script> prettyPrint(); </script>

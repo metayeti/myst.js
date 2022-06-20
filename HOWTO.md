@@ -241,33 +241,45 @@ var stateIsActive = myState.isActive();
 
 ### Render
 
-The Render class contains functions that deal with on-screen rendering. Render is already present when a Surface is initialized (see next section for information on the Surface class).
+The Render class contains functions that deal with on-screen rendering. An instance of Render is automatically initialized whenever a Surface is initialized (see next section for information on the Surface class).
 
 It can be accessed via `state.surface.render` or the shorthand `state.paint`. It is preferable to use the shorthand method. Methods are listed below. Note the optional and default values.
 
 Rendering shapes:
 ```JavaScript
 // line
-line(x1, y1, x2, y2, [lineColor='#fff'], [lineWidth=1]);
+line(x1, y1, x2, y2, [lineColor='#fff'], [width=1]);
 
 // rectangle
-rect(x, y, width, height, [lineColor='#fff'], [lineWidth=1]);
+rect(x, y, width, height, [lineColor='#fff'], [width=1], [radius=0]);
 
 // filled rectangle
-rectFill(x, y, width, height, [backgroundColor='#fff']);
+rectFill(x, y, width, height, [color='#fff'], [radius=0]);
 
 // circle
-circle(x, y, radius, lineColor, [lineWidth=1)];
+circle(x, y, radius, lineColor, [width=1)];
 
 // filled circle
-circleFill(x, y, radius, [backgroundColor='#fff']);
+circleFill(x, y, radius, [color='#fff']);
 
 // arc (part of a circle)
-arc(x, y, radius, startAngle, endAngle, [lineColor='#fff'], [lineWidth=1]);
+arc(x, y, radius, startAngle, endAngle, [lineColor='#fff'], [width=1]);
 
-// solid polygon
+// filled arc
+arcFill(x, y, radius, startAngle, endAngle, [color='#fff']);
+
+// circular sector
+sector(x, y, radius, startAngle, endAngle, [color='#fff'], [width=1]);
+
+// filled circular sector
+sectorFill(x, y, radius, startAngle, endAngle, [color='#fff']);
+
+// polygon
 points = [[x1, y1], [x2, y2], ...];
-polygon(points, [backgroundColor='#fff']);
+polygon(points, [color='#fff'], [width=1]);
+
+// filled polygon
+polygonFill(points, [color='#fff']);
 ```
 
 Rendering graphics and tiles:
@@ -905,7 +917,7 @@ myst.movePoint(ax, ay, bx, by, d);
 
 `getRandomInt` returns an integer from a range at random.
 ```JavaScript
-myst.getRandomInt(min, max); // returns a number between min and max (inclusive)
+myst.getRandomInt(min, max); // returns an integer in range [min..max]
 ```
 
 `coinFlip` returns either true or false at random.
@@ -918,6 +930,11 @@ else {
 }
 ```
 
+`diceRoll` returns the result of a random dice roll. The parameter is the number of sides on the die - default is 6.
+```JavaScript
+myst.diceRoll([N=6]); // returns an integer in range [1..N]
+```
+
 `shuffle` shuffles an array.
 ```JavaScript
 myst.shuffle(array);
@@ -926,4 +943,9 @@ myst.shuffle(array);
 `choose` picks an element from an array at random.
 ```JavaScript
 myst.choose(array);
+```
+
+`pick` picks an element from an array at random and **removes that element** from the array.
+```JavaScript
+myst.pick(array);
 ```

@@ -1,4 +1,4 @@
-## next
+## 0.9.5 (June 21, 2022)
 - `FEATURE` Added `sector` and `sectorFill` functions to `Render`.
 - `BUGFIX` Fixed the "bounce" of the `myst.ease.backIn` easing function to be closer to that of `myst.ease.backOut`.
 - `FEATURE` Added `diceRoll` function.

@@ -12,7 +12,7 @@
 
 /**
  * @file myst.js
- * @version 0.9.4(*)
+ * @version 0.9.5
  * @author Danijel Durakovic
  * @copyright 2021
  */
@@ -1545,7 +1545,7 @@ myst.Render = function(ctx) {
 	};
 
 	/**
-	 * Renders a circle sector.
+	 * Renders a circular sector.
 	 *
 	 * @param {number} x - Sector x coordinate.
 	 * @param {number} y - Sector y coordinate.
@@ -1570,7 +1570,7 @@ myst.Render = function(ctx) {
 	};
 
 	/**
-	 * Renders a filled circle sector.
+	 * Renders a filled circular sector.
 	 *
 	 * @param {number} x - Sector x coordinate.
 	 * @param {number} y - Sector y coordinate.
