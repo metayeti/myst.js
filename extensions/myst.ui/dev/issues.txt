@@ -1,0 +1,6 @@
+GENERAL
+[ ] Image does not auto-init with texture's width and height (when width/height aren't provided)
+[ ] TileButton::tiles isn't documented
+
+HOWTO
+[ ] make sure to point out that inputHandler should be passed to myst.ui.init for controls with input to work

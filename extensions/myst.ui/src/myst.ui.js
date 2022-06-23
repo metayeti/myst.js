@@ -12,7 +12,7 @@
 
 /**
  * @file myst.ui.js
- * @version 0.2.0
+ * @version 0.2.1
  * @author Danijel Durakovic
  * @copyright 2021
  */
@@ -729,7 +729,7 @@ var atomic_components = {
 		 * @returns {object} Self.
 		 */
 		self.centerX = function() {
-			var ownerWidth = (self._owner) ? self.owner._width : self._context.surface.width;
+			var ownerWidth = (self._owner) ? self._owner._width : self._context.surface.width;
 			self.setX(Math.floor((ownerWidth - self._width) / 2));
 			return self;
 		};
@@ -744,7 +744,7 @@ var atomic_components = {
 		 * @returns {object} Self.
 		 */
 		self.centerY = function() {
-			var ownerHeight = (self._owner) ? self.owner._height : self._context.surface.height;
+			var ownerHeight = (self._owner) ? self._owner._height : self._context.surface.height;
 			self.setY(Math.floor((ownerHeight - self._height) / 2));
 			return self;
 		};
