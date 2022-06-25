@@ -12,7 +12,7 @@
 
 /**
  * @file myst.ui.js
- * @version 0.2.2
+ * @version 0.2.3
  * @author Danijel Durakovic
  * @copyright 2021
  */
@@ -1889,7 +1889,42 @@ var public_components = {
 		self._type = 'Image';
 	},
 
+	/**
+	 * TileImage control. Extends {@link public_components.Control}, {@link atomic_components.Tile}.
+	 *
+	 * @class TileImage
+	 * @classdesc Displays a static tile from a tileset.
+	 * @memberof public_components
+	 *
+	 * @param {object} options - Constructor options.
+	 */
 	TileImage: function(options, self) {
+		self = self || this;
+		options = options || {};
+
+		myst.compose(
+			self,
+			new public_components.Control(options, self),
+			new atomic_components.Tile(options, self)
+		);
+
+		self._type = 'TileImage';
+
+		/**
+		 * Switch to a different tile.
+		 *
+		 * @function setTile
+		 * @memberof public_components.TileImage
+		 * @instance
+		 *
+		 * @param {array} tile - Next tile.
+		 */
+		self.setTile = function(tile) {
+			if (tile instanceof Array && tile.length >= 2) {
+				self._activeTile = tile;
+				self._requestRepaint = true;
+			}
+		};
 	},
 
 	/**
