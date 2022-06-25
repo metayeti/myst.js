@@ -12,7 +12,7 @@
 
 /**
  * @file myst.ui.js
- * @version 0.2.1
+ * @version 0.2.2
  * @author Danijel Durakovic
  * @copyright 2021
  */
@@ -988,6 +988,7 @@ var atomic_components = {
 	Tweenable: function(options, self) {
 
 		var _activeTweens = [];
+		var _activeTimeout = null;
 
 		function finalizeAllTweens() {
 			_activeTweens.forEach(function(tween) {
@@ -996,6 +997,10 @@ var atomic_components = {
 				}
 			});
 			_activeTweens = [];
+			if (_activeTimeout) {
+				clearTimeout(_activeTimeout);
+				_activeTimeout = null;
+			}
 		}
 
 		/**
@@ -1009,32 +1014,37 @@ var atomic_components = {
 		 * @param {object} [options] - Tween options.
 		 * @param {number} [options.duration=240] - Tween duration in milliseconds.
 		 * @param {function} [options.ease=myst.ease.quadInOut] - Easing function.
-		 * @param {number} [options.delay=0] - TODO Tween delay in milliseconds.
-		 * @param {function} [options.onDone] - TODO Is called when tween is done animating.
+		 * @param {number} [options.delay=0] - Tween delay in milliseconds.
+		 * @param {function} [options.onDone] - Is called when tween is done animating.
 		 */
 		self.tween = function(properties, options) {
 			options = options || {};
 			var duration = fromOption(options.duration, 240);
 			var easef = fromOption(options.ease, myst.ease.quadInOut);
+			var delay = fromOption(options.delay, 0);
 
-			finalizeAllTweens();
+			function applyTween() {
+				finalizeAllTweens();
+				myst.iter(properties, function(key, value, index) {
+					var memberfstr = key.charAt(0).toUpperCase() + key.slice(1);
+					var fromf = self['get' + memberfstr];
+					if (!(fromf instanceof Function)) {
+						console.error('"' + key + '" is not a valid tween property.');
+						return;
+					}
+					var from = fromf();
+					var to = value;
+					var setf = self['set' + memberfstr];
+					var donef = (index === 0) ? function() { invokeEvent(options.onDone, self); } : null;
+					var tween = new myst.Tween(from, to, duration, setf, donef, easef);
+					_activeTweens.push(tween);
+					tween.start();
+				});
+			}
 
-			myst.iter(properties, function(key, value) {
-				var memberfstr = key.charAt(0).toUpperCase() + key.slice(1);
-				var fromf = self['get' + memberfstr];
-				if (!(fromf instanceof Function)) {
-					console.error('"' + key + '" is not a valid tween property.');
-					return;
-				}
-				var from = fromf();
-				var to = value;
-				var setf = self['set' + memberfstr];
-				var tween = new myst.Tween(from, to, duration, setf, function() {
-					invokeEvent(options.onDone, self);
-				}, easef);
-				_activeTweens.push(tween);
-				tween.start();
-			});
+			if (delay === 0) { applyTween(); }
+			else { setTimeout(applyTween, delay); }
+
 			return self;
 		};
 
@@ -1048,7 +1058,7 @@ var atomic_components = {
 		 * @param {object} [options] - Tween options.
 		 * @param {number} [options.duration=240] - Tween duration in milliseconds.
 		 * @param {function} [options.ease=myst.ease.quadInOut] - Easing function.
-		 * @param {number} [options.delay=0] - TODO Tween delay in milliseconds.
+		 * @param {number} [options.delay=0] - Tween delay in milliseconds.
 		 */
 		self.fadeOut = function(options) {
 			self.tween({ alpha: 0 }, options);
@@ -1064,7 +1074,7 @@ var atomic_components = {
 		 * @param {object} [options] - Tween options.
 		 * @param {number} [options.duration=240] - Tween duration in milliseconds.
 		 * @param {function} [options.ease=myst.ease.quadInOut] - Easing function.
-		 * @param {number} [options.delay=0] - TODO Tween delay in milliseconds.
+		 * @param {number} [options.delay=0] - Tween delay in milliseconds.
 		 */
 		self.fadeIn = function(options) {
 			self.tween({ alpha: 1 }, options);
@@ -1081,7 +1091,7 @@ var atomic_components = {
 		 * @param {object} [options] - Tween options.
 		 * @param {number} [options.duration=240] - Tween duration in milliseconds.
 		 * @param {function} [options.ease=myst.ease.quadInOut] - Easing function.
-		 * TODO @param {number} [options.delay=0] - Tween delay in milliseconds.
+		 * @param {number} [options.delay=0] - Tween delay in milliseconds.
 		 */
 		self.fadeTo = function(alpha, options) {
 			self.tween({ alpha: alpha }, options);
@@ -1194,7 +1204,7 @@ var atomic_components = {
 			}
 			if (_pointIn(coords)) {
 				self._holding = self._pressed = true;
-				self._events.onPress();
+				self._events.onPress(coords);
 			}
 		}, _eventId).bindTo(self._rootContext);
 
@@ -1204,10 +1214,10 @@ var atomic_components = {
 				var nextPressed = _pointIn(coords);
 				if (prevPressed !== nextPressed) {
 					if ((self._pressed = nextPressed)) {
-						self._events.onPress();
+						self._events.onPress(coords);
 					}
 					else if (!self._pressed) {
-						self._events.onRelease();
+						self._events.onRelease(coords);
 					}
 				}
 			}
@@ -1218,8 +1228,8 @@ var atomic_components = {
 				var prevPressed = self._pressed;
 				self._holding = self._pressed = false;
 				if (prevPressed) {
-					self._events.onRelease();
-					self._events.onClick();
+					self._events.onRelease(coords);
+					self._events.onClick(coords);
 				}
 			}
 		}, _eventId).bindTo(self._rootContext);
@@ -1854,9 +1864,21 @@ var public_components = {
 		self.setShape(options);
 	},
 
+	/**
+	 * Image control. Extends {@link public_components.Control}, {@link atomic_components.Graphics}.
+	 *
+	 * @class Image
+	 * @classdesc Displays a static image from a texture.
+	 * @memberof public_components
+	 *
+	 * @param {object} options - Constructor options.
+	 */
 	Image: function(options, self) {
 		self = self || this;
 		options = options || {};
+
+		options.width = fromOption(options.width, options.texture.width);
+		options.height = fromOption(options.height, options.texture.height);
 
 		myst.compose(
 			self,
@@ -1959,12 +1981,13 @@ var public_components = {
 		);
 
 		self._type = 'TileButton';
-
 		options.tiles = options.tiles || {};
 
 		var tileNormal = options.tiles.normal || [0, 0];
 		var tilePressed = options.tiles.pressed || [0, 0];
 		var tileDisabled = options.tiles.disabled || [0, 0];
+
+		self._activeTile = tileNormal;
 
 		self._events.onPress = function() { // @override
 			self._activeTile = tilePressed;
@@ -2037,6 +2060,28 @@ var public_functions = {
 	},
 
 	/**
+	 * Applies an action to an arbitrary group of components.
+	 *
+	 * @function applyToGroup
+	 * @memberof public_functions
+	 * @instance
+	 *
+	 * @param {array} group - Group of components.
+	 * @param {string} fname - Function name.
+	 * @param {string} [fargs] - Function arguments.
+	 */
+	applyToGroup: function(group, fname, fargs) {
+		if (fargs != null) {
+			fargs = (fargs instanceof Array) ? fargs : [fargs];
+		}
+		myst.iter(group, function(key, component) {
+			if (component[fname] instanceof Function) {
+				component[fname].apply(component, fargs);
+			}
+		});
+	},
+
+	/**
 	 * Creates a tile from a given texture.
 	 *
 	 * @function createTile
@@ -2058,6 +2103,20 @@ var public_functions = {
 		});
 		tileSurface.render.tile(texture, 0, 0, tileWidth, tileHeight, tileX, tileY);
 		return tileSurface.canvas;
+	},
+
+	/**
+	 * Applies a delayed action.
+	 *
+	 * @function delayedAction
+	 * @memberof public_functions
+	 * @instance
+	 *
+	 * @param {number} delay
+	 * @param {function} callback
+	 */
+	delayedAction: function(delay, callback) {
+		setTimeout(callback, delay);
 	},
 
 	/**

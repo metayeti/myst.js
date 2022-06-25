@@ -40,7 +40,7 @@
 
 /**
  * @file myst.ui.js
- * @version 0.2.0
+ * @version 0.2.2
  * @author Danijel Durakovic
  * @copyright 2021
  */
@@ -757,7 +757,7 @@ var atomic_components = {
 		 * @returns {object} Self.
 		 */
 		self.centerX = function() {
-			var ownerWidth = (self._owner) ? self.owner._width : self._context.surface.width;
+			var ownerWidth = (self._owner) ? self._owner._width : self._context.surface.width;
 			self.setX(Math.floor((ownerWidth - self._width) / 2));
 			return self;
 		};
@@ -772,7 +772,7 @@ var atomic_components = {
 		 * @returns {object} Self.
 		 */
 		self.centerY = function() {
-			var ownerHeight = (self._owner) ? self.owner._height : self._context.surface.height;
+			var ownerHeight = (self._owner) ? self._owner._height : self._context.surface.height;
 			self.setY(Math.floor((ownerHeight - self._height) / 2));
 			return self;
 		};
@@ -1016,6 +1016,7 @@ var atomic_components = {
 	Tweenable: function(options, self) {
 
 		var _activeTweens = [];
+		var _activeTimeout = null;
 
 		function finalizeAllTweens() {
 			_activeTweens.forEach(function(tween) {
@@ -1024,6 +1025,10 @@ var atomic_components = {
 				}
 			});
 			_activeTweens = [];
+			if (_activeTimeout) {
+				clearTimeout(_activeTimeout);
+				_activeTimeout = null;
+			}
 		}
 
 		/**
@@ -1037,32 +1042,37 @@ var atomic_components = {
 		 * @param {object} [options] - Tween options.
 		 * @param {number} [options.duration=240] - Tween duration in milliseconds.
 		 * @param {function} [options.ease=myst.ease.quadInOut] - Easing function.
-		 * @param {number} [options.delay=0] - TODO Tween delay in milliseconds.
-		 * @param {function} [options.onDone] - TODO Is called when tween is done animating.
+		 * @param {number} [options.delay=0] - Tween delay in milliseconds.
+		 * @param {function} [options.onDone] - Is called when tween is done animating.
 		 */
 		self.tween = function(properties, options) {
 			options = options || {};
 			var duration = fromOption(options.duration, 240);
 			var easef = fromOption(options.ease, myst.ease.quadInOut);
+			var delay = fromOption(options.delay, 0);
 
-			finalizeAllTweens();
+			function applyTween() {
+				finalizeAllTweens();
+				myst.iter(properties, function(key, value, index) {
+					var memberfstr = key.charAt(0).toUpperCase() + key.slice(1);
+					var fromf = self['get' + memberfstr];
+					if (!(fromf instanceof Function)) {
+						console.error('"' + key + '" is not a valid tween property.');
+						return;
+					}
+					var from = fromf();
+					var to = value;
+					var setf = self['set' + memberfstr];
+					var donef = (index === 0) ? function() { invokeEvent(options.onDone, self); } : null;
+					var tween = new myst.Tween(from, to, duration, setf, donef, easef);
+					_activeTweens.push(tween);
+					tween.start();
+				});
+			}
 
-			myst.iter(properties, function(key, value) {
-				var memberfstr = key.charAt(0).toUpperCase() + key.slice(1);
-				var fromf = self['get' + memberfstr];
-				if (!(fromf instanceof Function)) {
-					console.error('"' + key + '" is not a valid tween property.');
-					return;
-				}
-				var from = fromf();
-				var to = value;
-				var setf = self['set' + memberfstr];
-				var tween = new myst.Tween(from, to, duration, setf, function() {
-					invokeEvent(options.onDone, self);
-				}, easef);
-				_activeTweens.push(tween);
-				tween.start();
-			});
+			if (delay === 0) { applyTween(); }
+			else { setTimeout(applyTween, delay); }
+
 			return self;
 		};
 
@@ -1076,7 +1086,7 @@ var atomic_components = {
 		 * @param {object} [options] - Tween options.
 		 * @param {number} [options.duration=240] - Tween duration in milliseconds.
 		 * @param {function} [options.ease=myst.ease.quadInOut] - Easing function.
-		 * @param {number} [options.delay=0] - TODO Tween delay in milliseconds.
+		 * @param {number} [options.delay=0] - Tween delay in milliseconds.
 		 */
 		self.fadeOut = function(options) {
 			self.tween({ alpha: 0 }, options);
@@ -1092,7 +1102,7 @@ var atomic_components = {
 		 * @param {object} [options] - Tween options.
 		 * @param {number} [options.duration=240] - Tween duration in milliseconds.
 		 * @param {function} [options.ease=myst.ease.quadInOut] - Easing function.
-		 * @param {number} [options.delay=0] - TODO Tween delay in milliseconds.
+		 * @param {number} [options.delay=0] - Tween delay in milliseconds.
 		 */
 		self.fadeIn = function(options) {
 			self.tween({ alpha: 1 }, options);
@@ -1109,7 +1119,7 @@ var atomic_components = {
 		 * @param {object} [options] - Tween options.
 		 * @param {number} [options.duration=240] - Tween duration in milliseconds.
 		 * @param {function} [options.ease=myst.ease.quadInOut] - Easing function.
-		 * TODO @param {number} [options.delay=0] - Tween delay in milliseconds.
+		 * @param {number} [options.delay=0] - Tween delay in milliseconds.
 		 */
 		self.fadeTo = function(alpha, options) {
 			self.tween({ alpha: alpha }, options);
@@ -1222,7 +1232,7 @@ var atomic_components = {
 			}
 			if (_pointIn(coords)) {
 				self._holding = self._pressed = true;
-				self._events.onPress();
+				self._events.onPress(coords);
 			}
 		}, _eventId).bindTo(self._rootContext);
 
@@ -1232,10 +1242,10 @@ var atomic_components = {
 				var nextPressed = _pointIn(coords);
 				if (prevPressed !== nextPressed) {
 					if ((self._pressed = nextPressed)) {
-						self._events.onPress();
+						self._events.onPress(coords);
 					}
 					else if (!self._pressed) {
-						self._events.onRelease();
+						self._events.onRelease(coords);
 					}
 				}
 			}
@@ -1246,8 +1256,8 @@ var atomic_components = {
 				var prevPressed = self._pressed;
 				self._holding = self._pressed = false;
 				if (prevPressed) {
-					self._events.onRelease();
-					self._events.onClick();
+					self._events.onRelease(coords);
+					self._events.onClick(coords);
 				}
 			}
 		}, _eventId).bindTo(self._rootContext);
@@ -1882,9 +1892,21 @@ var public_components = {
 		self.setShape(options);
 	},
 
+	/**
+	 * Image control. Extends {@link public_components.Control}, {@link atomic_components.Graphics}.
+	 *
+	 * @class Image
+	 * @classdesc Displays a static image from a texture.
+	 * @memberof public_components
+	 *
+	 * @param {object} options - Constructor options.
+	 */
 	Image: function(options, self) {
 		self = self || this;
 		options = options || {};
+
+		options.width = fromOption(options.width, options.texture.width);
+		options.height = fromOption(options.height, options.texture.height);
 
 		myst.compose(
 			self,
@@ -1987,12 +2009,13 @@ var public_components = {
 		);
 
 		self._type = 'TileButton';
-
 		options.tiles = options.tiles || {};
 
 		var tileNormal = options.tiles.normal || [0, 0];
 		var tilePressed = options.tiles.pressed || [0, 0];
 		var tileDisabled = options.tiles.disabled || [0, 0];
+
+		self._activeTile = tileNormal;
 
 		self._events.onPress = function() { // @override
 			self._activeTile = tilePressed;
@@ -2065,6 +2088,28 @@ var public_functions = {
 	},
 
 	/**
+	 * Applies an action to an arbitrary group of components.
+	 *
+	 * @function applyToGroup
+	 * @memberof public_functions
+	 * @instance
+	 *
+	 * @param {array} group - Group of components.
+	 * @param {string} fname - Function name.
+	 * @param {string} [fargs] - Function arguments.
+	 */
+	applyToGroup: function(group, fname, fargs) {
+		if (fargs != null) {
+			fargs = (fargs instanceof Array) ? fargs : [fargs];
+		}
+		myst.iter(group, function(key, component) {
+			if (component[fname] instanceof Function) {
+				component[fname].apply(component, fargs);
+			}
+		});
+	},
+
+	/**
 	 * Creates a tile from a given texture.
 	 *
 	 * @function createTile
@@ -2086,6 +2131,20 @@ var public_functions = {
 		});
 		tileSurface.render.tile(texture, 0, 0, tileWidth, tileHeight, tileX, tileY);
 		return tileSurface.canvas;
+	},
+
+	/**
+	 * Applies a delayed action.
+	 *
+	 * @function delayedAction
+	 * @memberof public_functions
+	 * @instance
+	 *
+	 * @param {number} delay
+	 * @param {function} callback
+	 */
+	delayedAction: function(delay, callback) {
+		setTimeout(callback, delay);
 	},
 
 	/**
@@ -2117,13 +2176,13 @@ return myst.compose({ atomic: atomic_components }, public_components, public_fun
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="atomic_components.html">atomic_components</a></li><li><a href="public_components.html">public_components</a></li><li><a href="public_functions.html">public_functions</a></li></ul><h3>Classes</h3><ul><li><a href="atomic_components.AbstractButton.html">AbstractButton</a></li><li><a href="atomic_components.Base.html">Base</a></li><li><a href="atomic_components.Container.html">Container</a></li><li><a href="atomic_components.Debuggable.html">Debuggable</a></li><li><a href="atomic_components.Graphics.html">Graphics</a></li><li><a href="atomic_components.Tile.html">Tile</a></li><li><a href="atomic_components.Tweenable.html">Tweenable</a></li><li><a href="public_components.Control.html">Control</a></li><li><a href="public_components.Frame.html">Frame</a></li><li><a href="public_components.Label.html">Label</a></li><li><a href="public_components.Shape.html">Shape</a></li><li><a href="public_components.TileButton.html">TileButton</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="atomic_components.html">atomic_components</a></li><li><a href="public_components.html">public_components</a></li><li><a href="public_functions.html">public_functions</a></li></ul><h3>Classes</h3><ul><li><a href="atomic_components.AbstractButton.html">AbstractButton</a></li><li><a href="atomic_components.Base.html">Base</a></li><li><a href="atomic_components.Container.html">Container</a></li><li><a href="atomic_components.Debuggable.html">Debuggable</a></li><li><a href="atomic_components.Graphics.html">Graphics</a></li><li><a href="atomic_components.Tile.html">Tile</a></li><li><a href="atomic_components.Tweenable.html">Tweenable</a></li><li><a href="public_components.Control.html">Control</a></li><li><a href="public_components.Frame.html">Frame</a></li><li><a href="public_components.Image.html">Image</a></li><li><a href="public_components.Label.html">Label</a></li><li><a href="public_components.Shape.html">Shape</a></li><li><a href="public_components.TileButton.html">TileButton</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Tue Jun 21 2022 01:32:34 GMT+0200 (Central European Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Sat Jun 25 2022 04:17:56 GMT+0200 (Central European Summer Time)
 </footer>
 
 <script> prettyPrint(); </script>

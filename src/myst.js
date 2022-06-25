@@ -12,7 +12,7 @@
 
 /**
  * @file myst.js
- * @version 0.9.5
+ * @version 0.9.6
  * @author Danijel Durakovic
  * @copyright 2021
  */
@@ -370,10 +370,11 @@ myst.rotatePoint = function(ax, ay, bx, by, angle) {
  * @param {iterCallback} callback
  */
 myst.iter = function(object, callback) {
+	var index = 0;
 	for (var key in object) {
 		var item = object[key];
 		if (Object.prototype.hasOwnProperty.call(object, key) && !(item instanceof Function)) {
-			callback(key, item);
+			callback(key, item, index++);
 		}
 	}
 };
@@ -381,6 +382,7 @@ myst.iter = function(object, callback) {
  * @callback iterCallback
  * @param {string} key - Item's key.
  * @param {object} item - The item itself.
+ * @param {number} index - Item's index.
  */
 
 /**

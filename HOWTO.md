@@ -867,8 +867,8 @@ var object = {
 	pumpkins: 30,
 	strawberries: 40
 };
-myst.iter(object, function(key, item) {
-	console.log(key + ': ' + item);
+myst.iter(object, function(key, item, index) {
+	console.log(index + ': ' + key + ' - ' + item);
 });
 ```
 
