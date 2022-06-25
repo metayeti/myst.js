@@ -1,5 +1,0 @@
-GENERAL
-- TileButton::tiles isn't documented
-
-HOWTO
-- make sure to point out that inputHandler should be passed to myst.ui.init for controls with input to work
