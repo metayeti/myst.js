@@ -1,7 +1,8 @@
 /temp/
+/dev/
+/extensions/myst.ui/dev/
 *~
 *.swp
 *.swo
 *.vim
 .vscode
-dev/
