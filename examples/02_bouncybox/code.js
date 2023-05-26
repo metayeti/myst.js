@@ -6,8 +6,8 @@
 // bouncy box class
 function BouncyBox(state, options) {
 	// position and velocity of the box
-	var pos = { x: options.x, y: options.y };
-	var vel = { x: options.vel_x, y: options.vel_y };
+	let pos = { x: options.x, y: options.y };
+	let vel = { x: options.vel_x, y: options.vel_y };
 
 	this.animate = function() {
 		// bounce the box around
@@ -26,7 +26,7 @@ function BouncyBox(state, options) {
 }
 
 // create the main game state
-var myState = new myst.State();
+let myState = new myst.State();
 
 myState.init = function() {
 	// attach a custom object
@@ -51,7 +51,7 @@ myState.draw = function() {
 };
 
 // setup and run the game
-var myGame = new myst.Game({
+let myGame = new myst.Game({
 	canvasId: 'myst-example', // canvas element to initialize the game on
 	state: myState, // initial game state
 	background: '#000' // background fill color (optional)

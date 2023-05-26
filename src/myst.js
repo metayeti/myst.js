@@ -2,7 +2,7 @@
  * myst.js
  * Tiny HTML5 game engine
  *
- * (c) 2020 Danijel Durakovic
+ * (c) 2023 Danijel Durakovic
  * MIT License
  *
  */
@@ -12,9 +12,9 @@
 
 /**
  * @file myst.js
- * @version 0.9.6
+ * @version 0.9.7
  * @author Danijel Durakovic
- * @copyright 2021
+ * @copyright 2023
  */
 
 "use strict";
@@ -23,7 +23,7 @@
  * myst.js namespace
  * @namespace
  */
-var myst = {};
+const myst = {};
 
 ////////////////////////////////////////////////////////////////////////////////////
 //
@@ -31,14 +31,14 @@ var myst = {};
 //
 ////////////////////////////////////////////////////////////////////////////////////
 
-var C_NULL = void 0;
-var C_EMPTYF = function(){};
+const C_NULL = void 0;
+const C_EMPTYF = function(){};
 
-var C_VIEW_DEFAULT = 0;
-var C_VIEW_CENTER = 1;
-var C_VIEW_SCALE_FIT = 2;
-var C_VIEW_SCALE_STRETCH = 3;
-var C_VIEW_EXPAND = 4;
+const C_VIEW_DEFAULT = 0;
+const C_VIEW_CENTER = 1;
+const C_VIEW_SCALE_FIT = 2;
+const C_VIEW_SCALE_STRETCH = 3;
+const C_VIEW_EXPAND = 4;
 
 ////////////////////////////////////////////////////////////////////////////////////
 //
@@ -58,24 +58,7 @@ var C_VIEW_EXPAND = 4;
  * @returns {object}
  */
 myst.compose = function(/**/) {
-	// es6
-	if (Object.assign) {
-		return Object.assign.apply(null, arguments);
-	}
-	// non-es6
-	var obj = arguments[0];
-	var n_args = arguments.length;
-	for (var i = 1; i < n_args; ++i) {
-		var component = arguments[i];
-		if (!component)
-			continue;
-		for (var key in component) {
-			if (component.hasOwnProperty(key)) {
-				obj[key] = component[key];
-			}
-		}
-	}
-	return obj;
+	return Object.assign.apply(null, arguments);
 };
 
 /**
@@ -155,10 +138,10 @@ myst.diceRoll = function(N) {
  */
 myst.shuffle = function(list) {
 	// fisher-yates shuffle
-	var i = list.length;
+	let i = list.length;
 	while (--i) {
-		var r = Math.floor(Math.random() * (i + 1));
-		var tmp = list[i];
+		let r = Math.floor(Math.random() * (i + 1));
+		let tmp = list[i];
 		list[i] = list[r];
 		list[r] = tmp;
 	}
@@ -257,7 +240,7 @@ myst.pointInCircle = function(x, y, cx, cy, radius) {
  * @returns {bool}
  */
 myst.linesIntersect = function(ax, ay, bx, by, cx, cy, dx, dy) {
-	var ccwise = function(ax, ay, bx, by, cx, cy) {
+	let ccwise = function(ax, ay, bx, by, cx, cy) {
 		return (cy - ay) * (bx - ax) > (by - ay) * (cx - ax);
 	};
 	return ccwise(ax, ay, cx, cy, dx, dy) != ccwise(bx, by, cx, cy, dx, dy) &&
@@ -299,15 +282,15 @@ myst.pointToPointDistance = function(ax, ay, bx, by) {
  * @returns {number}
  */
 myst.pointToLineDistance = function(x, y, ax, ay, bx, by) {
-	var dx = bx - ax;
-	var dy = by - ay;
-	var l = dx * dx + dy * dy;
+	let dx = bx - ax;
+	let dy = by - ay;
+	let l = dx * dx + dy * dy;
 	if (l == 0) {
 		return 0;
 	}
-	var t = Math.min(1, Math.max(0, (dx * (x - ax) + dy * (y - ay)) / l));
-	var cx = ax + t * dx;
-	var cy = ay + t * dy;
+	let t = Math.min(1, Math.max(0, (dx * (x - ax) + dy * (y - ay)) / l));
+	let cx = ax + t * dx;
+	let cy = ay + t * dy;
 	return Math.sqrt((x - cx) * (x - cx) + (y - cy) * (y - cy));
 };
 
@@ -327,7 +310,7 @@ myst.pointToLineDistance = function(x, y, ax, ay, bx, by) {
  * @returns {array} Coordinates to point A after moving.
  */
 myst.movePoint = function(ax, ay, bx, by, d) {
-	var dir = Math.atan2(by - ay, bx - ax) * 180 / Math.PI;
+	let dir = Math.atan2(by - ay, bx - ax) * 180 / Math.PI;
 	return [
 		ax + Math.floor(Math.cos(dir * Math.PI / 180) * d),
 		ay + Math.floor(Math.sin(dir * Math.PI / 180) * d)
@@ -370,9 +353,9 @@ myst.rotatePoint = function(ax, ay, bx, by, angle) {
  * @param {iterCallback} callback
  */
 myst.iter = function(object, callback) {
-	var index = 0;
-	for (var key in object) {
-		var item = object[key];
+	let index = 0;
+	for (let key in object) {
+		let item = object[key];
 		if (Object.prototype.hasOwnProperty.call(object, key) && !(item instanceof Function)) {
 			callback(key, item, index++);
 		}
@@ -449,8 +432,8 @@ myst.Grid2D = function(w, h, defaultValue) {
 	 * Fills the grid with default values.
 	 */
 	this.clear = function() {
-		var n = w * h;
-		for (var i = 0; i < n; ++i) {
+		let n = w * h;
+		for (let i = 0; i < n; ++i) {
 			this.data[i] = defaultValue;
 		}
 	};
@@ -489,7 +472,7 @@ myst.Timer = function(interval) {
 	if (interval < 1) {
 		interval = 1;
 	}
-	var accumulator = 0;
+	let accumulator = 0;
 	/**
 	 * Indicates whether the timer has ticked or not.
 	 *
@@ -564,17 +547,17 @@ myst.Tween = function(from, to, duration, onUpdate, onDone, easef, procf, resetf
 		easef = myst.ease.linear;
 	}
 
-	var twTimeout = null;
-	var twFrametime = 15;
+	let twTimeout = null;
+	let twFrametime = 15;
 
-	var hasUpdate = onUpdate instanceof Function;
-	var hasDone = onDone instanceof Function;
-	var hasProc = procf instanceof Function;
-	var hasReset = resetf instanceof Function;
+	let hasUpdate = onUpdate instanceof Function;
+	let hasDone = onDone instanceof Function;
+	let hasProc = procf instanceof Function;
+	let hasReset = resetf instanceof Function;
 
 	function doTween(elapsed) {
-		var progress = elapsed / duration;
-		var value = from + easef(progress) * (to - from);
+		let progress = elapsed / duration;
+		let value = from + easef(progress) * (to - from);
 		if (hasProc) {
 			value = procf(value);
 		}
@@ -696,8 +679,8 @@ myst.ease = {
  *
  */
 myst.AssetLoader = function() {
-	var self = this;
-	var bank = {};
+	let self = this;
+	let bank = {};
 
 	/**
 	 * A list of load handlers. These can be overriden by the user or used to create custom
@@ -716,11 +699,11 @@ myst.AssetLoader = function() {
 	 *
 	 * @example
 	 * // Create a custom handler
-	 * var loader = new myst.AssetLoader();
+	 * let loader = new myst.AssetLoader();
 	 * loader.handler.customCategory = function(filename, ready) {
 	 *    // handler for customCategory
 	 *    // .. do something with filename ..
-	 *    var data = 'test';
+	 *    let data = 'test';
 	 *    // process the asset and return data with ready when done
 	 *    ready(data);
 	 * };
@@ -735,7 +718,7 @@ myst.AssetLoader = function() {
 
 	// default graphics load handler - used for loading image files
 	this.handler.graphics = function(filename, ready) {
-		var img = new Image();
+		let img = new Image();
 		img.src = filename;
 		img.addEventListener('load', function() {
 			ready(img);
@@ -744,13 +727,13 @@ myst.AssetLoader = function() {
 
 	// default data load handler - used for loading JSON files
 	this.handler.data = function(filename, ready) {
-		var xhr = new XMLHttpRequest();
+		let xhr = new XMLHttpRequest();
 		xhr.open('get', filename, true);
 		xhr.send(null);
 		xhr.onreadystatechange = function() {
 			if (xhr.readyState === 4 && xhr.status === 200) {
-				var response = xhr.responseText;
-				var data = JSON.parse(response);
+				let response = xhr.responseText;
+				let data = JSON.parse(response);
 				ready(data);
 			}
 		};
@@ -758,13 +741,13 @@ myst.AssetLoader = function() {
 
 	// default text load handler - used for loading text files
 	this.handler.text = function(filename, ready) {
-		var xhr = new XMLHttpRequest();
+		let xhr = new XMLHttpRequest();
 		xhr.open('get', filename, true);
 		xhr.send(null);
 		xhr.onreadystatechange = function() {
 			if (xhr.readyState === 4 && xhr.status === 200) {
-				var response = xhr.responseText;
-				var data = response;
+				let response = xhr.responseText;
+				let data = response;
 				ready(data);
 			}
 		};
@@ -782,7 +765,7 @@ myst.AssetLoader = function() {
 	 * @returns {object}
 	 *
 	 * @example
-	 * var assetList = {
+	 * let assetList = {
 	 *    graphics: {
 	 *       mysprite: 'mysprite.png',
 	 *       myimage: 'myimage.jpg'
@@ -791,7 +774,7 @@ myst.AssetLoader = function() {
 	 *       mydata: 'mydata.json'
 	 *    }
 	 * };
-	 * var assetLoader = new myst.AssetLoader();
+	 * let assetLoader = new myst.AssetLoader();
 	 * assetLoader.load({
 	 *    assets: assetList,
 	 *    done: function() {
@@ -800,16 +783,16 @@ myst.AssetLoader = function() {
 	 * });
 	 */
 	this.load = function(options) {
-		var assetList = options.assets;
+		let assetList = options.assets;
 		if (!assetList) {
 			return;
 		}
-		var done = options.done || C_EMPTYF;
-		var progress = options.progress || C_EMPTYF;
+		let done = options.done || C_EMPTYF;
+		let progress = options.progress || C_EMPTYF;
 		// count assets
-		var n_loaded = 0;
-		var n_toload = 0;
-		var n_categories = 0;
+		let n_loaded = 0;
+		let n_toload = 0;
+		let n_categories = 0;
 		myst.iter(assetList, function(category, itemList) {
 			n_categories++;
 			myst.iter(itemList, function() {
@@ -824,7 +807,7 @@ myst.AssetLoader = function() {
 		}
 		// call appropriate handlers on items
 		myst.iter(assetList, function(category, itemList) {
-			var loadHandler = self.handler[category];
+			let loadHandler = self.handler[category];
 			if (loadHandler instanceof Function) {
 				if (!bank[category]) {
 					bank[category] = {};
@@ -857,14 +840,14 @@ myst.AssetLoader = function() {
 	 * loader.get('category.key1 category.key2');
 	 */
 	this.get = function(/**/) {
-		var n_args = arguments.length;
-		var tokens;
-		var tokenPair;
-		var output = {};
-		var n_objects = 0;
-		var category, assetName;
-		var assetData;
-		var i, j;
+		let n_args = arguments.length;
+		let tokens;
+		let tokenPair;
+		let output = {};
+		let n_objects = 0;
+		let category, assetName;
+		let assetData;
+		let i, j;
 		for (i = 0; i < n_args; i++) {
 			if (typeof arguments[i] !== 'string')
 				continue;
@@ -898,13 +881,13 @@ myst.AssetLoader = function() {
 	 */
 	function FromObject(store) {
 		this.get = function(/**/) {
-			var n_args = arguments.length;
-			var tokens;
-			var output = {};
-			var n_objects = 0;
-			var assetName;
-			var assetData;
-			var i, j;
+			let n_args = arguments.length;
+			let tokens;
+			let output = {};
+			let n_objects = 0;
+			let assetName;
+			let assetData;
+			let i, j;
 			for (i = 0; i < n_args; i++) {
 				if (typeof arguments[i] !== 'string')
 					continue;
@@ -979,15 +962,15 @@ myst.AssetLoader = function() {
  */
 myst.Input = function(game) {
 	// input agents
-	var MOUSE = 0;
-	var TOUCH = 1;
+	let MOUSE = 0;
+	let TOUCH = 1;
 
 	// capture element
-	var element = game.getSurface().getCanvas();
-	var elementOwner = element.parentElement;
+	let element = game.getSurface().getCanvas();
+	let elementOwner = element.parentElement;
 
 	function translateCoords(e, agent) {
-		var ratio_x, ratio_y;
+		let ratio_x, ratio_y;
 		switch(game.getViewMode()) {
 			case C_VIEW_SCALE_FIT:
 				ratio_x = ratio_y = (element.offsetWidth < elementOwner.offsetWidth) ?
@@ -1004,9 +987,9 @@ myst.Input = function(game) {
 				ratio_x = ratio_y = 1;
 				break;
 		}
-		var bounds = element.getBoundingClientRect();
-		var px = (agent === TOUCH) ? e.changedTouches[0].clientX : e.clientX;
-		var py = (agent === TOUCH) ? e.changedTouches[0].clientY : e.clientY;
+		let bounds = element.getBoundingClientRect();
+		let px = (agent === TOUCH) ? e.changedTouches[0].clientX : e.clientX;
+		let py = (agent === TOUCH) ? e.changedTouches[0].clientY : e.clientY;
 		return [
 			Math.floor((px - bounds.left) * ratio_x),
 			Math.floor((py - bounds.top) * ratio_y)
@@ -1014,23 +997,23 @@ myst.Input = function(game) {
 	}
 
 	// event callback lists
-	var cb = { press: [], move: [], release: [] };
+	let cb = { press: [], move: [], release: [] };
 
 	// event handlers
 	function mouseHandler(callbackList, e) {
 		if (e.preventDefault)
 			e.preventDefault();
-		var button = e.which || e.button;
+		let button = e.which || e.button;
 		if (button !== 1)
 			return;
 		// translate
-		var coords = translateCoords(e, MOUSE);
+		let coords = translateCoords(e, MOUSE);
 		// dispatch
-		var i = callbackList.length;
+		let i = callbackList.length;
 		while (i--) {
-			var cbObj = callbackList[i];
-			var cbFunc = cbObj[0];
-			var cbState = cbObj[1];
+			let cbObj = callbackList[i];
+			let cbFunc = cbObj[0];
+			let cbState = cbObj[1];
 			if (!cbState || cbState._active) {
 				cbFunc(coords);
 			}
@@ -1042,13 +1025,13 @@ myst.Input = function(game) {
 		if (e.preventDefault)
 			e.preventDefault();
 		// translate
-		var coords = translateCoords(e, MOUSE);
+		let coords = translateCoords(e, MOUSE);
 		// dispatch
-		var i = callbackList.length;
+		let i = callbackList.length;
 		while (i--) {
-			var cbObj = callbackList[i];
-			var cbFunc = cbObj[0];
-			var cbState = cbObj[1];
+			let cbObj = callbackList[i];
+			let cbFunc = cbObj[0];
+			let cbState = cbObj[1];
 			if (!cbState || cbState._active) {
 				cbFunc(coords);
 			}
@@ -1062,13 +1045,13 @@ myst.Input = function(game) {
 		if (e.touches.length > 1)
 			return;
 		// translate
-		var coords = translateCoords(e, TOUCH);
+		let coords = translateCoords(e, TOUCH);
 		// dispatch
-		var i = callbackList.length;
+		let i = callbackList.length;
 		while (i--) {
-			var cbObj = callbackList[i];
-			var cbFunc = cbObj[0];
-			var cbState = cbObj[1];
+			let cbObj = callbackList[i];
+			let cbFunc = cbObj[0];
+			let cbState = cbObj[1];
 			if (!cbState || cbState._active) {
 				cbFunc(coords);
 			}
@@ -1117,8 +1100,8 @@ myst.Input = function(game) {
 	 * @returns {object} - BindObject
 	 */
 	this.on = function(eventType, callback, id) {
-		var callbackList = cb[eventType];
-		var cbRef = [callback, C_NULL, id];
+		let callbackList = cb[eventType];
+		let cbRef = [callback, C_NULL, id];
 		callbackList.push(cbRef);
 		return new BindObject(cbRef);
 	};
@@ -1141,14 +1124,14 @@ myst.Input = function(game) {
 			cb[eventType] = [];
 		}
 		else {
-			var callbackList = cb[eventType];
+			let callbackList = cb[eventType];
 			if (!callbackList) {
 				return;
 			}
-			var i = callbackList.length;
+			let i = callbackList.length;
 			while (i--) {
-				var cbObj = callbackList[i];
-				var cbId = cbObj[2];
+				let cbObj = callbackList[i];
+				let cbId = cbObj[2];
 				if (cbId === id) {
 					callbackList.splice(i, 1);
 				}
@@ -1170,10 +1153,10 @@ myst.Input = function(game) {
  * @classdesc Provides features for dealing with keyboard input.
  */
 myst.KeyInput = function() {
-	var self = this;
+	let self = this;
 
-	var eventQueue = [];
-	var keyBuffer = [];
+	let eventQueue = [];
+	let keyBuffer = [];
 
 	function addKeyEvent(type, keycode) {
 		// add event to the queue
@@ -1189,7 +1172,7 @@ myst.KeyInput = function() {
 
 	// attach listeners
 	document.addEventListener('keydown', function(e) {
-		var key = e.keyCode || e.which;
+		let key = e.keyCode || e.which;
 		// prevent default backspace behavior
 		if (key === self.keyBackspace || key === self.keyAlt)
 			e.preventDefault();
@@ -1199,7 +1182,7 @@ myst.KeyInput = function() {
 		}
 	});
 	document.addEventListener('keyup', function(e) {
-		var key = e.keyCode || e.which;
+		let key = e.keyCode || e.which;
 		if (key === self.keyBackspace || key === self.keyAlt)
 			e.preventDefault();
 		if (keyBuffer[key]) {
@@ -1267,7 +1250,7 @@ myst.KeyInput = function() {
 	 * @returns {bool}
 	 */
 	this.isKeyDown = function(keycode) {
-		var keyState = keyBuffer[keycode];
+		let keyState = keyBuffer[keycode];
 		return keyState !== undefined && keyState;
 	};
 
@@ -1314,7 +1297,7 @@ myst.KeyInput = function() {
  *   key is not found).
  */
 myst.Configuration = function(key, defaultConfiguration) {
-	var self = this;
+	let self = this;
 	/**
 	 * Save configuration to local storage.
 	 */
@@ -1325,8 +1308,8 @@ myst.Configuration = function(key, defaultConfiguration) {
 	 * Load configuration.
 	 */
 	this.load = function() {
-		var localConfig = localStorage.getItem(key);
-		var config = (localConfig) ? JSON.parse(localConfig) : defaultConfiguration;
+		let localConfig = localStorage.getItem(key);
+		let config = (localConfig) ? JSON.parse(localConfig) : defaultConfiguration;
 		// clear all config beforehand
 		myst.iter(self, function(key) {
 			delete self[key];
@@ -1642,11 +1625,11 @@ myst.Render = function(ctx) {
 		width = (width === undefined) ? 1 : width;
 		ctx.strokeStyle = color;
 		ctx.lineWidth = width;
-		var n_points = points.length;
+		let n_points = points.length;
 		ctx.beginPath();
-		for (var i = 0; i < n_points; i++) {
-			var p1 = points[i];
-			var p2 = (i < n_points - 1) ? points[i + 1] : points[0];
+		for (let i = 0; i < n_points; i++) {
+			let p1 = points[i];
+			let p2 = (i < n_points - 1) ? points[i + 1] : points[0];
 			ctx.moveTo(p1[0], p1[1]);
 			ctx.lineTo(p2[0], p2[1]);
 		}
@@ -1665,9 +1648,9 @@ myst.Render = function(ctx) {
 		ctx.fillStyle = color;
 		ctx.beginPath();
 		ctx.moveTo(points[0][0], points[0][1]);
-		var n_points = points.length;
-		for (var i = 1; i < n_points; i++) {
-			var p = points[i];
+		let n_points = points.length;
+		for (let i = 1; i < n_points; i++) {
+			let p = points[i];
 			ctx.lineTo(p[0], p[1]);
 		}
 		ctx.closePath();
@@ -1770,17 +1753,17 @@ myst.Render = function(ctx) {
 	this.bmptext = function(font, text, x, y, color, align) {
 		if (color === undefined)
 			color = 0;
-		var len = text.length;
-		var fw = font.width;
-		var fh = font.height;
-		var fgfx = font.gfx;
-		var ry = font.tilesH * color;
-		var acc = 0;
-		var varw = font.varwidth;
-		var offset = 0;
-		var textw;
-		var i, ci, cf;
-		var tileOffset = font.tileOffset;
+		let len = text.length;
+		let fw = font.width;
+		let fh = font.height;
+		let fgfx = font.gfx;
+		let ry = font.tilesH * color;
+		let acc = 0;
+		let varw = font.varwidth;
+		let offset = 0;
+		let textw;
+		let i, ci, cf;
+		let tileOffset = font.tileOffset;
 		if (align > 0) {
 			if (varw) {
 				for (i = 0; i < len; i++) {
@@ -1798,7 +1781,7 @@ myst.Render = function(ctx) {
 		for (i = 0; i < len; i++) {
 			ci = text.charCodeAt(i) - 32;
 			cf = ci - tileOffset;
-			var px;
+			let px;
 			if (varw) {
 				px = x + acc;
 				acc += font.widths[ci] + font.spacing;
@@ -1808,8 +1791,8 @@ myst.Render = function(ctx) {
 			}
 			if (ci === 0)
 				continue;
-			var cx = fw * (cf % font.tilesPerRow);
-			var cy = fh * Math.floor(cf / font.tilesPerRow) + ry;
+			let cx = fw * (cf % font.tilesPerRow);
+			let cy = fh * Math.floor(cf / font.tilesPerRow) + ry;
 			ctx.drawImage(fgfx, cx, cy, fw, fh, px - offset, y, fw, fh);
 		}
 	};
@@ -1856,9 +1839,9 @@ myst.Font = function(options) {
 		else {
 			// convert widths map to an array
 			this.widths = [];
-			for (var c = 32; c <= 126; c++) {
-				var key = String.fromCharCode(c);
-				var w = options.widths[key];
+			for (let c = 32; c <= 126; c++) {
+				let key = String.fromCharCode(c);
+				let w = options.widths[key];
 				this.widths.push((w) ? w : this.width);
 			}
 		}
@@ -1895,8 +1878,8 @@ myst.Font = function(options) {
 myst.Surface = function(options) {
 	options = options || {};
 
-	var canvas, ctx;
-	var fill;
+	let canvas, ctx;
+	let fill;
 
 	if (options.fromCanvas) {
 		// wrap around existing canvas element
@@ -1906,16 +1889,16 @@ myst.Surface = function(options) {
 	}
 	else {
 		// create a new canvas instance
-		var w = (options.width === undefined) ? 100 : options.width;
-		var h = (options.height === undefined) ? 100 : options.height;
+		let w = (options.width === undefined) ? 100 : options.width;
+		let h = (options.height === undefined) ? 100 : options.height;
 		canvas = document.createElement('canvas');
 		this.width = canvas.width = w;
 		this.height = canvas.height = h;
 	}
 	ctx = canvas.getContext('2d');
 
-	var original_width = this.width;
-	var original_height = this.height;
+	let original_width = this.width;
+	let original_height = this.height;
 
 	/**
 	 * Reference to canvas.
@@ -2096,27 +2079,27 @@ myst.State = function(options) {
  *   Alternatively, use initStates() to initialize states manually.
  */
 myst.Game = function(options) {
-	var self = this;
+	let self = this;
 
-	var state = C_NULL;
-	var surface = C_NULL;
+	let state = C_NULL;
+	let surface = C_NULL;
 
 	// references to canvas and canvas parent elements
-	var canvas;
-	var canvasOwner;
+	let canvas;
+	let canvasOwner;
 
 	// main loop variables
-	var currentTime = Date.now() / 1000;
-	var accumulator = 0;
-	var framerate = 60;
-	var tickRate = 1 / framerate;
+	let currentTime = Date.now() / 1000;
+	let accumulator = 0;
+	let framerate = 60;
+	let tickRate = 1 / framerate;
 
 	//
 	// main loop variants
 	//
 	function mainLoop(time) {
-		var timeNow = Date.now() / 1000;
-		var frameTime = timeNow - currentTime;
+		let timeNow = Date.now() / 1000;
+		let frameTime = timeNow - currentTime;
 		if (frameTime > 0.25) {
 			frameTime = 0.25;
 		}
@@ -2138,11 +2121,11 @@ myst.Game = function(options) {
 	//
 	// view handling
 	//
-	var view_mode = C_VIEW_DEFAULT;
-	var view_updatehandler = C_NULL;
-	var view_debounce_timeout = C_NULL;
-	var view_debounce_delay = 20;
-	var viewHandlers = {
+	let view_mode = C_VIEW_DEFAULT;
+	let view_updatehandler = C_NULL;
+	let view_debounce_timeout = C_NULL;
+	let view_debounce_delay = 20;
+	let viewHandlers = {
 		init: {},
 		update: {}
 	};
@@ -2171,13 +2154,13 @@ myst.Game = function(options) {
 		canvas.style.margin = 'auto';
 	};
 	viewHandlers.update[C_VIEW_SCALE_FIT] = function() {
-		var cw = surface.width;
-		var ch = surface.height;
-		var dw = canvasOwner.offsetWidth;
-		var dh = canvasOwner.offsetHeight;
-		var ratio = cw / ch;
-		var width = dh * ratio;
-		var height;
+		let cw = surface.width;
+		let ch = surface.height;
+		let dw = canvasOwner.offsetWidth;
+		let dh = canvasOwner.offsetHeight;
+		let ratio = cw / ch;
+		let width = dh * ratio;
+		let height;
 		if (width > dw) {
 			ratio = ch / cw;
 			width = dw;
@@ -2259,9 +2242,9 @@ myst.Game = function(options) {
 	 */
 	this.initStates = function(states) {
 		states = (states instanceof Array) ? states : [states];
-		var n_states = states.length;
-		for (var i = 0; i < n_states; i++) {
-			var game_state = states[i];
+		let n_states = states.length;
+		for (let i = 0; i < n_states; i++) {
+			let game_state = states[i];
 			if (!game_state._initialized) {
 				game_state._initState(surface);
 			}
@@ -2274,9 +2257,9 @@ myst.Game = function(options) {
 	this.run = function() {
 		// initialize game states on startup if provided
 		if (options.gameStates instanceof Array) {
-			var n_states = options.gameStates.length;
-			for (var i = 0; i < n_states; i++) {
-				var game_state = options.gameStates[i];
+			let n_states = options.gameStates.length;
+			for (let i = 0; i < n_states; i++) {
+				let game_state = options.gameStates[i];
 				if (!game_state._initialized) {
 					game_state._initState(surface);
 				}

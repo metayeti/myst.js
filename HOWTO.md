@@ -48,7 +48,7 @@ Put the following code in your JavaScript file:
 
 ```JavaScript
 // create a game state
-var myState = new myst.State();
+let myState = new myst.State();
 
 // state draw function
 myState.draw = function() {
@@ -59,7 +59,7 @@ myState.draw = function() {
 };
 
 // setup the game
-var myGame = new myst.Game({
+let myGame = new myst.Game({
 	canvasId: 'myCanvasId',
 	state: myState,
 	simpleLoop: true
@@ -81,7 +81,7 @@ What if we want to make a simple animation instead? Let's define both update and
 
 ```JavaScript
 // create a game state
-var myState = new myst.State();
+let myState = new myst.State();
 
 // state init function
 // gets called once as the state initializes
@@ -95,20 +95,20 @@ myState.draw = function() {
 	// clear the surface
 	this.surface.clear();
 	// draw a blue circle
-	var circle_x = 50 * Math.cos(this.rotation) + 200;
-	var circle_y = 50 * Math.sin(this.rotation) + 200;
+	let circle_x = 50 * Math.cos(this.rotation) + 200;
+	let circle_y = 50 * Math.sin(this.rotation) + 200;
 	this.paint.circleFill(circle_x, circle_y, 30, 'blue');
 };
 
 // state update function
 myState.update = function() {
 	// increase rotation
-	var speed = 0.1;
+	let speed = 0.1;
 	this.rotation += speed;
 };
 
 // setup the game
-var myGame = new myst.Game({
+let myGame = new myst.Game({
 	canvasId: 'myCanvasId',
 	state: myState
 });
@@ -134,7 +134,7 @@ Below is a short summary of classes found in myst.js and examples on how to use 
 The Game class constructs a Game object that exists at the core of a myst.js game. It handles initialization and runs the main game loop. It is initialized in the following way:
 
 ```JavaScript
-var myGame = new myst.Game({
+let myGame = new myst.Game({
 	canvasId: 'myCanvasId',
 	state: myState
 });
@@ -154,7 +154,7 @@ myGame.setState(nextState);
 
 To retreive the active game state:
 ```JavaScript
-var activeState = myGame.getState();
+let activeState = myGame.getState();
 ```
 
 States will initialize automatically when they are first entered into. For cases where you wish to manually initialize states, use:
@@ -185,7 +185,7 @@ Note that changing the view mode changes elements' CSS and has an effect on user
 The State class allows you to create State instances. These can be used to handle various game screens. At least one state is needed for a myst.js game to function. A state with its corresponding functions is defined in the following way:
 
 ```JavaScript
-var myState = new myst.State();
+let myState = new myst.State();
 
 myState.init = function() {
 	/* initialize state here */
@@ -213,7 +213,7 @@ All functions are optional. When `simpleLoop` is used, `update` will be ignored.
 You can use an alternate syntax if you want to:
 
 ```JavaScript
-var myState = new myst.State({
+let myState = new myst.State({
 	init: function() {
 		/* initialize state here */
 	},
@@ -236,7 +236,7 @@ The `init` function initializes and prepares the state and is guaranteed to only
 
 To check whether a state is active:
 ```JavaScript
-var stateIsActive = myState.isActive();
+let stateIsActive = myState.isActive();
 ```
 
 ### Render
@@ -317,8 +317,8 @@ Rotation example:
 ```JavaScript
 myState.draw = function() {
 	this.surface.clear();
-	var angle = 45; // angle of rotation
-	var point = [50, 50]; // rotation pivot point
+	let angle = 45; // angle of rotation
+	let point = [50, 50]; // rotation pivot point
 	this.paint.rotate(angle, point); // rotate at 45 degrees around point 50, 50
 	this.paint.rectFill(0, 0, 100, 100, 'red');
 	// once we are done rotating, we need to restore saved context
@@ -359,7 +359,7 @@ Surface is a class that wraps a `<canvas>` element and includes a Render. A glob
 
 To create a Surface object:
 ```JavaScript
-var mySurface = new myst.Surface({
+let mySurface = new myst.Surface({
 	width: 200,
 	height: 200
 });
@@ -369,8 +369,8 @@ This creates a Surface with its own internal `<canvas>` of specified dimensions.
 
 You may also create a Surface that wraps an existing `<canvas>` element:
 ```JavaScript
-var sourceCanvas = document.getElementById('someCanvasId');
-var mySurface = new myst.Surface({
+let sourceCanvas = document.getElementById('someCanvasId');
+let mySurface = new myst.Surface({
 	fromCanvas: sourceCanvas
 });
 ```
@@ -407,15 +407,15 @@ The Input class is used for handling mouse and touch events. The engine does not
 
 To instantiate an Input object, you need to associate it with a Game object:
 ```JavaScript
-var myInputHandler = new myst.Input(myGame);
+let myInputHandler = new myst.Input(myGame);
 ```
 
 You can register events with the `on` function. You can register one of three events: press, move or release:
 ```JavaScript
 myInputHandler.on('press', function(coords) {
 	// mousedown or touch-start has occured
-	var cx = coords[0]; // event x coordinate
-	var cy = coords[1]; // event y coordinate
+	let cx = coords[0]; // event x coordinate
+	let cy = coords[1]; // event y coordinate
 });
 myInputHandler.on('move', function(coords) {
 	// mousemove or touch-move has occured
@@ -473,12 +473,12 @@ The KeyInput class handles keyboard events.
 
 To create a handler:
 ```JavaScript
-var myKeyInputHandler = new myst.KeyInput();
+let myKeyInputHandler = new myst.KeyInput();
 ```
 
 To poll last keyboard event:
 ```JavaScript
-var keyEvent = myKeyInputHandler.pollEvent();
+let keyEvent = myKeyInputHandler.pollEvent();
 ```
 
 The return value stored in `keyEvent` will contain two properties, `type` and `keycode` - `type` can be either `myKeyInputHandler.KEYDOWN` or `myKeyInputHandler.KEYUP`, which are static values representing the event type. The `keycode` property contains a value with the corresponding key code.
@@ -509,7 +509,7 @@ myKeyInputHandler.getCharacter(keyEvent.keycode);
 
 To check if a given key is in keydown state:
 ```JavaScript
-var key = myKeyInputHandler.keyEnter; // check if Enter is currently pressed
+let key = myKeyInputHandler.keyEnter; // check if Enter is currently pressed
 myKeyInputHandler.isKeyDown(key);
 ```
 
@@ -520,7 +520,7 @@ Example usage:
 myState.update = function() {
 	// fetching keyboard events
 	// loop through keyboard events until there are none left
-	var keyEvent;
+	let keyEvent;
 	while (keyEvent = myKeyInputHandler.pollEvent()) {
 		if (keyEvent.type === myKeyInputHandler.KEYDOWN) {
 			// a keydown event has occured
@@ -532,8 +532,8 @@ myState.update = function() {
 		}
 	}
 	// checking individual key states
-	var isKeyWDown = myKeyInputHandler.isKeyDown(myKeyInputHandler.keyW);
-	var isKeyQDown = myKeyInputHandler.isKeyDown(myKeyInputHandler.keyQ);
+	let isKeyWDown = myKeyInputHandler.isKeyDown(myKeyInputHandler.keyW);
+	let isKeyQDown = myKeyInputHandler.isKeyDown(myKeyInputHandler.keyQ);
 };
 ```
 
@@ -545,12 +545,12 @@ AssetLoader includes a few default handlers for loading assets. Custom handler f
 
 To create an AssetLoader, use:
 ```JavaScript
-var myAssetLoader = new myst.AssetLoader();
+let myAssetLoader = new myst.AssetLoader();
 ```
 
 You will need a list of assets that point to the files. This list needs to have specific category names that correspond to the appropriate load handler functions. The default handlers are `graphics` for any type of image files, `data` for JSON files and `text` for plaintext files.
 ```JavaScript
-var myAssets = {
+let myAssets = {
 	graphics: {
 		player: 'path/to/player.png',
 		monster: 'path/to/monster.png',
@@ -584,26 +584,26 @@ Note: When loading multiple asset lists into a single AssetLoader instance, reso
 
 To retreive resources, you can use the `get` function:
 ```JavaScript
-var gfxPlayer = myAssetLoader.get('graphics.player');
-var storyText = myAssetLoader.get('text.story');
+let gfxPlayer = myAssetLoader.get('graphics.player');
+let storyText = myAssetLoader.get('text.story');
 ```
 
 To retreive several resources at once:
 ```JavaScript
-var gfx = myAssetLoader.get('graphics.player graphics.monster graphics.background');
+let gfx = myAssetLoader.get('graphics.player graphics.monster graphics.background');
 // we can now use gfx.player, gfx.monster, gfx.background
 ```
 
 You can use the `from` function for better readability:
 ```JavaScript
-var gfx = myAssetLoader.from('graphics').get('player monster background');
-var storyText = myAssetLoader.from('text').get('story');
+let gfx = myAssetLoader.from('graphics').get('player monster background');
+let storyText = myAssetLoader.from('text').get('story');
 ```
 
 You can also retreive the resource list directly:
 ```JavaScript
-var resourceList = myAssetLoader.getResources();
-var gfxPlayer = resourceList.graphics.player;
+let resourceList = myAssetLoader.getResources();
+let gfxPlayer = resourceList.graphics.player;
 ```
 
 In some cases, you may want to use the following pattern to "convert" the asset list into a resource list (actually you're retreiving a reference to the resource list and overriding myAssets with it - so be careful when loading multiple asset lists):
@@ -611,7 +611,7 @@ In some cases, you may want to use the following pattern to "convert" the asset 
 myAssets = myLoader.load({
 	assets: myAssets,
 	done: function() {
-		var gfxPlayer = myAssets.graphics.player;
+		let gfxPlayer = myAssets.graphics.player;
 	}
 });
 ```
@@ -620,7 +620,7 @@ To define a custom category, add a handler function to the list of handlers:
 ```JavaScript
 myAssetLoader.handler.custom = function(filename, ready) {
 	// process file given by filename
-	var object;
+	let object;
 	/* ... */
 	// call ready with the loaded object when done
 	ready(object);
@@ -629,7 +629,7 @@ myAssetLoader.handler.custom = function(filename, ready) {
 
 You can now use a custom category:
 ```JavaScript
-var myAssets = {
+let myAssets = {
 	custom: {
 		/* keys and filenames */
 	}
@@ -639,7 +639,7 @@ var myAssets = {
 This is an example for a sound effect asset handler using [howler.js](https://howlerjs.com/):
 ```javascript
 myAssetLoader.handler.sfx = function(filenames, ready) {
-	var sfx = new Howl({
+	let sfx = new Howl({
 		src: filenames,
 		autoplay: false,
 		loop: false,
@@ -652,7 +652,7 @@ myAssetLoader.handler.sfx = function(filenames, ready) {
 	});
 };
 
-var myAssets = {
+let myAssets = {
 	sfx: {
 		foo: ['foo.ogg', 'foo.aac', 'foo.wav'].
 		bar: ['bar.ogg', 'bar.aac', 'bar.wav']
@@ -663,8 +663,8 @@ myAssets = myAssetLoader.load({
 	assets: myAssets,
 	done: function() {
 		// retreive sfx
-		var sfx_foo = myAssets.sfx.foo;
-		var sfx_bar = myAssets.sfx.bar;
+		let sfx_foo = myAssets.sfx.foo;
+		let sfx_bar = myAssets.sfx.bar;
 		// play foo
 		sfx_foo.play();
 	}
@@ -676,10 +676,10 @@ myAssets = myAssetLoader.load({
 The Grid2D class is a container for a 2D matrix of values. It can be instantiated in the following way:
 ```JavaScript
 // creates a grid of size 100x100 with the default value 0
-var gridWidth = 100;
-var gridHeight = 100;
-var gridDefaultValue = 0;
-var myGrid = new myst.Grid2D(gridWidth, gridHeight, gridDefaultValue);
+let gridWidth = 100;
+let gridHeight = 100;
+let gridDefaultValue = 0;
+let myGrid = new myst.Grid2D(gridWidth, gridHeight, gridDefaultValue);
 ```
 
 Use the `clear` function to clear the entire grid to the default value specified in the constructor:
@@ -691,17 +691,17 @@ myGrid.clear();
 
 Use the `set` function to set a grid value:
 ```JavaScript
-var x = 10;
-var y = 10;
-var value = 20;
+let x = 10;
+let y = 10;
+let value = 20;
 myGrid.set(x, y, value);
 ```
 
 Use the `get` function to retreive a value from the grid:
 ```JavaScript
-var x = 10;
-var y = 10;
-var value = myGrid.get(x, y);
+let x = 10;
+let y = 10;
+let value = myGrid.get(x, y);
 ```
 
 ### Timer
@@ -710,8 +710,8 @@ The Timer class is used for creating simple, tick-based timer objects that can b
 
 To create a Timer object:
 ```JavaScript
-var interval = 60; // specifies the rate at which the timer ticks. 60 ticks ~ 1 second
-var myTimer = new myst.Timer(interval);
+let interval = 60; // specifies the rate at which the timer ticks. 60 ticks ~ 1 second
+let myTimer = new myst.Timer(interval);
 ```
 
 A timer's interval represents the number of ticks that need to occur for the timer to tick. Example usage:
@@ -750,12 +750,12 @@ The Configuration class provides a way to handle persistant storage for your gam
 A Configuration object is initialized in the following way:
 
 ```javascript
-var myKey = 'example';
-var myDefaultConfig = {
+let myKey = 'example';
+let myDefaultConfig = {
 	foo: 'value',
 	bar: 0
 };
-var myConfig = new myst.Configuration(myKey, myDefaultConfig);
+let myConfig = new myst.Configuration(myKey, myDefaultConfig);
 ```
 
 A configuration object acts like any other object and you may populate it with any sort of data. A default configuration serves as a template for your configuration. A `load` call needs to be applied at the start of the game to retreive the active configuration. If the key is not found within localStorage, the default configuration will be used.
@@ -842,7 +842,7 @@ tween.finish();
 
 To check if a tween is active:
 ```JavaScript
-var tweenIsActive = tween.isActive();
+let tweenIsActive = tween.isActive();
 ```
 
 ## Other functions
@@ -851,9 +851,9 @@ Listed here are some additional functions included with myst.js that may come in
 
 ### General purpose
 
-`compose` takes a number of JavaScript objects and creates a single object out of them. This is useful for creating any sort of entity-component systems, as well as extending functionality of objects or simply using it for syntax sugar. It uses Object.assign under the hood or emulates it on non-ES6 compliant browsers.
+`compose` takes a number of JavaScript objects and creates a single object out of them. This is useful for creating any sort of entity-component systems, as well as extending functionality of objects or simply using it for syntax sugar.
 ```JavaScript
-var result = myst.compose({
+let result = myst.compose({
 	apples: 10
 }, {
 	oranges: 20
@@ -863,7 +863,7 @@ var result = myst.compose({
 
 `iter` iterates over members of an object, ignoring any member functions.
 ```JavaScript
-var object = {
+let object = {
 	pumpkins: 30,
 	strawberries: 40
 };
@@ -874,7 +874,7 @@ myst.iter(object, function(key, item, index) {
 
 `getFilenameExtension` retreives the extension of a filename (always outputs lowercase).
 ```JavaScript
-var filename = 'file.json';
+let filename = 'file.json';
 myst.getFilenameExtension(filename); // returns 'json'
 ```
 

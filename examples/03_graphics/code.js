@@ -4,7 +4,7 @@
  */
 
 // create the main state
-var myState = new myst.State();
+let myState = new myst.State();
 
 // called when state initializes
 myState.init = function() {
@@ -21,21 +21,21 @@ myState.draw = function() {
 };
 
 // setup and run the game
-var myGame = new myst.Game({
+let myGame = new myst.Game({
 	canvasId: 'myst-example', // canvas element to initialize the game on
 	state: myState, // initial game state
 	simpleLoop: true // use a simple game loop that only draws and doesn't call state.update
 });
 
 // asset list
-var myAssets = {
+let myAssets = {
 	graphics: {
 		sprite: 'sprite.png'
 	}
 };
 
 // asset loader
-var myLoader = new myst.AssetLoader();
+let myLoader = new myst.AssetLoader();
 
 // load assets on window load
 window.addEventListener('load', function() {

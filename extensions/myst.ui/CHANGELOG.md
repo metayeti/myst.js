@@ -1,3 +1,6 @@
+## 0.2.4 (May 26, 2023)
+- `FEATURE` Upgrade to ES6 standard.
+
 ## 0.2.3 (June 25, 2022)
 - `FEATURE` Added `TileImage` control.
 

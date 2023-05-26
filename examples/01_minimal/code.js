@@ -4,7 +4,7 @@
  */
 
 // create a game state
-var myState = new myst.State();
+let myState = new myst.State();
 
 // called when state initializes
 myState.init = function() {
@@ -24,7 +24,7 @@ myState.draw = function() {
 };
 
 // setup game
-var myGame = new myst.Game({
+let myGame = new myst.Game({
 	canvasId: 'myst-example', // canvas element to initialize the game on
 	state: myState, // initial game state
 	simpleLoop: true // use a simple game loop that only draws and doesn't call state.update

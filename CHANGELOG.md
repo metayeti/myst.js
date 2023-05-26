@@ -1,3 +1,6 @@
+## 0.9.7 (May 26, 2023)
+- `FEATURE` Upgrade to ES6 standard.
+
 ## 0.9.6 (June 25, 2022)
 - `FEATURE` Added an `index` parameter to `iter` function's callback.
 

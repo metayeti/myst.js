@@ -4,19 +4,19 @@
  */
 
 function Button(state, options) {
-	var self = this;
+	let self = this;
 
-	var graphics = options.graphics;
-	var width = 200;
-	var height = 100;
-	var tileNormal = [0, 0];
-	var tilePressed = [1, 0];
-	var x = Math.floor((state.surface.width - width) / 2);
-	var y = Math.floor((state.surface.height - height) / 2);
-	var pressed = false;
-	var holding = false;
-	var enabled = true;
-	var angle = 0;
+	let graphics = options.graphics;
+	let width = 200;
+	let height = 100;
+	let tileNormal = [0, 0];
+	let tilePressed = [1, 0];
+	let x = Math.floor((state.surface.width - width) / 2);
+	let y = Math.floor((state.surface.height - height) / 2);
+	let pressed = false;
+	let holding = false;
+	let enabled = true;
+	let angle = 0;
 
 	this.enable = function() { enabled = true; };
 	this.disable = function() { enabled = false; };
@@ -25,11 +25,11 @@ function Button(state, options) {
 	this.draw = function() {
 		if (angle !== 0) {
 			// rotate around a central point
-			var center = [Math.floor(x + width / 2), Math.floor(y + height / 2)];
+			let center = [Math.floor(x + width / 2), Math.floor(y + height / 2)];
 			state.paint.rotate(angle, center);
 		}
 		// draw the button tile
-		var tile = (pressed) ? tilePressed : tileNormal;
+		let tile = (pressed) ? tilePressed : tileNormal;
 		state.paint.tile(graphics, x, y, width, height, tile[0] * width, tile[1] * height);
 		if (angle !== 0) {
 			// restore saved context from rotation
@@ -52,8 +52,8 @@ function Button(state, options) {
 	}).bindTo(state);
 	inputHandler.on('move', function(coords) {
 		if (holding && enabled) {
-			var prevPressed = pressed;
-			var nextPressed = pointInButton(coords);
+			let prevPressed = pressed;
+			let nextPressed = pointInButton(coords);
 			if (prevPressed !== nextPressed) {
 				pressed = nextPressed;
 			}
@@ -61,7 +61,7 @@ function Button(state, options) {
 	}).bindTo(state);
 	inputHandler.on('release', function(coords) {
 		if (holding && enabled) {
-			var prevPressed = pressed;
+			let prevPressed = pressed;
 			holding = pressed = false;
 			if (prevPressed && options.onClick instanceof Function) {
 				// invoke onClick event
@@ -72,7 +72,7 @@ function Button(state, options) {
 }
 
 // create the main state
-var myState = new myst.State();
+let myState = new myst.State();
 
 // called when state initializes
 myState.init = function() {
@@ -80,21 +80,21 @@ myState.init = function() {
 	this.myButton = new Button(this, { // we pass the state for context
 		graphics: myAssets.graphics.button,
 		onClick: function() {
-			var button = this;
+			let button = this;
 			// disable button during animation
 			button.disable();
 			// setup a tween
-			var tweenFrom = 0; // tween from angle 0
-			var tweenTo = 360; // to angle 360
-			var tweenDuration = 1500; // 1.5 seconds
-			var tweenEasingFunction = myst.ease[myState.easingFunction]; // select easing function provided by user
-			var tweenUpdateFunction = button.setAngle; // function to call with updates
-			var tweenDoneFunction = function() {
+			let tweenFrom = 0; // tween from angle 0
+			let tweenTo = 360; // to angle 360
+			let tweenDuration = 1500; // 1.5 seconds
+			let tweenEasingFunction = myst.ease[myState.easingFunction]; // select easing function provided by user
+			let tweenUpdateFunction = button.setAngle; // function to call with updates
+			let tweenDoneFunction = function() {
 				// reset and enable button when tween finishes
 				button.setAngle(0);
 				button.enable();
 			};
-			var tween = new myst.Tween(tweenFrom, tweenTo, tweenDuration, tweenUpdateFunction, tweenDoneFunction, tweenEasingFunction);
+			let tween = new myst.Tween(tweenFrom, tweenTo, tweenDuration, tweenUpdateFunction, tweenDoneFunction, tweenEasingFunction);
 			// perform the tween
 			tween.start();
 		}
@@ -110,30 +110,30 @@ myState.draw = function() {
 };
 
 // setup and run the game
-var myGame = new myst.Game({
+let myGame = new myst.Game({
 	canvasId: 'myst-example', // canvas element to initialize the game on
 	state: myState, // initial game state
 	simpleLoop: true // use a simple game loop that only draws and doesn't call state.update
 });
 
 // asset list
-var myAssets = {
+let myAssets = {
 	graphics: {
 		button: 'button.png'
 	}
 };
 
 // asset loader
-var myLoader = new myst.AssetLoader();
+let myLoader = new myst.AssetLoader();
 
 // initialize input handler on game
-var inputHandler = new myst.Input(myGame);
+let inputHandler = new myst.Input(myGame);
 
 // toggle between easing functions
-var selectEaseElement = document.querySelector('#selectease');
+let selectEaseElement = document.querySelector('#selectease');
 
 selectEaseElement.addEventListener('change', function() {
-	var optionElement = selectEaseElement.options[selectEaseElement.selectedIndex];
+	let optionElement = selectEaseElement.options[selectEaseElement.selectedIndex];
 	myState.easingFunction = optionElement.text;
 });
 

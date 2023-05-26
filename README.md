@@ -2,11 +2,11 @@
 
 myst.js is a lightweight HTML5 game development toolkit intended for 2D game development.
 
-Version 0.9.6
+Version 0.9.7
 
 ## Features
 
-- Single file (minified: 16.6KB) with zero external dependencies
+- Single file (minified: 16.9KB) with zero external dependencies
 - Supports all modern browsers (IE11/Edge/Firefox/Opera/Chrome/Safari)
 - Easy to use API - most features are simple, reusable classes
 - State based
@@ -22,7 +22,7 @@ Please see [HOWTO.md](HOWTO.md). See documentation for API reference.
 
 ```javascript
 // create a game state
-var myState = new myst.State();
+let myState = new myst.State();
 
 // draw some shapes
 myState.draw = function() {
@@ -32,7 +32,7 @@ myState.draw = function() {
 };
 
 // setup game
-var myGame = new myst.Game({
+let myGame = new myst.Game({
 	canvasId: 'myCanvasId', // canvas element id
 	state: myState, // initial game state
 	simpleLoop: true // just draw and never call myState.update()

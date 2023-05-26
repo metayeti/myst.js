@@ -4,10 +4,10 @@
  */
 
 // create a key input handler
-var keyInputHandler = new myst.KeyInput();
+let keyInputHandler = new myst.KeyInput();
 
 // create the main state
-var myState = new myst.State();
+let myState = new myst.State();
 
 // called when state initializes
 myState.init = function() {
@@ -31,7 +31,7 @@ myState.draw = function() {
 	this.surface.clear();
 	this.paint.text('Type something!', 10, 14, '#555', 'left', 'bold 14px sans-serif');
 	this.paint.rectFill(10, 40, 380, 1, '#555');
-	var displayText = this.strBuff;
+	let displayText = this.strBuff;
 	if (this.showCaret)
 		displayText += '_';
 	this.paint.text(displayText, 10, 60);
@@ -56,14 +56,14 @@ myState.draw = function() {
 // update game
 myState.update = function() {
 	// intercept key events
-	var keyEvent;
+	let keyEvent;
 	while (keyEvent = keyInputHandler.pollEvent()) {
-		var type = keyEvent.type;
+		let type = keyEvent.type;
 		if (type === keyInputHandler.KEYDOWN) {
-			var keycode = keyEvent.keycode;
+			let keycode = keyEvent.keycode;
 			if (keyInputHandler.isAlphanumeric(keycode)) {
-				var ascii = keyInputHandler.getCharacter(keycode);
-				var character;
+				let ascii = keyInputHandler.getCharacter(keycode);
+				let character;
 				if (keyInputHandler.isKeyDown(keyInputHandler.keyShift)) {
 					character = ascii;
 				}
@@ -88,7 +88,7 @@ myState.update = function() {
 			console.log('KEYDOWN: ' + keycode);
 		}
 		else if (type === keyInputHandler.KEYUP) {
-			var keycode = keyEvent.keycode;
+			let keycode = keyEvent.keycode;
 			console.log('KEYUP: ' + keycode);
 		}
 	}
@@ -107,7 +107,7 @@ myState.update = function() {
 };
 
 // setup and run the game
-var myGame = new myst.Game({
+let myGame = new myst.Game({
 	canvasId: 'myst-example', // canvas element to initialize the game on
 	state: myState // initial game state
 });

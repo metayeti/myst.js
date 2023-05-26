@@ -3,7 +3,7 @@
  *
  */
 
-var myState = new myst.State();
+let myState = new myst.State();
 
 myState.createUI = function() {
 	// set the global context to this particular state
@@ -80,10 +80,10 @@ myState.init = function() {
 	myState.createUI();
 	(function() {
 		// activate easter-egg after 3 presses on canvas
-		var duration = 20000;
-		var pressedTimes = 0;
+		let duration = 20000;
+		let pressedTimes = 0;
 		function doEasterEgg() {
-			var myFrame = myState.myFrame;
+			let myFrame = myState.myFrame;
 			myFrame.myFrame3.myFrame5.myControl.setAngle(0).tween({ angle: -720 }, { duration: duration });
 			myFrame.myFrame3.myFrame5.setAngle(0).tween({ angle: -720 }, { duration: duration });
 			myFrame.myFrame3.myFrame4.setAngle(0).tween({ angle: 720 }, { duration: duration });
@@ -108,15 +108,15 @@ myState.draw = function() {
 	this.myFrame.draw();
 };
 
-var myGame = new myst.Game({
+let myGame = new myst.Game({
 	canvasId: 'myst-example',
 	state: myState,
 	simpleLoop: true
 });
 
-var inputHandler = new myst.Input(myGame);
+let inputHandler = new myst.Input(myGame);
 
-var myLoader = new myst.AssetLoader();
+let myLoader = new myst.AssetLoader();
 
 window.addEventListener('load', function() {
 	// initialize the user interface extension

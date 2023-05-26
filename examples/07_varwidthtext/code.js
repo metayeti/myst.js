@@ -4,7 +4,7 @@
  */
 
 // create the main state
-var myState = new myst.State();
+let myState = new myst.State();
 
 // called when state initializes
 myState.init = function() {
@@ -128,7 +128,7 @@ myState.draw = function() {
 };
 
 // setup and run the game
-var myGame = new myst.Game({
+let myGame = new myst.Game({
 	canvasId: 'myst-example', // canvas element to initialize the game on
 	state: myState, // initial game state
 	background: '#000', // background fill color
@@ -136,7 +136,7 @@ var myGame = new myst.Game({
 });
 
 // asset list
-var myAssets = {
+let myAssets = {
 	// font graphics
 	graphics: {
 		font: 'font.png'
@@ -144,7 +144,7 @@ var myAssets = {
 };
 
 // asset loader
-var myLoader = new myst.AssetLoader();
+let myLoader = new myst.AssetLoader();
 
 // load assets on window load
 window.addEventListener('load', function() {

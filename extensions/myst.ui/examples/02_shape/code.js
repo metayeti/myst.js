@@ -3,7 +3,7 @@
  *
  */
 
-var myState = new myst.State();
+let myState = new myst.State();
 
 myState.createUI = function() {
 	// set the global context to this particular state
@@ -148,13 +148,13 @@ myState.draw = function() {
 	this.shape9.draw();
 };
 
-var myGame = new myst.Game({
+let myGame = new myst.Game({
 	canvasId: 'myst-example',
 	state: myState,
 	simpleLoop: true
 });
 
-var inputHandler = new myst.Input(myGame);
+let inputHandler = new myst.Input(myGame);
 
 
 window.addEventListener('load', function() {

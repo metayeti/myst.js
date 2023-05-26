@@ -2,7 +2,7 @@
  * myst.ui.js
  * UI extension for myst.js
  *
- * (c) 2021 Danijel Durakovic
+ * (c) 2023 Danijel Durakovic
  * MIT License
  *
  */
@@ -12,15 +12,15 @@
 
 /**
  * @file myst.ui.js
- * @version 0.2.3
+ * @version 0.2.4
  * @author Danijel Durakovic
- * @copyright 2021
+ * @copyright 2023
  */
 
 myst.ui = (function() { "use strict";
 
-var input = null;
-var globalContext = null;
+let input = null;
+let globalContext = null;
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -33,8 +33,8 @@ var globalContext = null;
  *
  * @returns {number}
  */
-var getNextEventId = (function() {
-	var uid = 0;
+let getNextEventId = (function() {
+	let uid = 0;
 	return function() {
 		return ++uid;
 	};
@@ -70,7 +70,7 @@ function invokeEvent(callback, self) {
 /**
  * @namespace atomic_components
  */
-var atomic_components = {
+let atomic_components = {
 
 	/**
 	 * Base atomic component.
@@ -190,7 +190,7 @@ var atomic_components = {
 		 */
 		self.isEnabled = function() {
 			// climb the chain of owners to determine enabled state
-			var component = self;
+			let component = self;
 			do {
 				if (!component._enabled) {
 					return false;
@@ -289,8 +289,8 @@ var atomic_components = {
 		 * @returns {number} Component global x coordinate.
 		 */
 		self.getRealX = function() {
-			var x = 0;
-			var component = self;
+			let x = 0;
+			let component = self;
 			do { x += component._x; } while ((component = component._owner));
 			return x;
 		};
@@ -305,8 +305,8 @@ var atomic_components = {
 		 * @returns {number} Component global y coordinate.
 		 */
 		self.getRealY = function() {
-			var y = 0;
-			var component = self;
+			let y = 0;
+			let component = self;
 			do { y  += component._y; } while ((component = component._owner));
 			return y;
 		};
@@ -321,8 +321,8 @@ var atomic_components = {
 		 * @returns {array} Component global coordinates.
 		 */
 		self.getRealPosition = function() {
-			var x = 0, y = 0;
-			var component = self;
+			let x = 0, y = 0;
+			let component = self;
 			do {
 				x += component._x;
 				y += component._y;
@@ -710,7 +710,7 @@ var atomic_components = {
 		 * Returns the component visible state.
 		 */
 		self.isVisible = function() {
-			var component = self;
+			let component = self;
 			do {
 				if (component._alpha <= 0) {
 					return false;
@@ -729,7 +729,7 @@ var atomic_components = {
 		 * @returns {object} Self.
 		 */
 		self.centerX = function() {
-			var ownerWidth = (self._owner) ? self._owner._width : self._context.surface.width;
+			let ownerWidth = (self._owner) ? self._owner._width : self._context.surface.width;
 			self.setX(Math.floor((ownerWidth - self._width) / 2));
 			return self;
 		};
@@ -744,7 +744,7 @@ var atomic_components = {
 		 * @returns {object} Self.
 		 */
 		self.centerY = function() {
-			var ownerHeight = (self._owner) ? self._owner._height : self._context.surface.height;
+			let ownerHeight = (self._owner) ? self._owner._height : self._context.surface.height;
 			self.setY(Math.floor((ownerHeight - self._height) / 2));
 			return self;
 		};
@@ -899,13 +899,13 @@ var atomic_components = {
 				self._events.onRepaint();
 				self._requestRepaint = false;
 			}
-			var alpha = self.getAlpha();
+			let alpha = self.getAlpha();
 			if (alpha <= 0) {
 				return;
 			}
 			if (self._angle !== 0) {
-				var centerX = Math.floor(self._x + self._width / 2);
-				var centerY = Math.floor(self._y + self._height / 2);
+				let centerX = Math.floor(self._x + self._width / 2);
+				let centerY = Math.floor(self._y + self._height / 2);
 				self._context.paint.rotate(self._angle, [centerX, centerY]);
 			}
 			if (alpha < 1) {
@@ -946,25 +946,25 @@ var atomic_components = {
 	Debuggable: function(options, self) {
 		self = self || this;
 
-		var debugDisplayText = '';
+		let debugDisplayText = '';
 		function updateDebugDisplayText() {
 			debugDisplayText = '';
-			for (var i = 0; i < debugWatch.length; i++) {
+			for (let i = 0; i < debugWatch.length; i++) {
 				debugDisplayText += self[debugWatch[i]] + ' ';
 			}
 		}
 
 		if (options.debug) {
-			var debugWatch = (options.debugString) ? options.debugString.replace(/\$/g, '_').split(' ') : ['_type'];
-			var debugColor = options.debugColor || '#c2f';
+			let debugWatch = (options.debugString) ? options.debugString.replace(/\$/g, '_').split(' ') : ['_type'];
+			let debugColor = options.debugColor || '#c2f';
 			setTimeout(updateDebugDisplayText, 5);
 			setInterval(updateDebugDisplayText, 100);
-			var s_draw = self.draw; // @super:draw
+			let s_draw = self.draw; // @super:draw
 			self.draw = function() { // @override
 				s_draw();
 				if (self._angle !== 0) {
-					var centerX = Math.floor(self._x + self._width / 2);
-					var centerY = Math.floor(self._y + self._height / 2);
+					let centerX = Math.floor(self._x + self._width / 2);
+					let centerY = Math.floor(self._y + self._height / 2);
 					self._context.paint.rotate(self._angle, [centerX, centerY]);
 				}
 				self._context.paint.text(debugDisplayText, self._x, self._y - 15, debugColor, 'left', '11px sans-serif');
@@ -987,8 +987,8 @@ var atomic_components = {
 	 */
 	Tweenable: function(options, self) {
 
-		var _activeTweens = [];
-		var _activeTimeout = null;
+		let _activeTweens = [];
+		let _activeTimeout = null;
 
 		function finalizeAllTweens() {
 			_activeTweens.forEach(function(tween) {
@@ -1019,24 +1019,24 @@ var atomic_components = {
 		 */
 		self.tween = function(properties, options) {
 			options = options || {};
-			var duration = fromOption(options.duration, 240);
-			var easef = fromOption(options.ease, myst.ease.quadInOut);
-			var delay = fromOption(options.delay, 0);
+			let duration = fromOption(options.duration, 240);
+			let easef = fromOption(options.ease, myst.ease.quadInOut);
+			let delay = fromOption(options.delay, 0);
 
 			function applyTween() {
 				finalizeAllTweens();
 				myst.iter(properties, function(key, value, index) {
-					var memberfstr = key.charAt(0).toUpperCase() + key.slice(1);
-					var fromf = self['get' + memberfstr];
+					let memberfstr = key.charAt(0).toUpperCase() + key.slice(1);
+					let fromf = self['get' + memberfstr];
 					if (!(fromf instanceof Function)) {
 						console.error('"' + key + '" is not a valid tween property.');
 						return;
 					}
-					var from = fromf();
-					var to = value;
-					var setf = self['set' + memberfstr];
-					var donef = (index === 0) ? function() { invokeEvent(options.onDone, self); } : null;
-					var tween = new myst.Tween(from, to, duration, setf, donef, easef);
+					let from = fromf();
+					let to = value;
+					let setf = self['set' + memberfstr];
+					let donef = (index === 0) ? function() { invokeEvent(options.onDone, self); } : null;
+					let tween = new myst.Tween(from, to, duration, setf, donef, easef);
 					_activeTweens.push(tween);
 					tween.start();
 				});
@@ -1163,7 +1163,7 @@ var atomic_components = {
 		self = self || this;
 
 		// unique event identifier
-		var _eventId = '_@' + getNextEventId();
+		let _eventId = '_@' + getNextEventId();
 
 		// "press" gets triggered whenever a button is pressed down
 		self._events.onPress = C_EMPTYF;
@@ -1177,15 +1177,15 @@ var atomic_components = {
 		}
 
 		function _pointIn(coords) {
-			var component = self;
-			var list = [];
+			let component = self;
+			let list = [];
 			do {
 				list.push(component);
 			} while ((component = component._owner));
-			for (var i = list.length - 1; i >= 0; i--) {
+			for (let i = list.length - 1; i >= 0; i--) {
 				component = list[i];
 				if (component._angle !== 0) {
-					var centerPoint = [
+					let centerPoint = [
 						Math.floor(component.getRealX() + component._width / 2),
 						Math.floor(component.getRealY() + component._height / 2)
 					];
@@ -1210,8 +1210,8 @@ var atomic_components = {
 
 		input.on('move', function(coords) {
 			if (self._holding && self.isEnabled() && self.isVisible()) {
-				var prevPressed = self._pressed;
-				var nextPressed = _pointIn(coords);
+				let prevPressed = self._pressed;
+				let nextPressed = _pointIn(coords);
 				if (prevPressed !== nextPressed) {
 					if ((self._pressed = nextPressed)) {
 						self._events.onPress(coords);
@@ -1225,7 +1225,7 @@ var atomic_components = {
 
 		input.on('release', function(coords) {
 			if (self._holding && self.isEnabled() && self.isVisible()) {
-				var prevPressed = self._pressed;
+				let prevPressed = self._pressed;
 				self._holding = self._pressed = false;
 				if (prevPressed) {
 					self._events.onRelease(coords);
@@ -1356,12 +1356,12 @@ var atomic_components = {
 		 * @return {object} Removed component.
 		 */
 		self.remove = function(componentKey) {
-			var componentIndex = self._componentKeys.indexOf(componentKey);
+			let componentIndex = self._componentKeys.indexOf(componentKey);
 			if (componentIndex === -1) {
 				console.error('Cannot remove "' + componentKey + '", component not found.');
 				return;
 			}
-			var componentObject = self._componentList[componentIndex];
+			let componentObject = self._componentList[componentIndex];
 			// detach events attached to components
 			if (componentObject._detachListeners) {
 				componentObject._detachListeners();
@@ -1438,7 +1438,7 @@ var atomic_components = {
 /**
  * @namespace public_components
  */
-var public_components = {
+let public_components = {
 
 	/**
 	 * Control component. Extends {@link atomic_components.Base|Base},
@@ -1490,8 +1490,8 @@ var public_components = {
 		 * Render the component and all children components.
 		 */
 		self._events.onRepaint = function() {
-			var n_components = self._renderList.length;
-			for (var i = 0; i < n_components; i++) {
+			let n_components = self._renderList.length;
+			for (let i = 0; i < n_components; i++) {
 				self._renderList[i].draw();
 			}
 		};
@@ -1527,7 +1527,7 @@ var public_components = {
 
 		self._type = 'Shape';
 
-		var SHAPE_TYPE = {
+		let SHAPE_TYPE = {
 			rectangle: 1,
 			line: 2,
 			triangle: 3,
@@ -1546,11 +1546,11 @@ var public_components = {
 		self._shapeRadius = null;
 		self._shapeParameters = null;
 
-		var defaultShapeRealUnits = false;
-		var defaultShapeColor = '#000';
-		var defaultShapeFill = true;
-		var defaultShapeBorder = 1;
-		var defaultShapeType = SHAPE_TYPE.rectangle;
+		let defaultShapeRealUnits = false;
+		let defaultShapeColor = '#000';
+		let defaultShapeFill = true;
+		let defaultShapeBorder = 1;
+		let defaultShapeType = SHAPE_TYPE.rectangle;
 
 		/**
 		 * Returns default shape geometry based on current shape type.
@@ -1659,9 +1659,9 @@ var public_components = {
 			}
 			self._shapeBorder = (shapeOptions.border !== undefined) ? parseInt(shapeOptions.border, 10) : defaultShapeBorder;
 			// shape type
-			var previousShapeType = self._shapeType;
+			let previousShapeType = self._shapeType;
 			self._shapeType = SHAPE_TYPE[shapeOptions.type] || defaultShapeType;
-			var hasShapeChanged = self._shapeType !== previousShapeType;
+			let hasShapeChanged = self._shapeType !== previousShapeType;
 			// shape geometry
 			if (shapeOptions.geometry !== undefined) {
 				self._shapeGeometry = shapeOptions.geometry;
@@ -1711,12 +1711,12 @@ var public_components = {
 			if (!(self._shapeGeometry instanceof Array)) {
 				return;
 			}
-			var n_points = self._shapeGeometry.length;
-			var shapeType = self._shapeType;
-			var shapeFill = self._shapeFill;
-			var shapeColor = self._shapeColor;
-			var shapeBorder = self._shapeBorder;
-			var shapeParameters = self._shapeParameters;
+			let n_points = self._shapeGeometry.length;
+			let shapeType = self._shapeType;
+			let shapeFill = self._shapeFill;
+			let shapeColor = self._shapeColor;
+			let shapeBorder = self._shapeBorder;
+			let shapeParameters = self._shapeParameters;
 
 			/**
 			 * Translate unit geometry to pixels.
@@ -1724,14 +1724,14 @@ var public_components = {
 			 * @returns {array}
 			 */
 			function translateUnitGeometry(geometry) {
-				var realGeometry = [];
-				var scale_x = self.getWidth();
-				var scale_y = self.getHeight();
-				for (var p = 0; p < n_points; p++) {
-					var pointUnitCoordinates = geometry[p];
+				let realGeometry = [];
+				let scale_x = self.getWidth();
+				let scale_y = self.getHeight();
+				for (let p = 0; p < n_points; p++) {
+					let pointUnitCoordinates = geometry[p];
 					if (pointUnitCoordinates instanceof Array && pointUnitCoordinates.length === 2) {
-						var px = pointUnitCoordinates[0] * scale_x;
-						var py = pointUnitCoordinates[1] * scale_y;
+						let px = pointUnitCoordinates[0] * scale_x;
+						let py = pointUnitCoordinates[1] * scale_y;
 						if (!shapeFill || shapeFill && shapeType === SHAPE_TYPE.line) {
 							// shrink shape by border
 							px = myst.clamp(px, shapeBorder, scale_x - shapeBorder);
@@ -1749,19 +1749,19 @@ var public_components = {
 			 * @returns {number|array}
 			 */
 			function translateUnitRadius(radius) {
-				var scale_x = self.getWidth();
-				var scale_y = self.getHeight();
-				var scale_min = Math.min(scale_x, scale_y);
+				let scale_x = self.getWidth();
+				let scale_y = self.getHeight();
+				let scale_min = Math.min(scale_x, scale_y);
 				if (radius instanceof Array) {
-					var realRadius = [];
-					var n_items = radius.length;
-					for (var i = 0; i < n_items; i++) {
+					let realRadius = [];
+					let n_items = radius.length;
+					for (let i = 0; i < n_items; i++) {
 						realRadius.push(radius[i] * scale_min);
 					}
 					return realRadius;
 				}
 				else {
-					var ps = radius * scale_min;
+					let ps = radius * scale_min;
 					if (!shapeFill && (shapeType === SHAPE_TYPE.circle ||
 							shapeType === SHAPE_TYPE.arc ||
 							shapeType == SHAPE_TYPE.pie)) {
@@ -1771,8 +1771,8 @@ var public_components = {
 				}
 			}
 
-			var geometry = (self._shapeRealUnits) ? self._shapeGeometry : translateUnitGeometry(self._shapeGeometry);
-			var shapeRadius = (self._shapeRealUnits) ? self._shapeRadius : translateUnitRadius(self._shapeRadius);
+			let geometry = (self._shapeRealUnits) ? self._shapeGeometry : translateUnitGeometry(self._shapeGeometry);
+			let shapeRadius = (self._shapeRealUnits) ? self._shapeRadius : translateUnitRadius(self._shapeRadius);
 
 			switch (shapeType) {
 				case SHAPE_TYPE.rectangle:
@@ -2018,9 +2018,9 @@ var public_components = {
 		self._type = 'TileButton';
 		options.tiles = options.tiles || {};
 
-		var tileNormal = options.tiles.normal || [0, 0];
-		var tilePressed = options.tiles.pressed || [0, 0];
-		var tileDisabled = options.tiles.disabled || [0, 0];
+		let tileNormal = options.tiles.normal || [0, 0];
+		let tilePressed = options.tiles.pressed || [0, 0];
+		let tileDisabled = options.tiles.disabled || [0, 0];
 
 		self._activeTile = tileNormal;
 
@@ -2079,7 +2079,7 @@ var public_components = {
 /**
  * @namespace public_functions
  */
-var public_functions = {
+let public_functions = {
 
 	/**
 	 * Initializes myst.ui.
@@ -2132,7 +2132,7 @@ var public_functions = {
 	 * @returns {object}
 	 */
 	createTile: function(texture, tileX, tileY, tileWidth, tileHeight) {
-		var tileSurface = new myst.Surface({
+		let tileSurface = new myst.Surface({
 			width: tileWidth,
 			height: tileHeight
 		});

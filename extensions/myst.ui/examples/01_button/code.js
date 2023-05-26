@@ -3,7 +3,7 @@
  *
  */
 
-var myState = new myst.State();
+let myState = new myst.State();
 
 myState.createUI = function() {
 	// set the global context to this particular state
@@ -53,21 +53,21 @@ myState.draw = function() {
 	this.myButton.draw();
 };
 
-var myGame = new myst.Game({
+let myGame = new myst.Game({
 	canvasId: 'myst-example',
 	state: myState,
 	simpleLoop: true
 });
 
-var inputHandler = new myst.Input(myGame);
+let inputHandler = new myst.Input(myGame);
 
-var myAssets = {
+let myAssets = {
 	graphics: {
 		button: 'button.png'
 	}
 };
 
-var myLoader = new myst.AssetLoader();
+let myLoader = new myst.AssetLoader();
 
 window.addEventListener('load', function() {
 	// initialize the user interface extension
