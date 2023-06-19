@@ -1,3 +1,0 @@
-/* myst.ui.js 0.2.4
- * (c) 2023 Danijel Durakovic
- * MIT License */

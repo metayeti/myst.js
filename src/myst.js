@@ -12,9 +12,8 @@
 
 /**
  * @file myst.js
- * @version 0.9.7
+ * @version 0.9.8
  * @author Danijel Durakovic
- * @copyright 2023
  */
 
 "use strict";

@@ -1,0 +1,14 @@
+{
+	"source_dir": "src/",
+	"destination_dir": "dist/",
+	"sources": [
+		{
+			"file": "myst.ui.js",
+			"header": [
+				"/* myst.ui.js %version%",
+				" * (c) $YEAR$ %author%",
+				" * MIT license */"
+			]
+		}
+	]
+}

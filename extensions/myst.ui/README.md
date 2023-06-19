@@ -1,6 +1,6 @@
 **myst.ui.js** is a user interface addon for myst.js. It supports constructs for composing basic interfaces and can be extended if needed.
 
-Version 0.2.3
+Version 0.2.5
 
 ## License
 

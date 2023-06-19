@@ -12,9 +12,8 @@
 
 /**
  * @file myst.ui.js
- * @version 0.2.4
+ * @version 0.2.5
  * @author Danijel Durakovic
- * @copyright 2023
  */
 
 myst.ui = (function() { "use strict";

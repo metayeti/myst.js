@@ -1,3 +1,0 @@
-/* myst.js 0.9.7
- * (c) 2023 Danijel Durakovic
- * MIT License */
