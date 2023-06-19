@@ -1,3 +1,6 @@
+## 0.9.8 (June 19, 2023)
+- Replace old clunky build scripts with yabs.js.
+
 ## 0.9.7 (May 26, 2023)
 - `FEATURE` Upgrade to ES6 standard.
 
