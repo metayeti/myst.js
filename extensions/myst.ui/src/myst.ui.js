@@ -12,7 +12,7 @@
 
 /**
  * @file myst.ui.js
- * @version 0.2.5
+ * @version 0.2.6
  * @author Danijel Durakovic
  */
 
