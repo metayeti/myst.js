@@ -946,7 +946,7 @@ let atomic_components = {
 		self = self || this;
 
 		let debugDisplayText = '';
-		let debugWatch = [];
+		let debugWatch = null;
 		
 		function updateDebugDisplayText() {
 			debugDisplayText = '';
@@ -956,7 +956,7 @@ let atomic_components = {
 		}
 
 		if (options.debug) {
-			debugWatch = (options.debugString) ? options.debugString.replace(/\$/g, '_').split(' ') : ['_type'];
+			let debugWatch = (options.debugString) ? options.debugString.replace(/\$/g, '_').split(' ') : ['_type'];
 			let debugColor = options.debugColor || '#c2f';
 			setTimeout(updateDebugDisplayText, 5);
 			setInterval(updateDebugDisplayText, 100);
