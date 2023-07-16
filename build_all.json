@@ -1,6 +1,6 @@
 {
 	"batch_build": [
 		"build.json",
-		"extensions/myst.ui/build.json"
+		"extensions/myst.ui/"
 	]
 }
