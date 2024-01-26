@@ -12,7 +12,7 @@
 
 /**
  * @file myst.ui.js
- * @version 0.2.6
+ * @version 0.3.0
  * @author Danijel Durakovic
  */
 
@@ -1977,8 +1977,11 @@ let public_components = {
 	 *
 	 * @param {object} options - Constructor options.
 	 */
+	/*
 	LinkLabel: function(options, self) {
+		//TODO
 	},
+	*/
 
 	BitmapLabel: function(options, self) {
 		self = self || this;

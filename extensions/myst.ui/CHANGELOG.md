@@ -1,3 +1,7 @@
+## 0.3.0 (?)
+- `BUGFIX` Shapes can now have a size of zero.
+- `FEATURE` Added `Label` and `BMPLabel` controls.
+
 ## 0.2.4 (May 26, 2023)
 - `FEATURE` Upgrade to ES6 standard.
 
