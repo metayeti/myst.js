@@ -1,2 +1,2 @@
-@node build.js
+@node build
 @pause>nul
