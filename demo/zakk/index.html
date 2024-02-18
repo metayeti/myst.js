@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Zakk</title>
+	<link rel="stylesheet" href="css/style.css">
+	<link rel="stylesheet" href="css/game.css">
+</head>
+<body>
+	<!--
+		Game demo for myst.js
+		Copyright (c) 2024 Danijel Durakovic
+	-->
+	<header>
+		<!--
+		<h2 class="title">Zakk</h2>
+		<hr>
+		-->
+		<p>This demo game showcases a simple game project built on the <a href="https://github.com/metayeti/myst.js" target="_blank">myst.js</a> engine.</p>
+		<p>How to play:</p>
+		<section class="keys">
+			&bull; Use arrow keys to move<br>
+			&bull; Z jumps<br>
+			&bull; X shoots
+		</section>
+	</header>
+	<div class="darken"></div>
+	<main id="content">
+		<canvas id="game" width="420" height="340"></canvas>
+	</main>
+	<footer>
+		<p class="copyright">Copyright &copy; 2024 Danijel Duraković</p>
+	</footer>
+	<script src="lib/howler.min.js"></script>
+	<script src="lib/myst.min.js"></script>
+	<script src="src/meta.js"></script>
+	<script src="src/const.js"></script>
+	<script src="src/util.js"></script>
+	<script src="src/load_state.js"></script>
+	<script src="src/title_state.js"></script>
+	<!--
+		todo
+	<script src="src/collision.js"></script>
+	-->
+	<script src="src/components.js"></script>
+	<script src="src/entities.js"></script>
+	<script src="src/world.js"></script>
+	<script src="src/game_state.js"></script>
+	<script src="src/assets.js"></script>
+	<script src="src/init.js"></script>
+</body>
+</html>

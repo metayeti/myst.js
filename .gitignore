@@ -1,6 +1,8 @@
 /temp/
 /dev/
 /extensions/myst.ui/dev/
+/demo/zakk/dev/
+/demo/zakk/data/music/*.mp3
 *~
 *.swp
 *.swo

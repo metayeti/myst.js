@@ -1,0 +1,55 @@
+header > .keys {
+	display: inline-block;
+	margin-top: 10px;
+	padding: 15px;
+	font-family: serif;
+	font-size: 18px;
+	color: #fff;
+	background-color: rgba(0,0,0,0.1);
+	border: 3px solid rgba(0,0,0,0.2);
+}
+footer > .copyright {
+	position: absolute;
+	margin: 0;
+	left: 0;
+	right: 0;
+	padding: 0;
+	bottom: 15px;
+	text-align: center;
+	font-family: sans-serif;
+	font-size: 13px;
+	color: #eee;
+}
+body > .darken {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	left: 0;
+	top: 0;
+	background-color: #000;
+	opacity: 0;
+	visibility: hidden;
+	transition: visibility 0s, opacity 0.3s linear;
+}
+body > .darken.active {
+	opacity: 0.95;
+	visibility: visible;
+}
+#game {
+	background-color: #000;
+	border: 10px solid #1a1a1a;
+	background-image: url('../data/gfx/splash.png');
+	background-repeat: no-repeat;
+	background-position: center;
+	transition: border-color 0.3s linear;
+	transition: scale 0.55s;
+}
+#game.pressed {
+	background-color: #2f2f2f;
+	background-size: 98%;
+}
+#game.active {
+	background-image: none;
+	border: 10px solid #1d3f7c;
+	scale: 1.8;
+}

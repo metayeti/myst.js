@@ -1,0 +1,42 @@
+body {
+	margin: 0;
+	padding: 15px;
+	background-color: #303030;
+	background-image: url('../data/gfx/pagebg.png');
+}
+hr {
+	border: 0;
+	border-top: 1px solid #444;
+	margin: 10px 0;
+}
+h1, h2, p, a {
+	margin: 0;
+	font-family: sans-serif;
+	color: #fff;
+}
+h2 {
+	padding: 5px 0;
+}
+p {
+	padding: 10px 0;
+	font-size: 15px;
+}
+a {
+	color: #10a4f4;
+	text-decoration: none;
+}
+a:hover,
+a:focus {
+	text-decoration: underline;
+}
+img {
+	padding: 10px 0;
+}
+.highlight {
+	color: #fff200;
+}
+h2.title {
+	font-size: 23px;
+	font-weight: bold;
+	color: #ccc;
+}

@@ -1,0 +1,39 @@
+{
+	"source_dir": "./",
+	"destination_dir": "build/demo/zakk/",
+	"html": "index.html",
+	"sources": [
+		{
+			"bundle": [
+				"src/meta.js",
+				"src/const.js",
+				"src/util.js",
+				"src/load_state.js",
+				"src/components.js",
+				"src/entities.js",
+				"src/world.js",
+				"src/game_state.js",
+				"src/assets.js",
+				"src/init.js"
+			],
+			"output_file": "src/game.min.js",
+			"compile_options": "--mangle --compress --enclose",
+			"preprocess": true,
+			"variables": {
+				"debug": [
+					"DEBUG=true"
+				]
+			},
+			"header": [
+				"/* Zakk v%version%",
+				" * myst.js demo game",
+				" * (c) $YEAR$ %author% */"
+			]
+		}
+	],
+	"files": [
+		"css/*.css",
+		"data/*",
+		"lib/*.js"
+	]
+}
